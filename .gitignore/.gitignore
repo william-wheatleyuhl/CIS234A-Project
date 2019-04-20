@@ -1,8 +1,0 @@
-# Java files
-*.class
-
-
-# IntelliJ files
-.idea/
-out/
-*.iml
