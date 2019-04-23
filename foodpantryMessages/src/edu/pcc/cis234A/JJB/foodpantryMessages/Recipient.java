@@ -1,12 +1,14 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 public class Recipient {
+    public String userName;
     public String firstName;
     public String lastName;
     public String phoneNbr;
     public String emailAddr;
 
-    public Recipient(String firstName, String lastName) {
+    public Recipient(String userName, String firstName, String lastName) {
+        this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
     }
