@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="edu.pcc.cis234A.JJB.foodpantryMessages.NotificationLogForm">
-  <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="6" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="10" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="800" height="600"/>
-																																											 
     </constraints>
-    <properties/>
+    <properties>
+      <preferredSize width="800" height="600"/>
+    </properties>
     <border type="none"/>
     <children>
       <component id="c26f0" class="javax.swing.JLabel" binding="pageName">
@@ -17,44 +18,42 @@
           <text value="Food Pantry Notification Log"/>
         </properties>
       </component>
-      <component id="fec3a" class="javax.swing.JLabel" binding="dateLabel">
+      <component id="fec3a" class="javax.swing.JLabel" binding="messageNumberLabel">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false">
+            <preferred-size width="15" height="16"/>
+          </grid>
         </constraints>
         <properties>
-          <text value="DATE"/>
+          <text value="#"/>
         </properties>
       </component>
-      <component id="b495d" class="javax.swing.JLabel" binding="timeLabel">
+      <component id="b495d" class="javax.swing.JLabel" binding="timestampLabel">
         <constraints>
-          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="100" height="16"/>
+          </grid>
         </constraints>
         <properties>
-          <text value="TIME"/>
+          <text value="TIMESTAMP"/>
         </properties>
       </component>
       <component id="69f17" class="javax.swing.JLabel" binding="sentByLabel">
         <constraints>
-          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="100" height="16"/>
+          </grid>
         </constraints>
         <properties>
           <text value="SENT BY"/>
         </properties>
       </component>
-      <component id="a3d51" class="javax.swing.JLabel" binding="sentToLabel">
+      <component id="a3d51" class="javax.swing.JLabel" binding="recipientCountLabel">
         <constraints>
-          <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="SENT TO"/>
-        </properties>
-      </component>
-      <component id="fed71" class="javax.swing.JLabel" binding="messageLabel">
-        <constraints>
-          <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="MESSAGE"/>
+          <text value="RECIPIENT COUNT"/>
         </properties>
       </component>
       <component id="a3420" class="javax.swing.JLabel" binding="userLoggedInLabel">
@@ -67,8 +66,8 @@
       </component>
       <scrollpane id="5366f" binding="tableScrollPane">
         <constraints>
-          <grid row="4" column="1" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="-1" height="200"/>
+          <grid row="6" column="1" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="453" height="191"/>
           </grid>
         </constraints>
         <properties/>
@@ -82,14 +81,14 @@
       </scrollpane>
       <vspacer id="e194b">
         <constraints>
-          <grid row="1" column="6" row-span="4" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="1" column="6" row-span="6" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <preferred-size width="10" height="-1"/>
           </grid>
         </constraints>
       </vspacer>
       <vspacer id="c70bf">
         <constraints>
-          <grid row="1" column="0" row-span="4" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="1" column="0" row-span="6" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <preferred-size width="10" height="-1"/>
           </grid>
         </constraints>
@@ -103,7 +102,7 @@
       </hspacer>
       <hspacer id="9bb6b">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="7" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+          <grid row="9" column="0" row-span="1" col-span="7" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="-1" height="10"/>
           </grid>
         </constraints>
@@ -114,6 +113,74 @@
         </constraints>
         <properties/>
       </component>
+      <component id="fed71" class="javax.swing.JLabel" binding="messagePreviewLabel">
+        <constraints>
+          <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false">
+            <preferred-size width="248" height="16"/>
+          </grid>
+        </constraints>
+        <properties>
+          <text value="MESSAGE PREVIEW"/>
+        </properties>
+      </component>
+      <component id="c5a3b" class="javax.swing.JLabel" binding="minDateLabel">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Min date:"/>
+        </properties>
+      </component>
+      <grid id="d6940" binding="minDatePanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="16"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <component id="41075" class="javax.swing.JLabel" binding="maxDateLabel">
+        <constraints>
+          <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Max date:"/>
+        </properties>
+      </component>
+      <grid id="d28c2" binding="maxDatePanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="16"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <component id="26aaa" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="f6abc" class="javax.swing.JLabel" binding="fullMessageLabel">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="FULL MESSAGE"/>
+        </properties>
+      </component>
+      <scrollpane id="73e9e" binding="fullMessageScrollPane">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </scrollpane>
     </children>
   </grid>
 </form>
