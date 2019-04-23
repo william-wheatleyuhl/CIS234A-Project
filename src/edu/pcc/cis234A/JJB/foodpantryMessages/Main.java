@@ -1,8 +1,7 @@
-package edu.pcc.cis234A.JJB.foodpantryMessages;
+package pcc.cis234A.JJB.foodpantryMessages;
 
-/**
- * @author Syn
- * @version 2019.04.20
- */
 public class Main {
+    public static void main(String[] args){
+        System.out.println("test");
+    }
 }
