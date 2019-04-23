@@ -5,8 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * @author Syn
- * @version 2019.04.10
+ * @author Syn, Jeff
+ * @version 2019.04.23
  */
 public class UserLoginGUI {
     private JPanel rootPanel;
@@ -44,13 +44,21 @@ public class UserLoginGUI {
         suButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                boolean nameOK = false;
+                boolean usernameOK = false;
                 boolean emailOK = UserLogin.verifyEmail(suEmailField.getText());
                 if(suNameField.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Invalid Name");
                 }
+                else{
+                    nameOK = true;
+                }
 
                 if(suUsernameField.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Invalid Username");
+                }
+                else{
+                    usernameOK = true;
                 }
 
                 if(!emailOK){
@@ -60,6 +68,13 @@ public class UserLoginGUI {
                 boolean passwordOK = UserLogin.verifySignUpPassword(suPasswordField1.getText(), suPasswordField2.getText());
                 if(!passwordOK){
                     JOptionPane.showMessageDialog(null, "Invalid Password");
+                }
+
+                /**
+                 * assuming java works like C and && operator only compares two values
+                 */
+                if((nameOK && usernameOK) && (emailOK && passwordOK)){
+                    JOptionPane.showMessageDialog(null, "Sucessfully signed up!");
                 }
             }
         });
