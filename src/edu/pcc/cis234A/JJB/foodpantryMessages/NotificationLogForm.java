@@ -11,7 +11,7 @@ import java.awt.*;
  */
 public class NotificationLogForm {
     private JPanel rootPanel;
-    private JLabel pageName;
+    private JLabel pageNameLabel;
     private JLabel userLoggedInLabel;
     private JLabel messageNumberLabel;
     private JLabel timestampLabel;
@@ -37,6 +37,10 @@ public class NotificationLogForm {
         maxDatePanel.add(jMaxDateChooser);
     }
 
+    /**
+     * Returns the root panel associated with the form
+     * @return the root panel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }
