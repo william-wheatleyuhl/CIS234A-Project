@@ -1,10 +1,12 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
- * Created by Will Wheatley-Uhl on 4/20/19
+ * Main Class
+ * Loads and Displays NotificationForm
+ * @author Will Wheatley-Uhl
+ * @version 2019.04.20
  */
 public class Main {
     public static void createAndShowNotification() {
@@ -18,8 +20,6 @@ public class Main {
 
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(() -> createAndShowNotification());
-        SubscriberDB subs = new SubscriberDB();
-        subs.readSubscribers();
     }
 
 }

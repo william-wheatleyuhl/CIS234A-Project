@@ -1,8 +1,13 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
-
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * SubsciberDB Class
+ * Connects to the Database, Returns requested data based on SQL Queries.
+ * @author Will Wheatley-Uhl
+ * @version 2019.04.22
+ */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
     private static final String USERNAME = "234a_JavaneseJumpingBeans";

@@ -2,10 +2,17 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
+/**
+ * NotificationForm Class
+ * This class defines the functionality of the GUI for sending Foot Pantry based Messages.
+ * The user is able to select what subscribers the message is sent to, type a message, select a message from a template,
+ * and send the message. The templates are pulled from the TEMPLATE table in the Database, and all sent messages will
+ * be stored in the MESSAGES table and given a unique messageID.
+ * @authors Syn Calvo and Will Wheatley-Uhl
+ * 2019.04.19
+ */
 public class NotificationForm {
     private JPanel rootPanel;
     private JLabel userLoggedInLabel;
@@ -42,6 +49,9 @@ public class NotificationForm {
                 }
             }
         });
+/**
+ * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
+*/
         chooseTemplate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

@@ -1,5 +1,11 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+/**
+ *Recipient Class
+ * This Class will model the recipient, and will store Recipient data.
+ * @author Will Wheatley-Uhl
+ * @version 2019.04.23
+ */
 public class Recipient {
     public String userName;
     public String firstName;

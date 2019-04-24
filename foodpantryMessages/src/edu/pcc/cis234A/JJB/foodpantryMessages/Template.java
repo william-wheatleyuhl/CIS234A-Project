@@ -1,7 +1,11 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 /**
- * Created by vztr on 4/23/19
+ * Template Class.
+ * A class to represent a Template object from the Database.
+ * Created by Will Wheatley-Uhl on 4/23/19
+ * @author Will Wheatley-Uhl
+ * @version 2019.04.23
  */
 public class Template {
     public int templateID;
