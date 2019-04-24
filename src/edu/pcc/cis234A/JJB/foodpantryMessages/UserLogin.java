@@ -26,24 +26,18 @@ public class UserLogin {
     }
 
     /***
-     * Takes email value from email textbox in the sign up half of the page.
-     * Checks whether it contains an '@' symbol and a '.' .
-     * A valid email can have multiple '.'s (like our PCC emails), but only one '@'.
-     * The method iterates through all characters in a string so if it comes across an
-     * '@' and we know one has already been found because our boolean has been set to true
-     * then we just return false immediately. The final if statement checks that the email address
-     * contains a '.' and '@', and that the index at which the '.' occurs is greater than the index
-     * at which the '@' occurs. It then checks that the '@' character is not the 0th index, and that the '.'
-     * character is not at the last index. Finally it insures that the difference between their indexes is greater
-     * than 1 to avoid something like name@.com which isn't valid at all.
+     * This method ensures that the email provided contains an arbitrary amount of '.'s before the one
+     * '@', but only one (mandatory) '.' after the one '@'. No '@' or '.' can be either the first or last character
+     * of the email string. If there is a '.' at the character directly before or directly after the '@' then the email
+     * is invalid. Before the '@' any 2 '.'s with an index differential of 1 results in an invalid email address.
      */
     public static boolean verifyEmail(String email){
         boolean containsAT = false;
-        boolean containsDOT = false;
+        boolean containsDOTAfterAT = false;
         boolean inputOK = false;
         int charIndex = 0;
         int atIndex = -1;
-        int dotIndex = -1;
+        int dotAfterAtIndex = -1;
         for(char c : email.toCharArray()){
             if(c == '@'){
                 if(containsAT){
@@ -51,18 +45,41 @@ public class UserLogin {
                 }
                 containsAT = true;
                 atIndex = charIndex;
+
+                if(charIndex == 0 || charIndex == email.length() - 1){
+                    return false;
+                }
             }
+
             if(c == '.'){
-                containsDOT = true;
-                dotIndex = charIndex;
+                if(charIndex == 0 || charIndex == email.length() - 1){
+                    return false;
+                }
+
+                if(email.charAt(charIndex + 1) == '@'){
+                    return false;
+                }
+
+                if(email.charAt(charIndex + 1) == '.' || email.charAt(charIndex - 1) == '.'){
+                    return false;
+                }
+
+                if(containsAT){
+                    if(containsDOTAfterAT){
+                        return false;
+                    }
+                    containsDOTAfterAT = true;
+                    dotAfterAtIndex = charIndex;
+                }
             }
+
             charIndex += 1;
         }
-        if(((containsAT && containsDOT) && (dotIndex > atIndex)) && ((atIndex != 0) && (dotIndex != email.length() - 1))){
-            if(dotIndex - atIndex > 1){
-                inputOK = true;
-            }
+
+        if((containsAT && containsDOTAfterAT) && dotAfterAtIndex - atIndex > 1){
+            inputOK = true;
         }
+
         return inputOK;
     }
 
