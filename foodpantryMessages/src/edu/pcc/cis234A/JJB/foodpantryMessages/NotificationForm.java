@@ -27,12 +27,16 @@ public class NotificationForm {
     private JComboBox chooseTemplate;
     SubscriberDB subs = new SubscriberDB();
     ArrayList<Template> templates = subs.readTemplates();
-    ArrayList<Recipient> recipUsers;
-    Iterator<Recipient> recipients = subs.readSubscriberNames().iterator();
+    ArrayList<Recipient> recipients = subs.readSubscriberNames();
 
     public NotificationForm() {
-
         populateComboBox();
+
+        /**
+         * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
+         * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
+         * field from editing.
+         */
         allRadio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -40,21 +44,32 @@ public class NotificationForm {
                     recipientField.setEnabled(false);
                     recipientField.setText(gatherRecipients());
                     specificRadio.setSelected(false);
+                }else {
+                    recipientField.setText("");
+
                 }
             }
         });
-
+/**
+ * Action Listener for the "Specific Users" radio button. Disables the "All Users" radio, sets text of Recipient
+ * List to an empty text field.
+ * TODO: Parse Recipient field to detect usernames.
+ */
         specificRadio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(specificRadio.isSelected()) {
                     recipientField.setEnabled(true);
+                    recipientField.setText("");
                     allRadio.setSelected(false);
                 }
             }
         });
 /**
  * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
+ * clears the message field.
+ * TODO: Add funciton to scale number of templates in combobox to number in database.
+ * TODO: Cache Message when switching between templates and new messages.
 */
         chooseTemplate.addActionListener(new ActionListener() {
             @Override
@@ -73,6 +88,10 @@ public class NotificationForm {
         });
     }
 
+    /**
+     * Create a Model for the ComboBox pulldown menu for message templates and populate it from saved Templates
+     * found in the database. Currently set with one default option and 3 template options.
+     */
     public void populateComboBox() {
         DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
         model.removeAllElements();
@@ -87,11 +106,17 @@ public class NotificationForm {
         return rootPanel;
     }
 
+    /**
+     * Converts ArrayList of recipients into an Iterator Class.Iterates through the list of usernames
+     * in the Subscribers List. Returns a string of all Usernames in the Database.
+     * @return toList A list of all subscriber's Usernames
+     */
     public String gatherRecipients() {
+        Iterator<Recipient> recipientStrings = recipients.iterator();
         String toList = "";
-        while(recipients.hasNext()) {
-            toList += recipients.next().getUserName();
-            if(recipients.hasNext()) {
+        while(recipientStrings.hasNext()) {
+            toList += recipientStrings.next().getUserName();
+            if(recipientStrings.hasNext()) {
                 toList += ", ";
             }
         }

@@ -19,6 +19,11 @@ public class SubscriberDB {
         return DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
     }
 
+    /**
+     * Query the Database for enough data to populate the recipient Constructor. Add the newly created Recipient
+     * objects to the recipients ArrayList.
+     * @return recipients Return an ArrayList of Recipient Objects
+     */
     public ArrayList readSubscriberNames() {
         ArrayList<Recipient> receivers = new ArrayList<>();
         try (
@@ -36,6 +41,11 @@ public class SubscriberDB {
         return receivers;
     }
 
+    /**
+     * Grabs Template data from the database, and uses it in a Template Constructor. New Templates are then added
+     * to an ArrayList of Templates.
+     * @return templates An ArrayList of Template objects
+     */
     public ArrayList readTemplates() {
         ArrayList<Template> templates = new ArrayList<>();
         try (
