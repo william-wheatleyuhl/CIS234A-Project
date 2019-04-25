@@ -13,7 +13,7 @@ public class Recipient {
     public String phoneNbr;
     public String emailAddr;
 
-    public Recipient(String userName, String firstName, String lastName) {
+    public Recipient(String userName, String lastName, String firstName) {
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -41,7 +41,6 @@ public class Recipient {
     public String getFirstName() {
         return firstName;
     }
-
     public String getLastName() {
         return lastName;
     }
@@ -50,6 +49,10 @@ public class Recipient {
     }
     public String getPhoneNbr() {
         return phoneNbr;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public String getEmailAddr() {

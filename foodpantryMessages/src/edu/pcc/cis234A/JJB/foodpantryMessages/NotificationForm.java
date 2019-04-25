@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * NotificationForm Class
@@ -26,6 +27,8 @@ public class NotificationForm {
     private JComboBox chooseTemplate;
     SubscriberDB subs = new SubscriberDB();
     ArrayList<Template> templates = subs.readTemplates();
+    ArrayList<Recipient> recipUsers;
+    Iterator<Recipient> recipients = subs.readSubscriberNames().iterator();
 
     public NotificationForm() {
 
@@ -35,6 +38,7 @@ public class NotificationForm {
             public void actionPerformed(ActionEvent actionEvent) {
                 if(allRadio.isSelected()) {
                     recipientField.setEnabled(false);
+                    recipientField.setText(gatherRecipients());
                     specificRadio.setSelected(false);
                 }
             }
@@ -83,4 +87,14 @@ public class NotificationForm {
         return rootPanel;
     }
 
+    public String gatherRecipients() {
+        String toList = "";
+        while(recipients.hasNext()) {
+            toList += recipients.next().getUserName();
+            if(recipients.hasNext()) {
+                toList += ", ";
+            }
+        }
+        return toList;
+    }
 }
