@@ -23,6 +23,11 @@ public class UserLogin {
         jf1.setContentPane(new UserLoginGUI().getRootPanel());
         jf1.setVisible(true);
 
+        /*UserLoginDB database1 = new UserLoginDB();
+        int highestUserID = database1.getHighestUserID();
+        System.out.println(highestUserID);
+        database1.insertUser(highestUserID);*/
+
     }
 
     /***
@@ -77,7 +82,9 @@ public class UserLogin {
         }
 
         if((containsAT && containsDOTAfterAT) && dotAfterAtIndex - atIndex > 1){
-            inputOK = true;
+            if(email.length() <= 50){
+                inputOK = true;
+            }
         }
 
         return inputOK;
