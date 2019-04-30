@@ -86,6 +86,13 @@ public class NotificationForm {
                 }
             }
         });
+        sendNotificationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                subs.logMessage(getMessageText(), 99);
+                System.out.println(getMessageText());
+            }
+        });
     }
 
     /**
@@ -121,5 +128,9 @@ public class NotificationForm {
             }
         }
         return toList;
+    }
+
+    public String getMessageText() {
+        return notificationTextArea.getText();
     }
 }
