@@ -23,14 +23,14 @@ public class NotificationForm {
     private JLabel sendToLabel;
     private JRadioButton allRadio;
     private JRadioButton specificRadio;
-    private JTextField recipientField;
+    private JComboBox groupSelect;
     private JComboBox chooseTemplate;
     SubscriberDB subs = new SubscriberDB();
     ArrayList<Template> templates = subs.readTemplates();
-    ArrayList<Recipient> recipients = subs.readSubscriberNames();
+    ArrayList<Recipient> recipients = subs.readSubscriberData();
 
     public NotificationForm() {
-        populateComboBox();
+        populateTemplateMenu();
 
         /**
          * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
@@ -41,12 +41,8 @@ public class NotificationForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(allRadio.isSelected()) {
-                    recipientField.setEnabled(false);
-                    recipientField.setText(gatherRecipients());
+                    groupSelect.setEnabled(false);
                     specificRadio.setSelected(false);
-                }else {
-                    recipientField.setText("");
-
                 }
             }
         });
@@ -59,8 +55,7 @@ public class NotificationForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(specificRadio.isSelected()) {
-                    recipientField.setEnabled(true);
-                    recipientField.setText("");
+                    groupSelect.setEnabled(true);
                     allRadio.setSelected(false);
                 }
             }
@@ -74,22 +69,34 @@ public class NotificationForm {
         chooseTemplate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                switch(chooseTemplate.getSelectedIndex() ) {
-                    case 0:     notificationTextArea.setText("");
-                                break;
-                    case 1:     notificationTextArea.setText(templates.get(0).messageText);
-                                break;
-                    case 2:     notificationTextArea.setText(templates.get(1).messageText);
-                                break;
-                    case 3:     notificationTextArea.setText(templates.get(2).messageText);
-                                break;
+//                switch (chooseTemplate.getSelectedIndex()) {
+//                    case 0:
+//                        notificationTextArea.setText("");
+//                        break;
+//                    case 1:
+//                        notificationTextArea.setText(templates.get(0).messageText);
+//                        break;
+//                    case 2:
+//                        notificationTextArea.setText(templates.get(1).messageText);
+//                        break;
+//                    case 3:
+//                        notificationTextArea.setText(templates.get(2).messageText);
+//                        break;
+
+                int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
+                if(chooseTemplate.getSelectedIndex() == 0) {
+                    notificationTextArea.setText("");
+                } else {
+                notificationTextArea.setText(templates.get(selectedIndex).messageText);
                 }
             }
         });
+
+
         sendNotificationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                subs.logMessage(getMessageText(), 99);
+                subs.logMessage(getMessageText());
                 System.out.println(getMessageText());
             }
         });
@@ -99,10 +106,20 @@ public class NotificationForm {
      * Create a Model for the ComboBox pulldown menu for message templates and populate it from saved Templates
      * found in the database. Currently set with one default option and 3 template options.
      */
-    public void populateComboBox() {
+    public void populateTemplateMenu() {
         DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
         model.removeAllElements();
         model.addElement("No Template");
+        for(Template temp : templates) {
+            model.addElement(temp.templateName);
+        }
+        chooseTemplate.setModel(model);
+    }
+
+    public void poulateRecipientMenu() {
+        DefaultComboBoxModel model = (DefaultComboBoxModel) groupSelect.getModel();
+        model.removeAllElements();
+        model.addElement("Select Recipients...");
         for(Template temp : templates) {
             model.addElement(temp.templateName);
         }

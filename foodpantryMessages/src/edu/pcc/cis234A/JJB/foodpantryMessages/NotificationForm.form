@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="10" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="547" height="493"/>
+      <xy x="20" y="20" width="595" height="493"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -31,7 +31,7 @@
           <text value="Send"/>
         </properties>
       </component>
-      <component id="a72ec" class="javax.swing.JTextField" binding="recipientField">
+      <component id="ad5ba" class="javax.swing.JComboBox" binding="groupSelect">
         <constraints>
           <grid row="4" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -39,7 +39,6 @@
         </constraints>
         <properties>
           <enabled value="false"/>
-          <text value="Separate entries with a comma"/>
         </properties>
       </component>
       <component id="c9bd5" class="javax.swing.JComboBox" binding="chooseTemplate">
