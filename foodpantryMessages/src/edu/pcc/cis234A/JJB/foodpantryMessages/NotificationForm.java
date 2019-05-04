@@ -31,6 +31,7 @@ public class NotificationForm {
 
     public NotificationForm() {
         populateTemplateMenu();
+        poulateRecipientMenu();
 
         /**
          * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
@@ -63,26 +64,11 @@ public class NotificationForm {
 /**
  * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
  * clears the message field.
- * TODO: Add funciton to scale number of templates in combobox to number in database.
  * TODO: Cache Message when switching between templates and new messages.
 */
         chooseTemplate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-//                switch (chooseTemplate.getSelectedIndex()) {
-//                    case 0:
-//                        notificationTextArea.setText("");
-//                        break;
-//                    case 1:
-//                        notificationTextArea.setText(templates.get(0).messageText);
-//                        break;
-//                    case 2:
-//                        notificationTextArea.setText(templates.get(1).messageText);
-//                        break;
-//                    case 3:
-//                        notificationTextArea.setText(templates.get(2).messageText);
-//                        break;
-
                 int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
                 if(chooseTemplate.getSelectedIndex() == 0) {
                     notificationTextArea.setText("");
@@ -91,7 +77,6 @@ public class NotificationForm {
                 }
             }
         });
-
 
         sendNotificationButton.addActionListener(new ActionListener() {
             @Override
@@ -119,10 +104,11 @@ public class NotificationForm {
     public void poulateRecipientMenu() {
         DefaultComboBoxModel model = (DefaultComboBoxModel) groupSelect.getModel();
         model.removeAllElements();
+        int[] groupCounts = getGroupCounts();
         model.addElement("Select Recipients...");
-        for(Template temp : templates) {
-            model.addElement(temp.templateName);
-        }
+        model.addElement("Managers: " + groupCounts[0]);
+        model.addElement("Staff: " + groupCounts[1]);
+        model.addElement("Subscribers: " + groupCounts[2]);
         chooseTemplate.setModel(model);
     }
 
@@ -135,16 +121,20 @@ public class NotificationForm {
      * in the Subscribers List. Returns a string of all Usernames in the Database.
      * @return toList A list of all subscriber's Usernames
      */
-    public String gatherRecipients() {
-        Iterator<Recipient> recipientStrings = recipients.iterator();
-        String toList = "";
-        while(recipientStrings.hasNext()) {
-            toList += recipientStrings.next().getUserName();
-            if(recipientStrings.hasNext()) {
-                toList += ", ";
+    public int[] getGroupCounts() {
+//        Iterator<Recipient> recipientStrings = recipients.iterator();
+        int[] groupCount = new int[3];
+        for(Recipient recipient : recipients) {
+            switch(recipient.getSubscriberRole()) {
+                case 1: groupCount[0]++;
+                        break;
+                case 2: groupCount[1]++;
+                        break;
+                case 3: groupCount[2]++;
+                        break;
             }
         }
-        return toList;
+        return groupCount;
     }
 
     public String getMessageText() {

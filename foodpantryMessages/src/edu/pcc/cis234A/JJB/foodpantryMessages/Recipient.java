@@ -10,27 +10,24 @@ public class Recipient {
     public String userName;
     public String firstName;
     public String lastName;
-    public String phoneNbr;
     public String emailAddr;
+    public int subscriberRole;
 
-    public Recipient(String userName, String lastName, String firstName) {
+    public Recipient(String userName, String lastName, String firstName, String emailAddr, int subscriberRole) {
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.emailAddr = emailAddr;
+        this.subscriberRole = subscriberRole;
     }
 
-//    Setters
-
+    //    Setters
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public void setPhoneNbr(String phoneNbr) {
-        this.phoneNbr = phoneNbr;
     }
 
     public void setEmailAddr(String emailAddr) {
@@ -47,9 +44,6 @@ public class Recipient {
     public String getFullName() {
         return firstName + " " + lastName;
     }
-    public String getPhoneNbr() {
-        return phoneNbr;
-    }
 
     public String getUserName() {
         return userName;
@@ -57,5 +51,9 @@ public class Recipient {
 
     public String getEmailAddr() {
         return emailAddr;
+    }
+
+    public int getSubscriberRole() {
+        return subscriberRole;
     }
 }

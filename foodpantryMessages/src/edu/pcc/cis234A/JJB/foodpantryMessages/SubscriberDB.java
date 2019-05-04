@@ -12,7 +12,7 @@ public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
-    private static final String SUBSCRIBER_QUERY = "SELECT Username, LastName, FirstName, RoleID FROM [USER]";
+    private static final String SUBSCRIBER_QUERY = "SELECT Username, LastName, FirstName, Email, RoleID FROM [USER]";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
@@ -37,8 +37,11 @@ public class SubscriberDB {
                 ) {
             System.out.println("Reading Subscribers...");
             while (rs.next()) {
-                receivers.add(new Recipient(rs.getString("Username"), rs.getString("LastName"), rs.getString("FirstName")));
-                subscriberCount++;
+                receivers.add(new Recipient(rs.getString("Username"),
+                        rs.getString("LastName"),
+                        rs.getString("FirstName"),
+                        rs.getString("Email"),
+                        rs.getInt("RoleID")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
