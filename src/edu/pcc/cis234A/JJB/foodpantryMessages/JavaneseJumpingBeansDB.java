@@ -1,5 +1,6 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -16,6 +17,10 @@ public class JavaneseJumpingBeansDB {
     private static final String NOTIFICATION_SQL = "SELECT * FROM NOTIFICATION " +
             "WHERE DateTime >= ? AND DateTime <= ? ORDER BY DateTime DESC";
     private static final String USER_SQL = "SELECT Username FROM [USER] WHERE UserID = ?";
+    private DefaultTableModel model = new DefaultTableModel(new String[]{"#", "Timestamp", "Sent By",
+            "Recipient Count", "Message"}, 0);
+    private NotificationLogForm notificationLogForm = new NotificationLogForm();
+
 
 
     /**
@@ -50,20 +55,32 @@ public class JavaneseJumpingBeansDB {
             //java.util.Date date = new java.util.Date();
             //Timestamp timestamp = new Timestamp(date.getTime());
             //System.out.println("timestamp=" + timestamp);
-            System.out.println(minDate);
+            System.out.println("Query Min Date: " + minDate);
+            System.out.println("Query Max Date: " + maxDate);
             stmt.setTimestamp(1, minDate);
             stmt.setTimestamp(2, maxDate);
             ResultSet rs = stmt.executeQuery();
+            int iter = 1;
             while (rs.next()) {
+                String i = Integer.toString(iter);
+                //String n = rs.getString("MessageID");
+                String d = rs.getString("DateTime");
+                String u = rs.getString("UserID");
+                String r = rs.getString("RecipientCount");
+                String m = rs.getString("Message");
+                model.addRow(new Object[]{i, d, u, r, m});
                 notifications.add(new Notification(rs.getInt("MessageID"),
                         rs.getTimestamp("DateTime"),
                         rs.getString("Message"),
                         rs.getInt("UserID"),
                         rs.getInt("RecipientCount")));
+                iter++;
             }
+            System.out.println("Row count: " + model.getRowCount());
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        notificationLogForm.setTableModel(model);
         return notifications;
     }
 
