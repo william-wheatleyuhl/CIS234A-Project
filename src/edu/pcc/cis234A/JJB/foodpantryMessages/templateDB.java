@@ -19,6 +19,8 @@ public class templateDB {
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String NAME_QUERY = "SELECT Username, LastName, FirstName FROM [USER]";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
+    private static final String ID_QUERY = "SELECT MAX(TemplateID) FROM TEMPLATE";
+    private static final String LOG_TEMPLATE = "INSERT INTO TEMPLATE (TemplateID, TemplateName, MessageText, RoleID) VALUES(?,?,?,?)";
 
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -44,5 +46,45 @@ public class templateDB {
             e.printStackTrace();
         }
         return templates;
+    }
+
+    /**
+     * Submit template data to DB when "Save" button is clicked
+     * @param newTemplateString
+     * @param newTemplateName
+     */
+    public void logNewTemplate(String newTemplateName, String newTemplateString) {
+        try {
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(LOG_TEMPLATE);
+            stmt.setInt(1, getLastTemplateID() + 1);
+            stmt.setString(2, newTemplateName);
+            stmt.setString(3, newTemplateString);
+            //TODO: Change RoleID to UserID in DB for TEMPLATE table
+            //TODO: Use UserID from session for below stmt
+            stmt.setInt(4, 1);
+            stmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns the integer value of the last TemplateID from the TEMPLATE table.
+     * @return lastTemplateID The value of the last TemplateID
+     */
+    public int getLastTemplateID() {
+        int lastTemplateID = 0;
+        try {
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(ID_QUERY);
+            ResultSet rs = stmt.executeQuery();
+            lastTemplateID = rs.getInt("TemplateID");
+            System.out.println(lastTemplateID); //For testing purposes only
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lastTemplateID;
+
     }
 }
