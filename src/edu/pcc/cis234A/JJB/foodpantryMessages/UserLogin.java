@@ -1,4 +1,4 @@
-package pcc.cis234A.JJB.foodpantryMessages;
+package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 
 /**
@@ -13,7 +13,7 @@ public class UserLogin {
      */
     public static void main(String[] args){
 
-        UserLoginGUI main1 = new UserLoginGUI();
+        //UserLoginGUI main1 = new UserLoginGUI();
 
         JFrame jf1 = new JFrame();
 

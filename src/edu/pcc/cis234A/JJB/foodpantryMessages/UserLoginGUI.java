@@ -1,4 +1,4 @@
-package pcc.cis234A.JJB.foodpantryMessages;
+package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
