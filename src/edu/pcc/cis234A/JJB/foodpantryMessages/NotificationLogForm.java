@@ -39,6 +39,9 @@ public class NotificationLogForm {
     private JScrollPane fullMessageScrollPane;
     private static Timestamp minDate;
     private static Timestamp maxDate;
+    private static ArrayList<Notification> notifications = new ArrayList<Notification>();
+    private static DateFormat minDateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+    private static DateFormat maxDateFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
     /*private static DefaultTableModel model = new DefaultTableModel(new String[]{"#", "Timestamp", "Sent By",
             "Recipient Count", "Message"}, 0);*/
     private static String[] columnNames = {"#", "Timestamp", "Recipient Count", "Message"};
@@ -61,12 +64,9 @@ public class NotificationLogForm {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("date".equals(evt.getPropertyName())) {
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
                     Date dtMinDate = (Date) evt.getNewValue();
-                    String minTmst = dateFormat.format(dtMinDate);
-                    //System.out.println("String date: " + tmst);
+                    String minTmst = minDateFormat.format(dtMinDate);
                     minDate = Timestamp.valueOf(minTmst);
-                    //System.out.println("Min " + evt.getPropertyName() + ": " + tmstMinDate);
                     runQuery();
                     //notificationDataTable.setModel(model);
                 }
@@ -77,12 +77,9 @@ public class NotificationLogForm {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("date".equals(evt.getPropertyName())) {
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
                     Date dtMaxDate = (Date) evt.getNewValue();
-                    String maxTmst = dateFormat.format(dtMaxDate);
-                    //System.out.println("String date: " + tmst);
+                    String maxTmst = maxDateFormat.format(dtMaxDate);
                     maxDate = Timestamp.valueOf(maxTmst);
-                    //System.out.println("Max " + evt.getPropertyName() + ": " + tmstMaxDate);
                     runQuery();
                 }
             }
@@ -100,7 +97,7 @@ public class NotificationLogForm {
     public static void runQuery() {
         JavaneseJumpingBeansDB jjb = new JavaneseJumpingBeansDB();
         //jjb.setMinDate(Timestamp.valueOf("2000-01-01 00:00:00.0"));
-        ArrayList<Notification> notifications = jjb.readNotifications(minDate, maxDate);
+        notifications = jjb.readNotifications(minDate, maxDate);
         //displayData(notifications);
         int i = 1;
 
@@ -119,7 +116,6 @@ public class NotificationLogForm {
                     " || Message: " + not.getMessage());
             i++;
         }
-
     }
 
     /**
@@ -150,8 +146,6 @@ public class NotificationLogForm {
             row[4] = notifications.get(i).getMessage();
         }
     }*/
-
-
 
 
     public void setTableModel(DefaultTableModel model) {
