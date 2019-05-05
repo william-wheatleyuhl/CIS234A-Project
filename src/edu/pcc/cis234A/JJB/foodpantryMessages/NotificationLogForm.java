@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class NotificationLogForm {
     JDateChooser jMinDateChooser = new JDateChooser();
     JDateChooser jMaxDateChooser = new JDateChooser();
     JavaneseJumpingBeansDB jjbdb = new JavaneseJumpingBeansDB();
+    Main mn = new Main();
 
     /**
      * Creates the Food Pantry form, adds the min and max date pickers, and creates listeners for the date pickers.
@@ -51,10 +53,14 @@ public class NotificationLogForm {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("date".equals(evt.getPropertyName())) {
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    String strMinDate = dateFormat.format((Date) evt.getNewValue());
-                    jjbdb.setMinDate(strMinDate);
-                    System.out.println("Min " + evt.getPropertyName() + ": " + strMinDate);
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+                    Date dtMinDate = (Date) evt.getNewValue();
+                    String minTmst = dateFormat.format(dtMinDate);
+                    //System.out.println("String date: " + tmst);
+                    Timestamp tmstMinDate = Timestamp.valueOf(minTmst);
+                    mn.setMinDate(tmstMinDate);
+                    //System.out.println("Min " + evt.getPropertyName() + ": " + tmstMinDate);
+                    mn.runQuery();
                 }
             }
         });
@@ -63,7 +69,14 @@ public class NotificationLogForm {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("date".equals(evt.getPropertyName())) {
-                    System.out.println("Max " + evt.getPropertyName() + ": " + (Date) evt.getNewValue());
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+                    Date dtMaxDate = (Date) evt.getNewValue();
+                    String maxTmst = dateFormat.format(dtMaxDate);
+                    //System.out.println("String date: " + tmst);
+                    Timestamp tmstMaxDate = Timestamp.valueOf(maxTmst);
+                    mn.setMaxDate(tmstMaxDate);
+                    //System.out.println("Max " + evt.getPropertyName() + ": " + tmstMaxDate);
+                    mn.runQuery();
                 }
             }
         });

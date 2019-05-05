@@ -14,10 +14,9 @@ public class JavaneseJumpingBeansDB {
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String NOTIFICATION_SQL = "SELECT * FROM NOTIFICATION " +
-            "WHERE DateTime >= '2019-04-15' AND DateTime <= '2019-04-18' ORDER BY DateTime DESC";
+            "WHERE DateTime >= ? AND DateTime <= ? ORDER BY DateTime DESC";
     private static final String USER_SQL = "SELECT Username FROM [USER] WHERE UserID = ?";
-    private String minDate;
-    private String maxDate;
+
 
     /**
      * Establishes the DB connection.
@@ -31,8 +30,8 @@ public class JavaneseJumpingBeansDB {
      * Reads and returns notifications along with their details and usernames.
      * @return A list of notifications
      */
-    public ArrayList<Notification> readNotifications() {
-        ArrayList<Notification> notifications = readNotificationBasics();
+    public ArrayList<Notification> readNotifications(Timestamp minDate, Timestamp maxDate) {
+        ArrayList<Notification> notifications = readNotificationBasics(minDate, maxDate);
         readUsernames(notifications);
         return notifications;
     }
@@ -41,14 +40,20 @@ public class JavaneseJumpingBeansDB {
      * Adds notifications and their details from the NOTIFICATION table to a list.
      * @return A list of notifications within the specified date range
      */
-    private ArrayList<Notification> readNotificationBasics() {
+    private ArrayList<Notification> readNotificationBasics(Timestamp minDate, Timestamp maxDate) {
         ArrayList<Notification> notifications = new ArrayList<>();
         try (
             Connection conn = getConnection();
             PreparedStatement stmt = conn.prepareStatement(NOTIFICATION_SQL);
-            // stmt.setInt(1, not.getUserId());
-            ResultSet rs = stmt.executeQuery();
+
         ) {
+            //java.util.Date date = new java.util.Date();
+            //Timestamp timestamp = new Timestamp(date.getTime());
+            //System.out.println("timestamp=" + timestamp);
+            System.out.println(minDate);
+            stmt.setTimestamp(1, minDate);
+            stmt.setTimestamp(2, maxDate);
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 notifications.add(new Notification(rs.getInt("MessageID"),
                         rs.getTimestamp("DateTime"),
@@ -82,18 +87,4 @@ public class JavaneseJumpingBeansDB {
         }
     }
 
-    /**
-     * Sets the min date, which will be used as the first parameter for NOTIFICATION_SQL.
-     */
-    public void setMinDate(String minDate) {
-        this.minDate = minDate;
-        System.out.println("JJBDB Min Date: " + this.minDate);
-    }
-
-    /**
-     * Sets the max date, which will be used as the second parameter for NOTIFICATION_SQL.
-     */
-    public void setMaxDate(String maxDate) {
-        this.maxDate = maxDate;
-    }
 }
