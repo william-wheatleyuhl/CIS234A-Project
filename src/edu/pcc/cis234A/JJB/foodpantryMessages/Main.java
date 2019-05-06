@@ -1,6 +1,7 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * The Main class for Sprint 1
@@ -18,7 +19,9 @@ public class Main {
     private static void createAndShowLog() {
         JFrame frame = new JFrame("Food Pantry Notification Log");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(800, 600));
         frame.getContentPane().add(new NotificationLogForm().getRootPanel());
+        //frame.getContentPane().add(new JScrollPane(new NotificationLogForm().getTableScrollPane()));
         frame.pack();
         frame.setVisible(true);
         notificationLogForm.runQuery();
