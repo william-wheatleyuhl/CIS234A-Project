@@ -3,6 +3,7 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -25,11 +26,6 @@ public class NotificationLogForm {
     private JPanel rootPanel;
     private JLabel pageNameLabel;
     private JLabel userLoggedInLabel;
-    private JLabel messageNumberLabel;
-    private JLabel timestampLabel;
-    private JLabel sentByLabel;
-    private JLabel recipientCountLabel;
-    private JLabel messagePreviewLabel;
     private JTable notificationDataTable;
     private JScrollPane tableScrollPane;
     private JLabel minDateLabel;
@@ -77,6 +73,24 @@ public class NotificationLogForm {
         }*/
         model.setColumnIdentifiers(new Object[] {
                 "#", "Timestamp", "Sent By", "Recipient Count", "Message Preview" });
+
+        notificationDataTable.setRowHeight(20);
+        notificationDataTable.getColumnModel().getColumn(0).setPreferredWidth(8);
+
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer();
+        /*headerRenderer.setBackground(new Color(66, 209, 244));
+        headerRenderer.setHorizontalAlignment( JLabel.CENTER);
+        for (int i = 0; i < notificationDataTable.getModel().getColumnCount(); i++) {
+            notificationDataTable.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+        }*/
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+        notificationDataTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        notificationDataTable.getColumnModel().getColumn(1).setPreferredWidth(105);
+        notificationDataTable.getColumnModel().getColumn(2).setPreferredWidth(120);
+        notificationDataTable.getColumnModel().getColumn(3).setPreferredWidth(70);
+        notificationDataTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        notificationDataTable.getColumnModel().getColumn(4).setMinWidth(248);
 
         jMinDateChooser.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -170,22 +184,26 @@ public class NotificationLogForm {
             String s = " " + not.getUsername();
             int r = not.getRecipientCount();
             String m = " " + not.getMessage();
+            //String m = " " + formatMessagePreview(not.getMessage());
 
             model.addRow(new Object[]{i, t, s, r, m});
             i++;
         }
-        notificationDataTable.setRowHeight(20);
-        notificationDataTable.getColumnModel().getColumn(0).setPreferredWidth(8);
-        notificationDataTable.getColumnModel().getColumn(1).setPreferredWidth(105);
-        notificationDataTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        notificationDataTable.getColumnModel().getColumn(3).setPreferredWidth(90);
+
         notificationDataTable.setModel(model);
-        notificationDataTable.getColumnModel().getColumn(4).setMinWidth(248);
         //tableScrollPane.add(notificationDataTable);
     }
 
     public static String formatTimestamp(Timestamp t) {
         Date d = new Date(t.getTime());
         return dateFormat.format(d);
+    }
+
+    public static String formatMessagePreview(String message) {
+        String s = message.substring(0, Math.min(message.length(), 45));
+        if(message.length() > 45) {
+            s = message.substring(0, Math.min(message.length(), 45)) + "...";
+        }
+        return s;
     }
 }
