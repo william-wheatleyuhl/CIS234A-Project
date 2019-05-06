@@ -27,6 +27,7 @@ public class createTemplateForm {
     ArrayList<Template> templates = temps.readTemplates();
     private String newTemplateName;
     private String newTemplateText;
+    private int existingTemplateID;
 
     public createTemplateForm() {
         populateComboBox();
@@ -137,18 +138,20 @@ public class createTemplateForm {
                     if(radioCreateNew.isSelected()) {
                         // Placeholder - In the future the save button will commit information to
                         // DB, inform user it has been saved, and refresh the page
-                        JOptionPane.showMessageDialog(null, "New template saved");
+                        JOptionPane.showMessageDialog(null, "New template saved saved as \"" + newTemplateName + "\"");
                         System.out.println("Template name: " + newTemplateName); //testing
                         System.out.println("Template text: " + newTemplateText); //testing
                         temps.logNewTemplate(newTemplateName, newTemplateText);
                     }
                     else if(radioEditExisting.isSelected()) {
+                        existingTemplateID = comboTemplates.getSelectedIndex();
                         // Placeholder - In the future the save button will commit information to
                         // DB, inform user it has been saved, and refresh the page
-                        JOptionPane.showMessageDialog(null, "Changes to <template name> saved");
+                        JOptionPane.showMessageDialog(null, "Changes to \"" + newTemplateName + "\" saved");
                         System.out.println("Template name: " + newTemplateName); //testing
                         System.out.println("Template text: " + newTemplateText); //testing
-                        //temps.logExistingTemplate(existingTemplateName, existingTemplateText);
+                        System.out.println("TemplateID: " + existingTemplateID); //testing
+                        temps.updateExistingTemplate(newTemplateName, newTemplateText, existingTemplateID);
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Choose \"Create New\" or select an existing template to save");

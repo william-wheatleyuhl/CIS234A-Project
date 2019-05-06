@@ -21,6 +21,7 @@ public class templateDB {
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT TemplateID FROM TEMPLATE";
     private static final String LOG_TEMPLATE = "INSERT INTO TEMPLATE VALUES(?,?,?,?)";
+    private static final String UPDATE_TEMPLATE = "UPDATE TEMPLATE SET TemplateName = ?, MessageText = ?, RoleID = ? WHERE TemplateID = ?";
 
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -90,5 +91,24 @@ public class templateDB {
         }
     }
 
-
+    /**
+     * Update an existing template in DB when "Save" button is clicked
+     * @param existingTemplateString
+     * @param existingTemplateName
+     */
+    public void updateExistingTemplate(String existingTemplateName, String existingTemplateString, int existingTemplateID) {
+        try {
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(UPDATE_TEMPLATE);
+            stmt.setString(1, existingTemplateName);
+            stmt.setString(2, existingTemplateString);
+            //TODO: Change RoleID to UserID in DB for TEMPLATE table
+            //TODO: Use UserID from session for below stmt
+            stmt.setInt(3, 1);
+            stmt.setInt(4, existingTemplateID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
