@@ -30,11 +30,12 @@ public class UserLoginGUI {
     private JTextField suPasswordField2;
     private JButton suButton;
 
-    public static String usernameDB;
+    public static String[] usernameDB;
     public static String lastNameDB;
     public static String firstNameDB;
     public static String emailDB;
     public static String[] firstLast;
+    public static String passwordDB;
 
     private UserLoginDB database1 = new UserLoginDB();
     int highestUserID = database1.getHighestUserID();
@@ -62,28 +63,20 @@ public class UserLoginGUI {
                 else{
                     String fullName = suNameField.getText();
                     firstLast = fullName.split(" ");
-                    if(firstLast[0].length() <= 25 && firstLast[1].length() <= 25){
+                    if(firstLast.length > 1 && (firstLast[0].length() <= 25 && firstLast[1].length() <= 25)){
                         nameOK = true;
                     }
                     else{
-                        JOptionPane.showMessageDialog(null, "Invalid Name. Too Long.");
-                    }
-                }
-
-                if(suUsernameField.getText().equals("")){
-                    JOptionPane.showMessageDialog(null, "Invalid Username");
-                }
-                else{
-                    if(suUsernameField.getText().length() <= 50){
-                        usernameOK = true;
-                    }
-                    else{
-                        JOptionPane.showMessageDialog(null, "Invalid Username. Too Long.");
+                        JOptionPane.showMessageDialog(null, "Invalid Name");
                     }
                 }
 
                 if(!emailOK){
                     JOptionPane.showMessageDialog(null, "Invalid Email");
+                }
+                else{
+                    usernameDB = suEmailField.getText().split("@");
+                    suUsernameField.setText(usernameDB[0]);
                 }
 
                 boolean passwordOK = UserLogin.verifySignUpPassword(suPasswordField1.getText(), suPasswordField2.getText());
@@ -91,14 +84,20 @@ public class UserLoginGUI {
                     JOptionPane.showMessageDialog(null, "Invalid Password");
                 }
 
+                boolean emailUnique = UserLogin.verifyEmailUnique(suEmailField.getText());
+
+                if(!emailUnique){
+                    JOptionPane.showMessageDialog(null, "Email Already Used");
+                }
+
                 /**
                  * assuming java works like C and && operator only compares two values
                  */
-                if((nameOK && usernameOK) && (emailOK && passwordOK)){
-                    usernameDB = suUsernameField.getText();
+                if((nameOK && emailUnique) && (emailOK && passwordOK)){
                     lastNameDB = firstLast[1];
                     firstNameDB = firstLast[0];
                     emailDB = suEmailField.getText();
+                    passwordDB = UserLogin.hashPassword(suPasswordField1.getText());
 
                     database1.insertUser(highestUserID);
 
@@ -109,19 +108,54 @@ public class UserLoginGUI {
 
         /**
          * This code executes when you press the sign in button.
-         * At present it only checks that both the fields contain *some* data.
-         * In the future when we are connected to the database it will verify that the username
-         * exists and that the generated password hash matches the one in the database.
+         * First it checks that the username you typed in exists.
+         * Then it hashes the PW you typed in.
+         * It then runs checkHashedPWUserMatch to verify that in the PASSWORD table there is a row
+         * which contains the UserID associated with the username typed in and that the associated hash
+         * is the same as the one generated from the password the user typed in.
          */
         siButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(siUsernameField.getText().equals("") || siPasswordField.getPassword().toString().equals("")){
+
+
+                /*if(siUsernameField.getText().equals("") || siPasswordField.getPassword().toString().equals("")){
                     JOptionPane.showMessageDialog(null, "Invalid Login");
                 }
                 else{
                     JOptionPane.showMessageDialog(null, "You Have Signed In");
+                }*/
+
+                int signInUserID = 0;
+                String signInPW;
+                String signInPWHash;
+                boolean signInSuccess = false;
+
+                boolean userExists = database1.checkUserExists(siUsernameField.getText());
+
+                if(userExists){
+                    signInUserID = database1.getUsernameUserID(siUsernameField.getText());
+
+                    signInPW = new String(siPasswordField.getPassword());
+                    signInPWHash = UserLogin.hashPassword(signInPW);
+
+                    //System.out.println(signInUserID);
+                    //System.out.println(signInPWHash);
+
+                    signInSuccess = database1.checkHashedPWUserMatch(signInPWHash, signInUserID);
+
+                    if(!signInSuccess){
+                        JOptionPane.showMessageDialog(null, "Invalid Sign-in");
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "Signed in!");
+                        /**
+                         * This is where the splash screen code will execute
+                         */
+                    }
                 }
+
+
             }
         });
     }

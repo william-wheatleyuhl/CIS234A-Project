@@ -1,5 +1,8 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 /**
  * @author Jeff
@@ -13,8 +16,6 @@ public class UserLogin {
      */
     public static void main(String[] args){
 
-        //UserLoginGUI main1 = new UserLoginGUI();
-
         JFrame jf1 = new JFrame();
 
         jf1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,11 +23,6 @@ public class UserLogin {
         jf1.setSize(800, 600);
         jf1.setContentPane(new UserLoginGUI().getRootPanel());
         jf1.setVisible(true);
-
-        /*UserLoginDB database1 = new UserLoginDB();
-        int highestUserID = database1.getHighestUserID();
-        System.out.println(highestUserID);
-        database1.insertUser(highestUserID);*/
 
     }
 
@@ -90,6 +86,28 @@ public class UserLogin {
         return inputOK;
     }
 
+
+    /**
+     * This method pulls all the emails from the database and insures that the email
+     * in the paremeters does not match any emails already used.
+     *
+     */
+    public static boolean verifyEmailUnique(String email){
+        boolean unique = true;
+
+        UserLoginDB database1 = new UserLoginDB();
+
+        ArrayList<String> emailList = database1.getUserEmails();
+
+        for(String s : emailList){
+            if(email.equals(s)){
+                unique = false;
+            }
+        }
+
+        return unique;
+    }
+
     /***
      * Takes both password entries from the sign up and verifies that they are the same.
      */
@@ -101,6 +119,32 @@ public class UserLogin {
             return false;
         }
     }
+
+    /**
+     *
+     * This method hashes the password fed to it with MD5.
+     */
+    public static String hashPassword(String password){
+        String hashedPW = null;
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(password.getBytes());
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < bytes.length; i ++){
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            hashedPW = sb.toString();
+        }
+        catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
+        //System.out.println(hashedPW);
+
+        return hashedPW;
+    }
+
 
 
 }
