@@ -25,9 +25,13 @@ public class createTemplateForm {
     private JComboBox comboTemplates;
     templateDB temps = new templateDB();
     ArrayList<Template> templates = temps.readTemplates();
+    private String newTemplateName;
+    private String newTemplateText;
 
     public createTemplateForm() {
         populateComboBox();
+        areaTemplateText.setEnabled(false);
+        fieldTemplateName.setEnabled(false);
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
 
@@ -44,6 +48,8 @@ public class createTemplateForm {
                     comboTemplates.setEnabled(false);
                     areaTemplateText.setText("");
                     fieldTemplateName.setText("");
+                    areaTemplateText.setEnabled(true);
+                    fieldTemplateName.setEnabled(true);
                 }
             }
         });
@@ -58,6 +64,8 @@ public class createTemplateForm {
                 if(radioEditExisting.isSelected()) {
                     radioCreateNew.setSelected(false);
                     comboTemplates.setEnabled(true);
+                    areaTemplateText.setEnabled(true);
+                    fieldTemplateName.setEnabled(true);
                 }
             }
         });
@@ -112,6 +120,7 @@ public class createTemplateForm {
                     JOptionPane.showMessageDialog(null, "Please enter a Template Name");
                 }
                 else {
+                    newTemplateName = fieldTemplateName.getText();
                     checkTemplateName = true;
                 }
 
@@ -120,6 +129,7 @@ public class createTemplateForm {
                     JOptionPane.showMessageDialog(null, "Please enter text for the template");
                 }
                 else {
+                    newTemplateText = areaTemplateText.getText();
                     checkTemplateText = true;
                 }
 
@@ -128,11 +138,17 @@ public class createTemplateForm {
                         // Placeholder - In the future the save button will commit information to
                         // DB, inform user it has been saved, and refresh the page
                         JOptionPane.showMessageDialog(null, "New template saved");
+                        System.out.println("Template name: " + newTemplateName); //testing
+                        System.out.println("Template text: " + newTemplateText); //testing
+                        temps.logNewTemplate(newTemplateName, newTemplateText);
                     }
                     else if(radioEditExisting.isSelected()) {
                         // Placeholder - In the future the save button will commit information to
                         // DB, inform user it has been saved, and refresh the page
                         JOptionPane.showMessageDialog(null, "Changes to <template name> saved");
+                        System.out.println("Template name: " + newTemplateName); //testing
+                        System.out.println("Template text: " + newTemplateText); //testing
+                        //temps.logExistingTemplate(existingTemplateName, existingTemplateText);
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Choose \"Create New\" or select an existing template to save");
