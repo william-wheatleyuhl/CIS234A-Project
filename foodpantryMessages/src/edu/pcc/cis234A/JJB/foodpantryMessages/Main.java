@@ -12,8 +12,8 @@ public class Main {
     public static void createAndShowNotification() {
         JFrame frame = new JFrame("Food Pantry Notifications");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(675, 400));
-        frame.getContentPane().add( new NotificationForm().getRootPanel());
+        frame.setPreferredSize(new Dimension(800, 600));
+        frame.getContentPane().add( new Presentation().getRootPanel());
         frame.pack();
         frame.setVisible(true);
     }

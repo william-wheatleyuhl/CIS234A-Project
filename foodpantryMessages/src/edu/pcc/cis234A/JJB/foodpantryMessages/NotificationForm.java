@@ -16,7 +16,6 @@ import java.util.Iterator;
  */
 public class NotificationForm {
     private JPanel rootPanel;
-    private JLabel userLoggedInLabel;
     private JTextArea notificationTextArea;
     private JLabel editTextLabel;
     private JButton sendNotificationButton;
