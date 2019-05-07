@@ -17,11 +17,6 @@ public class JavaneseJumpingBeansDB {
     private static final String NOTIFICATION_SQL = "SELECT * FROM NOTIFICATION " +
             "WHERE DateTime >= ? AND DateTime <= ? ORDER BY DateTime DESC, MessageID DESC";
     private static final String USER_SQL = "SELECT Username FROM [USER] WHERE UserID = ?";
-    private DefaultTableModel model = new DefaultTableModel(new String[]{"#", "Timestamp", "Sent By",
-            "Recipient Count", "Message"}, 0);
-    private NotificationLogForm notificationLogForm = new NotificationLogForm();
-
-
 
     /**
      * Establishes the DB connection.
@@ -69,7 +64,6 @@ public class JavaneseJumpingBeansDB {
                         rs.getInt("RecipientCount")));
                 iter++;
             }
-            System.out.println("Row count: " + model.getRowCount());
         } catch (SQLException e) {
             e.printStackTrace();
         }
