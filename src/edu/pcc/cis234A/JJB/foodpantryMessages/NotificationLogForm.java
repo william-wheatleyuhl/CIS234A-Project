@@ -35,6 +35,7 @@ public class NotificationLogForm {
     private JPanel maxDatePanel;
     private JLabel fullMessageLabel;
     private JTextArea fullMessageTextArea;
+    private JScrollPane fullMessageScrollPane;
     private static Timestamp minDate;
     private static Timestamp maxDate;
     private static ArrayList<Notification> notifications;
@@ -58,6 +59,9 @@ public class NotificationLogForm {
         jMaxDateChooser = new JDateChooser();
         minDatePanel.add(jMinDateChooser);
         maxDatePanel.add(jMaxDateChooser);
+
+        //fullMessageTextArea.setLineWrap(true);
+        //fullMessageTextArea.setWrapStyleWord(true);
 
         model.setColumnIdentifiers(new Object[] { "#", "Timestamp", "Sent By", "Recipient Count", "Message Preview" });
         notificationDataTable.setRowHeight(20);

@@ -20,7 +20,8 @@ public class Main {
         JFrame frame = new JFrame("Food Pantry Notification Log");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(800, 600));
-        frame.getContentPane().add(new NotificationLogForm().getRootPanel());frame.pack();
+        frame.getContentPane().add(new NotificationLogForm().getRootPanel());
+        frame.pack();
         frame.setVisible(true);
         notificationLogForm.runQuery();
     }
