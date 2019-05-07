@@ -1,21 +1,50 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
+
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
 
+/**
+ * @author William Wheatley-Uhl
+ * @version 2019.05.06
+ */
 public class MessageBuilder {
-    private String recipient;
+    private Recipient recipient;
+    private String sendTo;
     private String sentFrom = "jjb.234a.test@gmail.com";
     private String msgText;
     private final String username= "jjb.234a.test@gmail.com";
     private final String password = "xqaddkztgrcbdlda";  // App password for gmail, not actual password.
 
-    public MessageBuilder(String recipient, String msgText) {
-        this.recipient = recipient;
+    public MessageBuilder(String sendTo, String msgText) {
+        this.sendTo = sendTo;
         this.msgText = msgText;
-
     }
 
+//    public MessageBuilder(Recipient recipient, String msgText) {
+//        this.recipient = recipient;
+//        this.sendTo = recipient.getEmailAddr();
+//        this.msgText = msgText;
+//    }
+
+    /**
+     *
+     * @param msgText
+     * @param name
+     * @return
+     */
+    public String formatMessage(String msgText, String name) {
+        String salutation = "Hello " + name + ",\n\n";
+        String closing = "\n\nCome on Down!\n" +
+                "PCC Foodbank Project\n" +
+                "jjb.234a.test@gmail.com\n" +
+                "(555)-867-5309";
+        return salutation + msgText + closing;
+    }
+
+    /**
+     *
+     */
     public void sendMessage() {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -27,17 +56,17 @@ public class MessageBuilder {
 
         Session session = Session.getDefaultInstance(props, new Authenticator() {
             protected PasswordAuthentication getPassWordAuthentication() {
-                return new PasswordAuthentication("shipwreckwill@gmail.com", "pazrjknlqccqhklx");
+                return new PasswordAuthentication(username, password);
             }
         });
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sentFrom));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTo));
             message.setSubject("Test Message");
-            message.setText(msgText);
+            message.setText(formatMessage( msgText, "Will"));
             Transport.send(message, username, password);
-            System.out.println("Message Sent to: " + recipient);
+            System.out.println("Message Sent to: " + sendTo);
         } catch(MessagingException e) {
             e.printStackTrace();
         }

@@ -1,9 +1,9 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * NotificationForm Class
@@ -12,7 +12,7 @@ import java.util.Iterator;
  * and send the message. The templates are pulled from the TEMPLATE table in the Database, and all sent messages will
  * be stored in the MESSAGES table and given a unique messageID.
  * @authors Syn Calvo and Will Wheatley-Uhl
- * 2019.04.19
+ * 2019.05.06
  */
 public class NotificationForm {
     private JPanel rootPanel;
@@ -80,20 +80,21 @@ public class NotificationForm {
         });
 
         /**
-         *
+         * Action Listener for the "Send" button. Checks if message is empty, parses for tags, sends message, logs
+         * messages.
          */
         sendNotificationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(checkMessageContent()) {
+                    // Following is disabled to prevent spam.
 //                    for(Recipient recipient: recipients) {
-//                        MessageBuilder msg = new MessageBuilder("JJB.234A.TEST@GMAIL.COM",
-//                                recipient.getFullName());
-//                        msg.sendMessage();
+
 //                    }
-//                    subs.logMessage(getMessageText());
                     TagParser parser = new TagParser(getMessageText());
-                    parser.parseTags();
+                    MessageBuilder msg = new MessageBuilder("JJB.234A.TEST@GMAIL.COM", parser.parseTags());
+                    msg.sendMessage();
+//                    subs.logMessage(getMessageText());
 //                    System.out.println(getMessageText());
                 }
             }

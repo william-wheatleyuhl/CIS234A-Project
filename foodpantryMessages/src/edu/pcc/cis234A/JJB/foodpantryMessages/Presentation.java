@@ -3,7 +3,10 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 
 /**
- * Created by vztr on 5/7/19
+ * This class represents the implementation of the Presentation GUI. In this class, other modules are poulated
+ * into a JTabbedPane, and can be selected by using the tabs at the top of the screen.
+ * @author William Wheatley-Uhl
+ * @version 2019.05.06
  */
 public class Presentation {
     private JTabbedPane tabbedPane1;
@@ -21,6 +24,10 @@ public class Presentation {
 //        msgLogTab.add(new createTemplateForm().getRootPanel());
     }
 
+    /**
+     * Sends the JPanel object to a requesting class.
+     * @return A JPanel object representing the GUI of this class.
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }

@@ -1,4 +1,5 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -6,7 +7,7 @@ import java.awt.*;
  * Main Class
  * Loads and Displays NotificationForm
  * @author Will Wheatley-Uhl
- * @version 2019.04.20
+ * @version 2019.05.06
  */
 public class Main {
     public static void createAndShowNotification() {
