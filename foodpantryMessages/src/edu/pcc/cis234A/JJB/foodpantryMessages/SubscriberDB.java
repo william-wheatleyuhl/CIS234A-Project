@@ -75,7 +75,7 @@ public class SubscriberDB {
      *
      * @param messageString
      */
-    public void logMessage(String messageString) {
+    public void logMessage(String messageString, int subCount) {
         try {
             Connection conn = getConnection();
             PreparedStatement stmt = conn.prepareStatement(LOG_MESSAGE);
@@ -84,7 +84,7 @@ public class SubscriberDB {
             stmt.setTimestamp(2, currTime);
             stmt.setString(3, messageString);
             stmt.setInt(4, 3);
-            stmt.setInt(5, subscriberCount);
+            stmt.setInt(5, subCount);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

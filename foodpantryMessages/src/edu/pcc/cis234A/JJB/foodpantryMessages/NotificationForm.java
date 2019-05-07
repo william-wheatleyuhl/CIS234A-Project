@@ -24,9 +24,11 @@ public class NotificationForm {
     private JRadioButton specificRadio;
     private JComboBox groupSelect;
     private JComboBox chooseTemplate;
+    private int groupID;
     SubscriberDB subs = new SubscriberDB();
     ArrayList<Template> templates = subs.readTemplates();
     ArrayList<Recipient> recipients = subs.readSubscriberData();
+
 
     public NotificationForm() {
         populateTemplateMenu();
@@ -41,6 +43,7 @@ public class NotificationForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(allRadio.isSelected()) {
+                    groupID = 0;
                     groupSelect.setEnabled(false);
                     specificRadio.setSelected(false);
                 }
@@ -55,6 +58,7 @@ public class NotificationForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(specificRadio.isSelected()) {
+                    groupID = groupSelect.getSelectedIndex();
                     groupSelect.setEnabled(true);
                     allRadio.setSelected(false);
                 }
@@ -86,17 +90,36 @@ public class NotificationForm {
         sendNotificationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                int msgRecipientCount = 0;
                 if(checkMessageContent()) {
-                    // Following is disabled to prevent spam.
-//                    for(Recipient recipient: recipients) {
+//                     Following is disabled to prevent spam.
+                    for(Recipient recipient: recipients) {
+                        if(groupID == 0) {
+                            System.out.println(recipient.getFullName());
+                            msgRecipientCount++;
+                        } else if(recipient.getSubscriberRole() == groupID) {
+//                            TagParser parser = new TagParser(getMessageText());
+//                            MessageBuilder msg = new MessageBuilder("JJB.234A.TEST@GMAIL.COM", parser.parseTags());
+//                            msg.sendMessage();
 
-//                    }
-                    TagParser parser = new TagParser(getMessageText());
-                    MessageBuilder msg = new MessageBuilder("JJB.234A.TEST@GMAIL.COM", parser.parseTags());
-                    msg.sendMessage();
-//                    subs.logMessage(getMessageText());
-//                    System.out.println(getMessageText());
+                            System.out.println(recipient.getFullName());
+                            msgRecipientCount++;
+                        }
+                    }
+//                    subs.logMessage(getMessageText(), msgRecipientCount);
+                    System.out.println("Message: " + getMessageText() + "\t Sent to " + msgRecipientCount + " subscribers in\n" +
+                            "Group #" + groupID);
+                    JOptionPane.showMessageDialog(rootPanel, "Message Sent!");
                 }
+            }
+        });
+        /**
+         * Change the
+         */
+        groupSelect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                setGroupID(groupSelect.getSelectedIndex());
             }
         });
     }
@@ -175,5 +198,9 @@ public class NotificationForm {
             valid = true;
         }
         return valid;
+    }
+
+    private void setGroupID(int groupID) {
+        this.groupID = groupID;
     }
 }
