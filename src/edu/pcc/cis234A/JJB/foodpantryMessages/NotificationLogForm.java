@@ -44,7 +44,9 @@ public class NotificationLogForm {
     private static DateFormat dateFormat;
     private DefaultTableModel model;
     JDateChooser jMinDateChooser;
-    JDateChooser jMaxDateChooser ;
+    JDateChooser jMaxDateChooser;
+    private static Boolean initializeInd = false;
+    private JavaneseJumpingBeansDB jjb;
 
     /**
      * Creates the Food Pantry form, adds the min and max date pickers, and creates listeners for the date pickers.
@@ -59,7 +61,8 @@ public class NotificationLogForm {
         jMaxDateChooser = new JDateChooser();
         minDatePanel.add(jMinDateChooser);
         maxDatePanel.add(jMaxDateChooser);
-
+        fullMessageTextArea.setMargin(new Insets(2,5,2,5));
+        jjb = new JavaneseJumpingBeansDB();
         //fullMessageTextArea.setLineWrap(true);
         //fullMessageTextArea.setWrapStyleWord(true);
 
@@ -76,6 +79,7 @@ public class NotificationLogForm {
         notificationDataTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         notificationDataTable.getColumnModel().getColumn(4).setMinWidth(248);
         notificationDataTable.setIntercellSpacing(new Dimension(10, 4));
+        initializeTable();
 
         jMinDateChooser.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -120,29 +124,28 @@ public class NotificationLogForm {
         return rootPanel;
     }
 
-    /**
-     * Returns the root panel associated with the form.
-     * @return the root panel
-     */
-    /*public JScrollPane getTableScrollPane() {
-        return tableScrollPane;
-    }*/
-
-    public void runQuery() {
-        JavaneseJumpingBeansDB jjb = new JavaneseJumpingBeansDB();
-        //jjb.setMinDate(Timestamp.valueOf("2000-01-01 00:00:00.0"));
-        notifications = jjb.readNotifications(minDate, maxDate);
+    public void initializeTable() {
+        notifications = jjb.loadNotifications();
         populateTable();
-        //displayData(notifications);
         int i = 1;
 
         for (Notification not: notifications) {
-            /*Timestamp t = not.getDateTime();
-            String s = not.getUsername();
-            int r = not.getRecipientCount();
-            String m = not.getMessage();
+            String str = dateFormat.format(not.getDateTime());
+            System.out.println("#: " + i +
+                    " || Timestamp: " + str +
+                    " || Sent By: " + not.getUsername() +
+                    " || Recipient Count: " + not.getRecipientCount() +
+                    " || Message: " + not.getMessage());
+            i++;
+        }
+    }
 
-            model.addRow(new Object[]{i, t, s, r, m});*/
+    public void runQuery() {
+        notifications = jjb.readNotifications(minDate, maxDate);
+        populateTable();
+        int i = 1;
+
+        for (Notification not: notifications) {
             String str = dateFormat.format(not.getDateTime());
             System.out.println("#: " + i +
                     " || Timestamp: " + str +
