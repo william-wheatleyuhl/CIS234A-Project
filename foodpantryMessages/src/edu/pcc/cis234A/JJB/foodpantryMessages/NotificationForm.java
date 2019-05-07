@@ -33,11 +33,11 @@ public class NotificationForm {
         populateTemplateMenu();
         poulateRecipientMenu();
 
-        /**
-         * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
-         * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
-         * field from editing.
-         */
+/**
+ * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
+ * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
+ * field from editing.
+ */
         allRadio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -47,11 +47,11 @@ public class NotificationForm {
                 }
             }
         });
-/**
- * Action Listener for the "Specific Users" radio button. Disables the "All Users" radio, sets text of Recipient
- * List to an empty text field.
- * TODO: Parse Recipient field to detect usernames.
- */
+        /**
+         * Action Listener for the "Specific Users" radio button. Disables the "All Users" radio, sets text of Recipient
+         * List to an empty text field.
+         * TODO: Parse Recipient field to detect usernames.
+         */
         specificRadio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -61,19 +61,21 @@ public class NotificationForm {
                 }
             }
         });
-/**
- * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
- * clears the message field.
- * TODO: Cache Message when switching between templates and new messages.
-*/
+       /**
+         * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
+         * clears the message field.
+         * TODO: Cache Message when switching between templates and new messages.
+         */
         chooseTemplate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
                 if(chooseTemplate.getSelectedIndex() == 0) {
                     notificationTextArea.setText("");
+                    notificationTextArea.setEnabled(true);
                 } else {
                 notificationTextArea.setText(templates.get(selectedIndex).messageText);
+                notificationTextArea.setEnabled(false);
                 }
             }
         });
@@ -85,8 +87,15 @@ public class NotificationForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(checkMessageContent()) {
-                    subs.logMessage(getMessageText());
-                    System.out.println(getMessageText());
+//                    for(Recipient recipient: recipients) {
+//                        MessageBuilder msg = new MessageBuilder("JJB.234A.TEST@GMAIL.COM",
+//                                recipient.getFullName());
+//                        msg.sendMessage();
+//                    }
+//                    subs.logMessage(getMessageText());
+                    TagParser parser = new TagParser(getMessageText());
+                    parser.parseTags();
+//                    System.out.println(getMessageText());
                 }
             }
         });
