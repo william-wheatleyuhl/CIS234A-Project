@@ -78,6 +78,9 @@ public class NotificationForm {
             }
         });
 
+        /**
+         *
+         */
         sendNotificationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -101,6 +104,10 @@ public class NotificationForm {
         chooseTemplate.setModel(model);
     }
 
+    /**
+     * Create a model for the ComboBox pulldown menu for the message recipients and populate it with group
+     * name and number of members of each group.
+     */
     public void poulateRecipientMenu() {
         DefaultComboBoxModel model = (DefaultComboBoxModel) groupSelect.getModel();
         model.removeAllElements();
@@ -109,9 +116,13 @@ public class NotificationForm {
         model.addElement("Managers: " + groupCounts[0]);
         model.addElement("Staff: " + groupCounts[1]);
         model.addElement("Subscribers: " + groupCounts[2]);
-        chooseTemplate.setModel(model);
+        groupSelect.setModel(model);
     }
 
+    /**
+     *
+     * @return
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }
@@ -137,6 +148,10 @@ public class NotificationForm {
         return groupCount;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getMessageText() {
         return notificationTextArea.getText();
     }
