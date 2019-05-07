@@ -5,7 +5,10 @@ import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.Timestamp;
@@ -31,7 +34,7 @@ public class NotificationLogForm {
     private JLabel maxDateLabel;
     private JPanel maxDatePanel;
     private JLabel fullMessageLabel;
-    private JScrollPane fullMessageScrollPane;
+    private JTextArea fullMessageTextArea;
     private static Timestamp minDate;
     private static Timestamp maxDate;
     private static ArrayList<Notification> notifications;
@@ -91,6 +94,16 @@ public class NotificationLogForm {
                     maxDate = Timestamp.valueOf(maxTmst);
                     runQuery();
                 }
+            }
+        });
+
+        notificationDataTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //super.mouseClicked(e);
+                int i = notificationDataTable.getSelectedRow();
+                TableModel model = notificationDataTable.getModel();
+                fullMessageTextArea.setText(model.getValueAt(i, 4).toString());
             }
         });
     }
