@@ -84,8 +84,10 @@ public class NotificationForm {
         sendNotificationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                subs.logMessage(getMessageText());
-                System.out.println(getMessageText());
+                if(checkMessageContent()) {
+                    subs.logMessage(getMessageText());
+                    System.out.println(getMessageText());
+                }
             }
         });
     }
@@ -154,5 +156,15 @@ public class NotificationForm {
      */
     public String getMessageText() {
         return notificationTextArea.getText();
+    }
+
+    private Boolean checkMessageContent() {
+        Boolean valid = false;
+        if(getMessageText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Message Text may not be Blank");
+        } else {
+            valid = true;
+        }
+        return valid;
     }
 }

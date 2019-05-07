@@ -84,7 +84,7 @@ public class SubscriberDB {
             stmt.setString(3, messageString);
             stmt.setInt(4, 3);
             stmt.setInt(5, subscriberCount);
-            stmt.executeQuery();
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
