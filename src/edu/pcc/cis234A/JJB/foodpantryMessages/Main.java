@@ -11,8 +11,6 @@ import java.awt.*;
  */
 public class Main {
 
-    private static NotificationLogForm notificationLogForm = new NotificationLogForm();
-
     /**
      * Creates and displays the Food Pantry window.
      */
