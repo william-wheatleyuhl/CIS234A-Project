@@ -32,6 +32,7 @@ public class UserLogin {
         jf1.setContentPane(new UserLoginGUI().getRootPanel());
         jf1.setVisible(true);
 
+
         while (!loginSuccess) {
             System.out.println("");
         }
@@ -45,7 +46,6 @@ public class UserLogin {
         jf2.setContentPane(new Presentation().getRootPanel());
         jf2.setVisible(true);
 
-        /**set presentation gui to show*/
     }
 
     /***

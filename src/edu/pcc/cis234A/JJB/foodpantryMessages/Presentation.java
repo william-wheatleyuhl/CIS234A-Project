@@ -21,9 +21,9 @@ public class Presentation {
 
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
-//        sendNotificationTab.add(new NotificationForm().getRootPanel());
-//        templateTab.add(new NotificationForm().getRootPanel());
-//        msgLogTab.add(new createTemplateForm().getRootPanel());
+        sendNotificationTab.add(new NotificationForm().getRootPanel());
+        //templateTab.add(new createTemplateForm().getRootPanel());
+        //msgLogTab.add(new NotificationLogForm().getRootPanel());
     }
 
     /**

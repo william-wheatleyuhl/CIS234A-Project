@@ -68,14 +68,15 @@ public class UserLoginDB {
         }
 
         try(
-                Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement("INSERT INTO [PASSWORD] VALUES ('"+UserLoginGUI.passwordDB+"', "+highestUserID+")")
+                Connection conn2 = getConnection();
+                PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('"+UserLoginGUI.passwordDB+"', "+highestUserID+")")
         ){
-            stmt.executeUpdate();
+            stmt2.executeUpdate();
         } catch(SQLException e){
             e.printStackTrace();
         }
     }
+
 
 
     /**
@@ -152,5 +153,7 @@ public class UserLoginDB {
 
         return pwMatch;
     }
+
+
 
 }
