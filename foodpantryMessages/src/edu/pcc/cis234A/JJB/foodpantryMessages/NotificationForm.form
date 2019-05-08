@@ -38,7 +38,9 @@
           </grid>
         </constraints>
         <properties>
+          <lineWrap value="true"/>
           <text value=""/>
+          <wrapStyleWord value="true"/>
         </properties>
       </component>
       <component id="303f7" class="javax.swing.JRadioButton" binding="allRadio">

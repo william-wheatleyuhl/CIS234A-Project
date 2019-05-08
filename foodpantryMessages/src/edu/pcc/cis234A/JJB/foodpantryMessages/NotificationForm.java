@@ -115,7 +115,7 @@ public class NotificationForm {
             }
         });
         /**
-         * Change the selected Group of Recipients. 
+         * Change the selected Group of Recipients.
          */
         groupSelect.addActionListener(new ActionListener() {
             @Override
