@@ -141,7 +141,7 @@
       <scrollpane id="68fce" binding="fullMessageScrollPane">
         <constraints>
           <grid row="8" column="1" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <maximum-size width="-1" height="200"/>
+            <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
         <properties>
@@ -155,6 +155,7 @@
             <properties>
               <editable value="false"/>
               <lineWrap value="true"/>
+              <rows value="0"/>
               <wrapStyleWord value="true"/>
             </properties>
           </component>

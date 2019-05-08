@@ -23,11 +23,9 @@ public class Main {
         frame.getContentPane().add(new NotificationLogForm().getRootPanel());
         frame.pack();
         frame.setVisible(true);
-        notificationLogForm.runQuery();
     }
 
     public static void main(String[] args) {
-        System.out.println("Food Pantry Notifications:");
         SwingUtilities.invokeLater(Main::createAndShowLog);
     }
 

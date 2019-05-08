@@ -11,7 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,7 +21,15 @@ import java.util.Date;
  * The Notification Log form class
  *
  * @author Liana Schweitzer
- * @version 2019.04.21
+ * @version 2019.05.07
+ *
+ * Modifications:
+ * - Added new fields in addition to those already created by the GUI form.
+ * - Updated constructor to initialize fields, set up table, and include event listeners.
+ * - Added a method that initializes that table when the application is first started.
+ * - Added a method to call the DB class to run the query based on the min and max dates selected.
+ * - Added a method to load the table with the query results.
+ * - Added a method to format how the timestamp is displayed in the table.
  */
 public class NotificationLogForm {
     private JPanel rootPanel;
@@ -50,7 +57,8 @@ public class NotificationLogForm {
     private static Boolean initialLoadInd;
 
     /**
-     * Creates the Food Pantry form, adds the min and max date pickers, and creates listeners for the date pickers.
+     * Creates the Food Pantry form with date pickers and notification log table.  Includes a method call to
+     * initialize the table with the 200 most recent logs.  Adds listeners for the date pickers and table.
      */
     public NotificationLogForm() {
         notifications = new ArrayList<Notification>();
@@ -65,8 +73,6 @@ public class NotificationLogForm {
         fullMessageTextArea.setMargin(new Insets(2,5,2,5));
         jjb = new JavaneseJumpingBeansDB();
         initialLoadInd = false;
-        //fullMessageTextArea.setLineWrap(true);
-        //fullMessageTextArea.setWrapStyleWord(true);
 
         model.setColumnIdentifiers(new Object[] { "#", "Timestamp", "Sent By", "Recipient Count", "Message Preview" });
         notificationDataTable.setRowHeight(20);
@@ -76,13 +82,16 @@ public class NotificationLogForm {
         notificationDataTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         notificationDataTable.getColumnModel().getColumn(1).setPreferredWidth(105);
         notificationDataTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        notificationDataTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        notificationDataTable.getColumnModel().getColumn(3).setPreferredWidth(55);
+        notificationDataTable.getColumnModel().getColumn(2).setPreferredWidth(160);
+        notificationDataTable.getColumnModel().getColumn(3).setPreferredWidth(65);
         notificationDataTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        notificationDataTable.getColumnModel().getColumn(4).setMinWidth(230);
+        notificationDataTable.getColumnModel().getColumn(4).setMinWidth(210);
         notificationDataTable.setIntercellSpacing(new Dimension(10, 4));
         initializeTable();
 
+        /**
+         * Event listener for the min date picker.
+         */
         jMinDateChooser.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -95,6 +104,9 @@ public class NotificationLogForm {
             }
         });
 
+        /**
+         * Event listener for the max date picker.
+         */
         jMaxDateChooser.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -107,6 +119,10 @@ public class NotificationLogForm {
             }
         });
 
+        /**
+         * Event listener for the table rows which populates the full message text area with the complete message
+         * which was previewed in the table.
+         */
         notificationDataTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -125,13 +141,15 @@ public class NotificationLogForm {
         return rootPanel;
     }
 
-    public void initializeTable() {
+    /**
+     * Initializes the table with the top 200 most recent logs
+     */
+    private void initializeTable() {
         initialLoadInd = true;
         notifications = jjb.readNotifications(Timestamp.valueOf("2000-01-01 00:00:00"),
                 Timestamp.valueOf("2200-12-31 23:59:59"), initialLoadInd);
         populateTable();
-        int i = 1;
-
+        /*int i = 1;
         for (Notification not: notifications) {
             String str = dateFormat.format(not.getDateTime());
             System.out.println("#: " + i +
@@ -140,26 +158,17 @@ public class NotificationLogForm {
                     " || Recipient Count: " + not.getRecipientCount() +
                     " || Message: " + not.getMessage());
             i++;
-        }
-        /*if(initialLoadInd) {
-            Timestamp maxTmst = jjb.getMaxTmst();
-            Timestamp minTmst = jjb.getMinTmst();
-            //Date maxDate = new SimpleDateFormat("yyyy-MM-dd").parse(maxTmst);
-            Date maxDt = new Date(maxTmst.getTime());
-            Date minDt = new Date(minTmst.getTime());
-            jMaxDateChooser.setDate(maxDt);
-            jMinDateChooser.setDate(minDt);
-            System.out.println("Set date picker min and dates.");
         }*/
         initialLoadInd = false;
-        //runQuery();
     }
 
-    public void runQuery() {
+    /**
+     * Makes the call to the database class, which runs the query.  Calls the method that will populate the table.
+     */
+    private void runQuery() {
         notifications = jjb.readNotifications(minDate, maxDate, initialLoadInd);
         populateTable();
-        int i = 1;
-
+        /*int i = 1;
         for (Notification not: notifications) {
             String str = dateFormat.format(not.getDateTime());
             System.out.println("#: " + i +
@@ -168,45 +177,32 @@ public class NotificationLogForm {
                     " || Recipient Count: " + not.getRecipientCount() +
                     " || Message: " + not.getMessage());
             i++;
-        }
+        }*/
     }
 
     /**
-     * Sets the min date, which will be used as the first parameter for NOTIFICATION_SQL.
+     * Populates the table with the data returned from the database query
      */
-    public void setMinDate(Timestamp minDate) {
-        this.minDate = minDate;
-        System.out.println("Main Min Date: " + this.minDate);
-    }
-
-    /**
-     * Sets the max date, which will be used as the second parameter for NOTIFICATION_SQL.
-     */
-    public void setMaxDate(Timestamp maxDate) {
-        this.maxDate = maxDate;
-        System.out.println("Main Max Date: " + this.maxDate);
-    }
-
-    public void populateTable() {
+    private void populateTable() {
         model.setRowCount(0);
         int i = 1;
-        System.out.println(notifications.size());
         for (Notification not : notifications) {
             String t = formatTimestamp(not.getDateTime());
             String s = not.getUsername();
             int r = not.getRecipientCount();
             String m = not.getMessage();
-            //String m = " " + formatMessagePreview(not.getMessage());
-
             model.addRow(new Object[]{i, t, s, r, m});
             i++;
         }
-
         notificationDataTable.setModel(model);
-        //tableScrollPane.add(notificationDataTable);
     }
 
-    public static String formatTimestamp(Timestamp t) {
+    /**
+     * Formats how the timestamp will be rendered in the table
+     * @param t The timestamp retrieved for each notification log entry
+     * @return A formatted timestamp for the table
+     */
+    private static String formatTimestamp(Timestamp t) {
         Date d = new Date(t.getTime());
         return dateFormat.format(d);
     }

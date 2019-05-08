@@ -8,7 +8,12 @@ import java.util.ArrayList;
  * The DB class for the notification log
  *
  * @author Liana Schweitzer
- * @version 2019.04.29
+ * @version 2019.05.07
+ *
+ * Modifications:
+ * - Added a new field that contains the SQL statement for the initial table load.
+ * - Added fields for setting which SQL statement will be used in the query.
+ * - Refactored readNotifications and readNotificationBasics so that they could be used for the initial load query.
  */
 public class JavaneseJumpingBeansDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -19,9 +24,6 @@ public class JavaneseJumpingBeansDB {
             "WHERE DateTime >= ? AND DateTime <= ? ORDER BY DateTime DESC, MessageID DESC";
     private static final String USER_SQL = "SELECT Username FROM [USER] WHERE UserID = ?";
     private static String sqlStringName;
-    private static Timestamp minTmst;
-    private static Timestamp maxTmst;
-    //private static NotificationLogForm notLogForm;
 
     /**
      * Establishes the DB connection.
@@ -32,7 +34,7 @@ public class JavaneseJumpingBeansDB {
     }
 
     /**
-     * Reads and returns notifications along with their details and usernames.
+     * Reads and returns notifications along with their details and usernames
      * @return A list of notifications
      */
     public ArrayList<Notification> readNotifications(Timestamp minDate, Timestamp maxDate, Boolean initialLoadInd) {
@@ -73,17 +75,11 @@ public class JavaneseJumpingBeansDB {
             e.printStackTrace();
         }
 
-        if (initialLoadInd) {
-            maxTmst = notifications.get(0).getDateTime();
-            System.out.println("Initial max tmst: " + maxTmst);
-            minTmst = notifications.get(notifications.size() - 1).getDateTime();
-            System.out.println("Initial min tmst: " + minTmst);
-        }
         return notifications;
     }
 
     /**
-     * Reads and sets the usernames for the notifications that are returned from the query.
+     * Reads and sets the usernames for the notifications that are returned from the query
      */
     private void readUsernames(ArrayList<Notification> notifications) {
         try (
@@ -101,13 +97,4 @@ public class JavaneseJumpingBeansDB {
             e.printStackTrace();
         }
     }
-
-    public Timestamp getMaxTmst() {
-        return maxTmst;
-    }
-
-    public Timestamp getMinTmst() {
-        return minTmst;
-    }
-
 }
