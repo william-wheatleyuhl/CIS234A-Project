@@ -1,6 +1,5 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
-import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -23,7 +22,6 @@ public class JavaneseJumpingBeansDB {
     private static final String NOTIFICATION_SQL = "SELECT * FROM NOTIFICATION " +
             "WHERE DateTime >= ? AND DateTime <= ? ORDER BY DateTime DESC, MessageID DESC";
     private static final String USER_SQL = "SELECT Username FROM [USER] WHERE UserID = ?";
-    private static String sqlStringName;
 
     /**
      * Establishes the DB connection.
@@ -48,6 +46,7 @@ public class JavaneseJumpingBeansDB {
      * @return A list of notifications within the specified date range
      */
     private ArrayList<Notification> readNotificationBasics(Timestamp minDate, Timestamp maxDate, Boolean initialLoadInd) {
+        String sqlStringName;
         if (initialLoadInd) {
             sqlStringName = LOAD_SQL;
         } else {
