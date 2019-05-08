@@ -148,11 +148,19 @@ public class UserLoginGUI {
                         JOptionPane.showMessageDialog(null, "Invalid Sign-in");
                     }
                     else{
-                        JOptionPane.showMessageDialog(null, "Signed in!");
+                        //JOptionPane.showMessageDialog(null, "Signed in!");
                         /**
                          * This is where the splash screen code will execute
                          */
+                        UserLogin loginSuccess = new UserLogin();
+                        loginSuccess.setLogin(true);
+                        loginSuccess.setLoggedInUser(siUsernameField.getText());
+
+
                     }
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Invalid Sign-in");
                 }
 
 

@@ -14,16 +14,38 @@ public class UserLogin {
      * Creates an instance of the UserLoginGUI class.
      * Creates a JFrame window, sets the content of it to the panel of the instance of the UserLoginGUI class.
      */
-    public static void main(String[] args){
 
+    private static boolean loginSuccess = false;
+    private static String loggedInUser;
+
+    public void setLogin(boolean truefalse){
+        loginSuccess = truefalse;
+    }
+    public void setLoggedInUser(String user){ loggedInUser = user; }
+    public String getLoggedInUser(){ return loggedInUser; }
+
+    public static void main(String[] args) {
         JFrame jf1 = new JFrame();
-
         jf1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf1.setTitle("Sign In");
         jf1.setSize(800, 600);
         jf1.setContentPane(new UserLoginGUI().getRootPanel());
         jf1.setVisible(true);
 
+        while (!loginSuccess) {
+            System.out.println("");
+        }
+
+        jf1.setVisible(false);
+
+        JFrame jf2 = new JFrame();
+        jf2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jf2.setTitle("Food Pantry Notifications");
+        jf2.setSize(800, 600);
+        jf2.setContentPane(new Presentation().getRootPanel());
+        jf2.setVisible(true);
+
+        /**set presentation gui to show*/
     }
 
     /***
