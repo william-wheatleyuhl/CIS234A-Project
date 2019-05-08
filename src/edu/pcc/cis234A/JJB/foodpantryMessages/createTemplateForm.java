@@ -33,6 +33,7 @@ public class createTemplateForm {
         populateComboBox();
         areaTemplateText.setEnabled(false);
         fieldTemplateName.setEnabled(false);
+        comboTemplates.setEnabled(false);
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
 
