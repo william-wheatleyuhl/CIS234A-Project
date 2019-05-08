@@ -12,8 +12,9 @@ import java.util.ArrayList;
  * and send the message. The templates are pulled from the TEMPLATE table in the Database, and all sent messages will
  * be stored in the MESSAGES table and given a unique messageID.
  * @authors Syn Calvo and Will Wheatley-Uhl
- * 2019.05.06
+ * @version 2019.05.07
  */
+
 public class NotificationForm {
     private JPanel rootPanel;
     private JTextArea notificationTextArea;
@@ -114,7 +115,7 @@ public class NotificationForm {
             }
         });
         /**
-         * Change the
+         * Change the selected Group of Recipients. 
          */
         groupSelect.addActionListener(new ActionListener() {
             @Override
