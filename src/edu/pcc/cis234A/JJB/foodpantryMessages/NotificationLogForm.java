@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,10 +44,10 @@ public class NotificationLogForm {
     private static DateFormat maxDateFormat;
     private static DateFormat dateFormat;
     private DefaultTableModel model;
-    JDateChooser jMinDateChooser;
-    JDateChooser jMaxDateChooser;
-    private static Boolean initializeInd = false;
+    private JDateChooser jMinDateChooser;
+    private JDateChooser jMaxDateChooser;
     private JavaneseJumpingBeansDB jjb;
+    private static Boolean initialLoadInd;
 
     /**
      * Creates the Food Pantry form, adds the min and max date pickers, and creates listeners for the date pickers.
@@ -63,28 +64,29 @@ public class NotificationLogForm {
         maxDatePanel.add(jMaxDateChooser);
         fullMessageTextArea.setMargin(new Insets(2,5,2,5));
         jjb = new JavaneseJumpingBeansDB();
+        initialLoadInd = false;
         //fullMessageTextArea.setLineWrap(true);
         //fullMessageTextArea.setWrapStyleWord(true);
 
         model.setColumnIdentifiers(new Object[] { "#", "Timestamp", "Sent By", "Recipient Count", "Message Preview" });
         notificationDataTable.setRowHeight(20);
-        notificationDataTable.getColumnModel().getColumn(0).setPreferredWidth(8);
+        notificationDataTable.getColumnModel().getColumn(0).setPreferredWidth(1);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment( JLabel.CENTER );
         notificationDataTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         notificationDataTable.getColumnModel().getColumn(1).setPreferredWidth(105);
         notificationDataTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        notificationDataTable.getColumnModel().getColumn(2).setPreferredWidth(120);
-        notificationDataTable.getColumnModel().getColumn(3).setPreferredWidth(70);
+        notificationDataTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        notificationDataTable.getColumnModel().getColumn(3).setPreferredWidth(55);
         notificationDataTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        notificationDataTable.getColumnModel().getColumn(4).setMinWidth(248);
+        notificationDataTable.getColumnModel().getColumn(4).setMinWidth(230);
         notificationDataTable.setIntercellSpacing(new Dimension(10, 4));
         initializeTable();
 
         jMinDateChooser.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if("date".equals(evt.getPropertyName())) {
+                if ("date".equals(evt.getPropertyName())) {
                     Date dtMinDate = (Date) evt.getNewValue();
                     String minTmst = minDateFormat.format(dtMinDate);
                     minDate = Timestamp.valueOf(minTmst);
@@ -96,7 +98,7 @@ public class NotificationLogForm {
         jMaxDateChooser.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if("date".equals(evt.getPropertyName())) {
+                if ("date".equals(evt.getPropertyName())) {
                     Date dtMaxDate = (Date) evt.getNewValue();
                     String maxTmst = maxDateFormat.format(dtMaxDate);
                     maxDate = Timestamp.valueOf(maxTmst);
@@ -108,10 +110,9 @@ public class NotificationLogForm {
         notificationDataTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //super.mouseClicked(e);
-                int i = notificationDataTable.getSelectedRow();
-                TableModel model = notificationDataTable.getModel();
-                fullMessageTextArea.setText(model.getValueAt(i, 4).toString());
+            int i = notificationDataTable.getSelectedRow();
+            TableModel model = notificationDataTable.getModel();
+            fullMessageTextArea.setText(model.getValueAt(i, 4).toString());
             }
         });
     }
@@ -125,7 +126,9 @@ public class NotificationLogForm {
     }
 
     public void initializeTable() {
-        notifications = jjb.loadNotifications();
+        initialLoadInd = true;
+        notifications = jjb.readNotifications(Timestamp.valueOf("2000-01-01 00:00:00"),
+                Timestamp.valueOf("2200-12-31 23:59:59"), initialLoadInd);
         populateTable();
         int i = 1;
 
@@ -138,10 +141,22 @@ public class NotificationLogForm {
                     " || Message: " + not.getMessage());
             i++;
         }
+        /*if(initialLoadInd) {
+            Timestamp maxTmst = jjb.getMaxTmst();
+            Timestamp minTmst = jjb.getMinTmst();
+            //Date maxDate = new SimpleDateFormat("yyyy-MM-dd").parse(maxTmst);
+            Date maxDt = new Date(maxTmst.getTime());
+            Date minDt = new Date(minTmst.getTime());
+            jMaxDateChooser.setDate(maxDt);
+            jMinDateChooser.setDate(minDt);
+            System.out.println("Set date picker min and dates.");
+        }*/
+        initialLoadInd = false;
+        //runQuery();
     }
 
     public void runQuery() {
-        notifications = jjb.readNotifications(minDate, maxDate);
+        notifications = jjb.readNotifications(minDate, maxDate, initialLoadInd);
         populateTable();
         int i = 1;
 
@@ -176,7 +191,7 @@ public class NotificationLogForm {
         model.setRowCount(0);
         int i = 1;
         System.out.println(notifications.size());
-        for(Notification not : notifications) {
+        for (Notification not : notifications) {
             String t = formatTimestamp(not.getDateTime());
             String s = not.getUsername();
             int r = not.getRecipientCount();
@@ -194,13 +209,5 @@ public class NotificationLogForm {
     public static String formatTimestamp(Timestamp t) {
         Date d = new Date(t.getTime());
         return dateFormat.format(d);
-    }
-
-    public static String formatMessagePreview(String message) {
-        String s = message.substring(0, Math.min(message.length(), 45));
-        if(message.length() > 45) {
-            s = message.substring(0, Math.min(message.length(), 45)) + "...";
-        }
-        return s;
     }
 }

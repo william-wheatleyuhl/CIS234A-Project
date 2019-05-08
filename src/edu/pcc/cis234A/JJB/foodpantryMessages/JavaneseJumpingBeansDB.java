@@ -18,6 +18,10 @@ public class JavaneseJumpingBeansDB {
     private static final String NOTIFICATION_SQL = "SELECT * FROM NOTIFICATION " +
             "WHERE DateTime >= ? AND DateTime <= ? ORDER BY DateTime DESC, MessageID DESC";
     private static final String USER_SQL = "SELECT Username FROM [USER] WHERE UserID = ?";
+    private static String sqlStringName;
+    private static Timestamp minTmst;
+    private static Timestamp maxTmst;
+    //private static NotificationLogForm notLogForm;
 
     /**
      * Establishes the DB connection.
@@ -27,40 +31,12 @@ public class JavaneseJumpingBeansDB {
         return DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
     }
 
-    public ArrayList<Notification> loadNotifications() {
-        ArrayList<Notification> notifications = loadNotificationBasics();
-        readUsernames(notifications);
-        return notifications;
-    }
-
-    private ArrayList<Notification> loadNotificationBasics() {
-        ArrayList<Notification> notifications = new ArrayList<>();
-        try (
-                Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(LOAD_SQL);
-
-        ) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                notifications.add(new Notification(rs.getInt("MessageID"),
-                        rs.getTimestamp("DateTime"),
-                        rs.getString("Message"),
-                        rs.getInt("UserID"),
-                        rs.getInt("RecipientCount")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return notifications;
-    }
-
-
     /**
      * Reads and returns notifications along with their details and usernames.
      * @return A list of notifications
      */
-    public ArrayList<Notification> readNotifications(Timestamp minDate, Timestamp maxDate) {
-        ArrayList<Notification> notifications = readNotificationBasics(minDate, maxDate);
+    public ArrayList<Notification> readNotifications(Timestamp minDate, Timestamp maxDate, Boolean initialLoadInd) {
+        ArrayList<Notification> notifications = readNotificationBasics(minDate, maxDate, initialLoadInd);
         readUsernames(notifications);
         return notifications;
     }
@@ -69,17 +45,22 @@ public class JavaneseJumpingBeansDB {
      * Adds notifications and their details from the NOTIFICATION table to a list.
      * @return A list of notifications within the specified date range
      */
-    private ArrayList<Notification> readNotificationBasics(Timestamp minDate, Timestamp maxDate) {
+    private ArrayList<Notification> readNotificationBasics(Timestamp minDate, Timestamp maxDate, Boolean initialLoadInd) {
+        if (initialLoadInd) {
+            sqlStringName = LOAD_SQL;
+        } else {
+            sqlStringName = NOTIFICATION_SQL;
+        }
         ArrayList<Notification> notifications = new ArrayList<>();
         try (
             Connection conn = getConnection();
-            PreparedStatement stmt = conn.prepareStatement(NOTIFICATION_SQL);
+            PreparedStatement stmt = conn.prepareStatement(sqlStringName);
 
         ) {
-            System.out.println("Query Min Date: " + minDate);
-            System.out.println("Query Max Date: " + maxDate);
-            stmt.setTimestamp(1, minDate);
-            stmt.setTimestamp(2, maxDate);
+            if (!initialLoadInd) {
+                stmt.setTimestamp(1, minDate);
+                stmt.setTimestamp(2, maxDate);
+            }
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 notifications.add(new Notification(rs.getInt("MessageID"),
@@ -91,7 +72,13 @@ public class JavaneseJumpingBeansDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //notificationLogForm.setTableModel(model);
+
+        if (initialLoadInd) {
+            maxTmst = notifications.get(0).getDateTime();
+            System.out.println("Initial max tmst: " + maxTmst);
+            minTmst = notifications.get(notifications.size() - 1).getDateTime();
+            System.out.println("Initial min tmst: " + minTmst);
+        }
         return notifications;
     }
 
@@ -113,6 +100,14 @@ public class JavaneseJumpingBeansDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Timestamp getMaxTmst() {
+        return maxTmst;
+    }
+
+    public Timestamp getMinTmst() {
+        return minTmst;
     }
 
 }
