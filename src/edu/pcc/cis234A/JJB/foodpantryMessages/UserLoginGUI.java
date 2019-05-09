@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 /**
  * @author Syn, Jeff
- * @version 2019.04.23
+ * @version 2019.05.08
  */
 public class UserLoginGUI {
     private JPanel rootPanel;
