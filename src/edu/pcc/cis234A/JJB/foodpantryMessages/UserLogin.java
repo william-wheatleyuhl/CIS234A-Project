@@ -42,7 +42,7 @@ public class UserLogin {
         JFrame jf2 = new JFrame();
         jf2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf2.setTitle("Food Pantry Notifications");
-        jf2.setSize(800, 600);
+        jf2.setSize(900, 750);
         jf2.setContentPane(new Presentation().getRootPanel());
         jf2.setVisible(true);
 

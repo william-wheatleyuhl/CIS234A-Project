@@ -33,8 +33,6 @@ import java.util.Date;
  */
 public class NotificationLogForm {
     private JPanel rootPanel;
-    private JLabel pageNameLabel;
-    private JLabel userLoggedInLabel;
     private JTable notificationDataTable;
     private JScrollPane tableScrollPane;
     private JLabel minDateLabel;
