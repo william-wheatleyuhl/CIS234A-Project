@@ -46,7 +46,8 @@ public class JavaneseJumpingBeansDB {
      * @return A list of notifications within the specified date range
      */
     private ArrayList<Notification> readNotificationBasics(Timestamp minDate, Timestamp maxDate, Boolean initialLoadInd) {
-        String sqlStringName;
+        // String used to set which query will be run
+		String sqlStringName;
         if (initialLoadInd) {
             sqlStringName = LOAD_SQL;
         } else {
