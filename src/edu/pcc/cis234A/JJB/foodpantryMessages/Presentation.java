@@ -13,7 +13,8 @@ import javax.swing.*;
 public class Presentation {
     private JTabbedPane tabbedPane1;
     private JPanel rootPanel;
-    private String username = "ZeroCool";
+    private UserLogin ul =  new UserLogin();
+    private String username = ul.getLoggedInUser();
     private JLabel userLoggedInLabel;
     private JPanel sendNotificationTab;
     private JPanel templateTab;

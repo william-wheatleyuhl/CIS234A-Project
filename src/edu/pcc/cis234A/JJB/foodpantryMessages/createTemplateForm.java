@@ -11,8 +11,6 @@ import java.awt.event.ActionListener;
  */
 public class createTemplateForm {
     private JPanel rootPanel;
-    private JLabel labelPageName;
-    private JLabel labelLoggedInAs;
     private JRadioButton radioCreateNew;
     private JRadioButton radioEditExisting;
     private JLabel labelTemplateName;
