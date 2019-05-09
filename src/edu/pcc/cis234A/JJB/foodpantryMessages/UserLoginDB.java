@@ -2,6 +2,10 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import java.sql.*;
 import java.util.ArrayList;
+/**
+ * Author: Jeff Humphrey
+ * Version: 2019.05.18
+ */
 
 public class UserLoginDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
