@@ -9,11 +9,9 @@ import javax.swing.*;
  * @version 2019.05.06
  */
 public class Presentation {
-    UserLogin userLogin1 = new UserLogin();
-
     private JTabbedPane tabbedPane1;
     private JPanel rootPanel;
-    private String username = userLogin1.getLoggedInUser();
+    private String username = "ZeroCool";
     private JLabel userLoggedInLabel;
     private JPanel sendNotificationTab;
     private JPanel templateTab;
@@ -22,8 +20,8 @@ public class Presentation {
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
         sendNotificationTab.add(new NotificationForm().getRootPanel());
-        templateTab.add(new createTemplateForm().getRootPanel());
-        msgLogTab.add(new NotificationLogForm().getRootPanel());
+//        templateTab.add(new NotificationForm().getRootPanel());
+//        msgLogTab.add(new createTemplateForm().getRootPanel());
     }
 
     /**
