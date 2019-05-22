@@ -4,7 +4,7 @@ import javax.swing.*;
 
 
 /**
- * This class represents the implementation of the Presentation GUI. In this class, other modules are poulated
+ * This class represents the implementation of the Presentation GUI. In this class, other modules are populated
  * into a JTabbedPane, and can be selected by using the tabs at the top of the screen.
  * @author William Wheatley-Uhl
  * @version 2019.05.06
@@ -23,7 +23,7 @@ public class Presentation {
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
         sendNotificationTab.add(new NotificationForm().getRootPanel());
-        templateTab.add(new createTemplateForm().getRootPanel());
+        templateTab.add(new CreateTemplateForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
     }
 
