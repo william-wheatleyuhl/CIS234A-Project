@@ -97,11 +97,14 @@ public class UserLoginGUI {
                     lastNameDB = firstLast[1];
                     firstNameDB = firstLast[0];
                     emailDB = suEmailField.getText();
-                    passwordDB = UserLogin.hashPassword(suPasswordField1.getText());
+                    UserLogin.generateSalt();
+                    passwordDB = UserLogin.hashPassword(suPasswordField1.getText(), UserLogin.salt.toString());
 
                     database1.insertUser(highestUserID);
+                    System.out.println("");
+                    database1.insertUserPassword(highestUserID);
 
-                    JOptionPane.showMessageDialog(null, "Sucessfully signed up!");
+                    JOptionPane.showMessageDialog(null, "Successfully signed up!");
                 }
             }
         });
@@ -130,14 +133,18 @@ public class UserLoginGUI {
                 String signInPW;
                 String signInPWHash;
                 boolean signInSuccess = false;
+                String signInUserSalt;
 
                 boolean userExists = database1.checkUserExists(siUsernameField.getText());
 
                 if(userExists){
                     signInUserID = database1.getUsernameUserID(siUsernameField.getText());
 
+                    signInUserSalt = database1.getUserSalt(signInUserID);
+                    //JOptionPane.showMessageDialog(null, signInUserSalt);
+
                     signInPW = new String(siPasswordField.getPassword());
-                    signInPWHash = UserLogin.hashPassword(signInPW);
+                    signInPWHash = UserLogin.hashPassword(signInPW, signInUserSalt);
 
                     //System.out.println(signInUserID);
                     //System.out.println(signInPWHash);

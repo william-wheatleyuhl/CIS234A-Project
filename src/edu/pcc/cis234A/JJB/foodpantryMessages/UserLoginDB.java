@@ -64,16 +64,20 @@ public class UserLoginDB {
     public void insertUser(int highestUserID){
         try(
                 Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement("INSERT INTO [USER] VALUES ('"+highestUserID+"', '"+UserLoginGUI.usernameDB[0]+"', '"+UserLoginGUI.lastNameDB+"', '"+UserLoginGUI.firstNameDB+"', '"+UserLoginGUI.emailDB+"', 3)")
+                PreparedStatement stmt = conn.prepareStatement("INSERT INTO [USER] VALUES ('"+highestUserID+"', '"+UserLoginGUI.usernameDB[0]+"', '"+UserLoginGUI.lastNameDB+"', '"+UserLoginGUI.firstNameDB+"', '"+UserLoginGUI.emailDB+"', 3, NULL, NULL, NULL)")
         ){
             stmt.executeUpdate();
         } catch(SQLException e){
             e.printStackTrace();
         }
+    }
 
+    public void insertUserPassword(int highestUserID){
         try(
                 Connection conn2 = getConnection();
-                PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('"+UserLoginGUI.passwordDB+"', "+highestUserID+")")
+                PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('"+UserLoginGUI.passwordDB+"', "+highestUserID+", '"+UserLogin.salt+"')");
+                //PreparedStatement stmt2 = conn2.prepareStatement(insertPasswordString);
+                //PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('testhash',35 , NULL)");
         ){
             stmt2.executeUpdate();
         } catch(SQLException e){
@@ -156,6 +160,27 @@ public class UserLoginDB {
         }
 
         return pwMatch;
+    }
+
+    /**
+     * returns a salt associated with a user id from the db
+     */
+    public String getUserSalt(int userID){
+        String userSalt = "";
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(PasswordSelectStar)
+        ){
+            while(rs.next()){
+                if(rs.getInt("UserID") == userID){
+                    userSalt = rs.getString("Pepper");
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return userSalt;
     }
 
 

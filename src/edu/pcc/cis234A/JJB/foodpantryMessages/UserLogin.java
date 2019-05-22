@@ -2,6 +2,7 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 
 /**
@@ -18,6 +19,8 @@ public class UserLogin {
     private static boolean loginSuccess = false;
     private static String loggedInUser;
 
+    public static byte[] salt = new byte[16];
+
     public void setLogin(boolean truefalse){
         loginSuccess = truefalse;
     }
@@ -31,7 +34,6 @@ public class UserLogin {
         jf1.setSize(800, 600);
         jf1.setContentPane(new UserLoginGUI().getRootPanel());
         jf1.setVisible(true);
-
 
         while (!loginSuccess) {
             System.out.println("");
@@ -105,7 +107,10 @@ public class UserLogin {
             }
         }
 
-        return inputOK;
+        if(email.contains("@pcc.edu")) {
+            return inputOK;
+        }
+        return false;
     }
 
 
@@ -135,7 +140,12 @@ public class UserLogin {
      */
     public static boolean verifySignUpPassword(String password, String password2){
         if(password.equals(password2)){
-            return true;
+            if(passwordStrong(password)) {
+                return true;
+            }
+            else{
+                return false;
+            }
         }
         else{
             return false;
@@ -143,11 +153,51 @@ public class UserLogin {
     }
 
     /**
+     * Method to check the strength of a password. Ensures that the password is at least 12 characters long and
+     * contains at least one uppercase letter, and at least one number.
+     */
+    private static boolean passwordStrong(String password){
+        boolean lengthOK = false;
+        boolean containsUpperLetter = false;
+        boolean containsNumber = false;
+
+        if(password.length() < 12){
+            lengthOK = false;
+        }
+        else{
+            lengthOK = true;
+        }
+
+        for(char c : password.toCharArray()){
+            if(Character.isUpperCase(c)){
+                containsUpperLetter = true;
+            }
+
+            if(Character.isDigit(c)){
+                containsNumber = true;
+            }
+        }
+
+        if((lengthOK && containsUpperLetter) && containsNumber){
+            return true;
+        }
+        return false;
+    }
+
+
+    public static void generateSalt(){
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(salt);
+    }
+
+    /**
      *
      * This method hashes the password fed to it with MD5.
      */
-    public static String hashPassword(String password){
+    public static String hashPassword(String password, String salt){
         String hashedPW = null;
+
+        password += salt;
 
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -163,6 +213,7 @@ public class UserLogin {
             e.printStackTrace();
         }
         //System.out.println(hashedPW);
+        //System.out.println(salt);
 
         return hashedPW;
     }
