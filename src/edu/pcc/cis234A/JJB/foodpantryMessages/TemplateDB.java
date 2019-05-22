@@ -11,9 +11,11 @@ import java.util.List;
  * Connects to the 234a_JavaneseJumpingBeans database & returns requested data based on SQL queries
  *
  * @author Syn
- * @version 2019.04.29
+ * @version 2019.05.21
+ *
+ * 20190521 SC - Updated UPDATE_TEMPLATE SQL to use UserID instead of RoleID
  */
-public class templateDB {
+public class TemplateDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
@@ -21,7 +23,7 @@ public class templateDB {
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT TemplateID FROM TEMPLATE";
     private static final String LOG_TEMPLATE = "INSERT INTO TEMPLATE VALUES(?,?,?,?)";
-    private static final String UPDATE_TEMPLATE = "UPDATE TEMPLATE SET TemplateName = ?, MessageText = ?, RoleID = ? WHERE TemplateID = ?";
+    private static final String UPDATE_TEMPLATE = "UPDATE TEMPLATE SET TemplateName = ?, MessageText = ?, UserID = ? WHERE TemplateID = ?";
 
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -82,7 +84,6 @@ public class templateDB {
             stmt.setInt(1, getLastTemplateID() + 1);
             stmt.setString(2, newTemplateName);
             stmt.setString(3, newTemplateString);
-            //TODO: Change RoleID to UserID in DB for TEMPLATE table
             //TODO: Use UserID from session for below stmt
             stmt.setInt(4, 1);
             stmt.executeUpdate();
@@ -102,7 +103,6 @@ public class templateDB {
             PreparedStatement stmt = conn.prepareStatement(UPDATE_TEMPLATE);
             stmt.setString(1, existingTemplateName);
             stmt.setString(2, existingTemplateString);
-            //TODO: Change RoleID to UserID in DB for TEMPLATE table
             //TODO: Use UserID from session for below stmt
             stmt.setInt(3, 1);
             stmt.setInt(4, existingTemplateID);
