@@ -7,13 +7,15 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
  * @version 2019.04.23
  */
 public class Recipient {
-    public String userName;
-    public String firstName;
-    public String lastName;
-    public String emailAddr;
-    public int subscriberRole;
+    private int userID;
+    private String userName;
+    private String firstName;
+    private String lastName;
+    private String emailAddr;
+    private int subscriberRole;
 
-    public Recipient(String userName, String lastName, String firstName, String emailAddr, int subscriberRole) {
+    public Recipient(int userID, String userName, String lastName, String firstName, String emailAddr, int subscriberRole) {
+        this.userID = userID;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,6 +37,9 @@ public class Recipient {
     }
 
     //    Getters
+    public int getUserID() {
+        return userID;
+    }
     public String getFirstName() {
         return firstName;
     }

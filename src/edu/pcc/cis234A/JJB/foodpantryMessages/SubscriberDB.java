@@ -13,10 +13,11 @@ public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
-    private static final String SUBSCRIBER_QUERY = "SELECT Username, LastName, FirstName, Email, RoleID FROM [USER]";
+    private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, RoleID FROM [USER]";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
+    private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
     private int subscriberCount = 0;
 
 
@@ -38,7 +39,8 @@ public class SubscriberDB {
                 ) {
             System.out.println("Reading Subscribers...");
             while (rs.next()) {
-                receivers.add(new Recipient(rs.getString("Username"),
+                receivers.add(new Recipient(rs.getInt("UserID"),
+                        rs.getString("Username"),
                         rs.getString("LastName"),
                         rs.getString("FirstName"),
                         rs.getString("Email"),
@@ -85,6 +87,35 @@ public class SubscriberDB {
             stmt.setString(3, messageString);
             stmt.setInt(4, 3);
             stmt.setInt(5, subCount);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Logs the recipients to the RECIPIENT Link table.
+     * Takes in userIDs of recipients receiving the message, and the last message ID in the DB.
+     * Logs both for each UserID.
+     * Check in DB with this Query:
+     * SELECT NOTIFICATION.MessageID
+     * ,DateTime
+     * ,Message
+     * ,RECIPIENT.UserID
+     * ,[USER].RoleID
+     * ,[USER].Username
+     * FROM NOTIFICATION
+     * JOIN RECIPIENT ON NOTIFICATION.MessageID = RECIPIENT.MessageID
+     * JOIN [USER] ON RECIPIENT.UserID = [USER].UserID
+     * ORDER BY MessageID;
+     * @param userID Integer value of the Recipient's UserID number.
+     */
+    public void logRecipients(int userID) {
+        try {
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(LOG_RECIPIENTS);
+            stmt.setInt(1, userID);
+            stmt.setInt(2, getLastMessageID());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

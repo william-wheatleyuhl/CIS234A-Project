@@ -91,6 +91,7 @@ public class NotificationForm {
         sendNotificationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                ArrayList<Integer> recipientIDs = new ArrayList<>();
                 int msgRecipientCount = 0;
                 if(checkMessageContent()) {
 //                     Following is disabled to prevent spam.
@@ -99,15 +100,19 @@ public class NotificationForm {
                             System.out.println(recipient.getFullName());
                             msgRecipientCount++;
                         } else if(recipient.getSubscriberRole() == groupID) {
-//                            TagParser parser = new TagParser(getMessageText());
+                            TagParser parser = new TagParser(getMessageText());
 //                            MessageBuilder msg = new MessageBuilder("JJB.234A.TEST@GMAIL.COM", parser.parseTags());
 //                            msg.sendMessage();
 
                             System.out.println(recipient.getFullName());
+                            recipientIDs.add(recipient.getUserID());
                             msgRecipientCount++;
                         }
                     }
-//                    subs.logMessage(getMessageText(), msgRecipientCount);
+                    subs.logMessage(getMessageText(), msgRecipientCount);
+                    for(int recipID : recipientIDs) {
+                        subs.logRecipients(recipID);
+                    }
                     System.out.println("Message: " + getMessageText() + "\t Sent to " + msgRecipientCount + " subscribers in\n" +
                             "Group #" + groupID);
                     JOptionPane.showMessageDialog(rootPanel, "Message Sent!");
