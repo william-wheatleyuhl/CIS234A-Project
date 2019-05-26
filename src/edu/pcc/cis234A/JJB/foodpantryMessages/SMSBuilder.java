@@ -17,7 +17,7 @@ public class SMSBuilder {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
         Message message = Message.creator(
-                new PhoneNumber("+15034215931"),
+                new PhoneNumber("+13607138917"),
                 new PhoneNumber("+19712568089"),
                 msgToSend).create();
     }
