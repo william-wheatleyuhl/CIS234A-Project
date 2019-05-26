@@ -98,19 +98,21 @@ public class NotificationForm {
                 TagParser parser = new TagParser(getMessageText());
                 int msgRecipientCount = 0;
                 if(checkMessageContent()) {
-                    String parsedMessage = parser.returnParsedMessage(); // Added here in case the next lines are commented out.
+//                    String parsedMessage = parser.returnParsedMessage(); // Added here in case the next lines are commented out.
                     for(Recipient recipient: recipients) {
                         if(groupID == 0) {
                             msgRecipientCount++;
                         } else if(recipient.getSubscriberRole() == groupID) {
 //                            The following lines are disabled to prevent spam.
-                            MessageBuilder msg = new MessageBuilder(recipient, parser.returnParsedMessage());
+                            SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
+//                            MessageBuilder msg = new MessageBuilder(recipient, parser.returnParsedMessage());
+                            smsMsg.sendSMS();
 //                            msg.sendMessage();
                             recipientIDs.add(recipient.getUserID());
                             msgRecipientCount++;
                         }
                     }
-                    System.out.println(parsedMessage);
+//                    System.out.println(parsedMessage);
 //                    subs.logMessage(getMessageText(), msgRecipientCount, getCurrentUserID());
 //                    for(int recipID : recipientIDs) {
 //                        subs.logRecipients(recipID);
