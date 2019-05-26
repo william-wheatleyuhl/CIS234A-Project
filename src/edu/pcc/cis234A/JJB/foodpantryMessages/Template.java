@@ -11,11 +11,13 @@ public class Template {
     public int templateID;
     public String templateName;
     public String messageText;
+    private int userID;
 
     public Template(int templateID, String templateName, String messageText) {
         this.templateID = templateID;
         this.templateName = templateName;
         this.messageText = messageText;
+        this.userID = userID;
     }
 
     public int getTemplateID() {
@@ -29,5 +31,7 @@ public class Template {
     public String getMessageText() {
         return messageText;
     }
+
+    public int getUserID() { return userID; }
 
 }

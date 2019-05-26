@@ -7,10 +7,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
- * @author Syn
- * @version 2019.04.23
+ * @author Syn Calvo
+ * @version 2019.05.21
+ *
+ * 20190521 SC - Fixed layout of combobox
+ * 20190521 SC - Reconstructed combobox listener to populate template fields dynamically
  */
-public class createTemplateForm {
+public class CreateTemplateForm {
     private JPanel rootPanel;
     private JLabel labelPageName;
     private JLabel labelLoggedInAs;
@@ -23,13 +26,14 @@ public class createTemplateForm {
     private JLabel labelTip;
     private JButton buttonSave;
     private JComboBox comboTemplates;
-    templateDB temps = new templateDB();
+    TemplateDB temps = new TemplateDB();
     ArrayList<Template> templates = temps.readTemplates();
     private String newTemplateName;
     private String newTemplateText;
     private int existingTemplateID;
+    private int userID;
 
-    public createTemplateForm() {
+    public CreateTemplateForm() {
         populateComboBox();
         areaTemplateText.setEnabled(false);
         fieldTemplateName.setEnabled(false);
@@ -58,7 +62,8 @@ public class createTemplateForm {
 
         /**
          * Action listener for the "Edit Existing" radio button.
-         * Deselects the "Create New" radio button.
+         * Deselects the "Create New" radio button and enables
+         * template text and name fields
          */
         radioEditExisting.addActionListener(new ActionListener() {
             @Override
@@ -80,36 +85,40 @@ public class createTemplateForm {
         comboTemplates.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                switch(comboTemplates.getSelectedIndex()) {
-                    case 0: areaTemplateText.setText("");
-                        break;
-                    case 1: areaTemplateText.setText(templates.get(0).messageText);
-                        break;
-                    case 2: areaTemplateText.setText(templates.get(1).messageText);
-                        break;
-                    case 3: areaTemplateText.setText(templates.get(2).messageText);
-                        break;
-                    case 4: areaTemplateText.setText(templates.get(3).messageText);
-                        break;
-                }
-                switch(comboTemplates.getSelectedIndex()) {
-                    case 0: fieldTemplateName.setText("");
-                        break;
-                    case 1: fieldTemplateName.setText(templates.get(0).templateName);
-                        break;
-                    case 2: fieldTemplateName.setText(templates.get(1).templateName);
-                        break;
-                    case 3: fieldTemplateName.setText(templates.get(2).templateName);
-                        break;
-                    case 4: fieldTemplateName.setText(templates.get(3).templateName);
-                        break;
-                }
+                int selectedIndex = comboTemplates.getSelectedIndex() -1;
+                areaTemplateText.setText(templates.get(selectedIndex).messageText);
+                fieldTemplateName.setText(templates.get(selectedIndex).templateName);
+//                switch(comboTemplates.getSelectedIndex()) {
+//                    case 0: areaTemplateText.setText("");
+//                        break;
+//                    case 1: areaTemplateText.setText(templates.get(0).messageText);
+//                        break;
+//                    case 2: areaTemplateText.setText(templates.get(1).messageText);
+//                        break;
+//                    case 3: areaTemplateText.setText(templates.get(2).messageText);
+//                        break;
+//                    case 4: areaTemplateText.setText(templates.get(3).messageText);
+//                        break;
+//                }
+//                switch(comboTemplates.getSelectedIndex()) {
+//                    case 0: fieldTemplateName.setText("");
+//                        break;
+//                    case 1: fieldTemplateName.setText(templates.get(0).templateName);
+//                        break;
+//                    case 2: fieldTemplateName.setText(templates.get(1).templateName);
+//                        break;
+//                    case 3: fieldTemplateName.setText(templates.get(2).templateName);
+//                        break;
+//                    case 4: fieldTemplateName.setText(templates.get(3).templateName);
+//                        break;
+//                }
             }
         });
 
         /**
          * Action listener for the "Save" button.
-         * Checks that form fields are completed.
+         * Checks that form fields are completed and calls methods to submit changes to DB.
+         * TODO: Refresh ComboBox dropdown with new changes
          */
         buttonSave.addActionListener(new ActionListener() {
             @Override
@@ -137,21 +146,17 @@ public class createTemplateForm {
 
                 if (checkTemplateName && checkTemplateText) {
                     if(radioCreateNew.isSelected()) {
-                        // Placeholder - In the future the save button will commit information to
-                        // DB, inform user it has been saved, and refresh the page
                         JOptionPane.showMessageDialog(null, "New template saved saved as \"" + newTemplateName + "\"");
-                        System.out.println("Template name: " + newTemplateName); //testing
-                        System.out.println("Template text: " + newTemplateText); //testing
+//                        System.out.println("Template name: " + newTemplateName); //testing
+//                        System.out.println("Template text: " + newTemplateText); //testing
                         temps.logNewTemplate(newTemplateName, newTemplateText);
                     }
                     else if(radioEditExisting.isSelected()) {
                         existingTemplateID = comboTemplates.getSelectedIndex();
-                        // Placeholder - In the future the save button will commit information to
-                        // DB, inform user it has been saved, and refresh the page
                         JOptionPane.showMessageDialog(null, "Changes to \"" + newTemplateName + "\" saved");
-                        System.out.println("Template name: " + newTemplateName); //testing
-                        System.out.println("Template text: " + newTemplateText); //testing
-                        System.out.println("TemplateID: " + existingTemplateID); //testing
+//                        System.out.println("Template name: " + newTemplateName); //testing
+//                        System.out.println("Template text: " + newTemplateText); //testing
+//                        System.out.println("TemplateID: " + existingTemplateID); //testing
                         temps.updateExistingTemplate(newTemplateName, newTemplateText, existingTemplateID);
                     }
                     else {
