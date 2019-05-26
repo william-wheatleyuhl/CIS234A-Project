@@ -25,21 +25,24 @@ public class NotificationForm {
     private JRadioButton specificRadio;
     private JComboBox groupSelect;
     private JComboBox chooseTemplate;
+    private String currentUser;
     private int groupID;
-    SubscriberDB subs = new SubscriberDB();
-    ArrayList<Template> templates = subs.readTemplates();
-    ArrayList<Recipient> recipients = subs.readSubscriberData();
+    private SubscriberDB subs = new SubscriberDB();
+    private ArrayList<Template> templates = subs.readTemplates();
+    private ArrayList<Recipient> recipients = subs.readSubscriberData();
 
 
-    public NotificationForm() {
+    public NotificationForm(String currUser) {
+        this.currentUser = currUser;
         populateTemplateMenu();
         poulateRecipientMenu();
+        getCurrentUserID();
 
-/**
- * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
- * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
- * field from editing.
- */
+        /**
+        * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
+        * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
+        * field from editing.
+        */
         allRadio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -92,30 +95,26 @@ public class NotificationForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 ArrayList<Integer> recipientIDs = new ArrayList<>();
+                TagParser parser = new TagParser(getMessageText());
                 int msgRecipientCount = 0;
                 if(checkMessageContent()) {
-//                     Following is disabled to prevent spam.
+                    String parsedMessage = parser.returnParsedMessage(); // Added here in case the next lines are commented out.
                     for(Recipient recipient: recipients) {
                         if(groupID == 0) {
-                            System.out.println(recipient.getFullName());
                             msgRecipientCount++;
                         } else if(recipient.getSubscriberRole() == groupID) {
-                            TagParser parser = new TagParser(getMessageText());
-//                            MessageBuilder msg = new MessageBuilder("JJB.234A.TEST@GMAIL.COM", parser.parseTags());
+//                            The following lines are disabled to prevent spam.
+                            MessageBuilder msg = new MessageBuilder(recipient, parser.returnParsedMessage());
 //                            msg.sendMessage();
-
-                            System.out.println(recipient.getFullName());
                             recipientIDs.add(recipient.getUserID());
                             msgRecipientCount++;
                         }
                     }
-                    subs.logMessage(getMessageText(), msgRecipientCount);
-                    for(int recipID : recipientIDs) {
-                        subs.logRecipients(recipID);
-                    }
-                    System.out.println("Message: " + getMessageText() + "\t Sent to " + msgRecipientCount + " subscribers in\n" +
-                            "Group #" + groupID);
-                    JOptionPane.showMessageDialog(rootPanel, "Message Sent!");
+                    System.out.println(parsedMessage);
+//                    subs.logMessage(getMessageText(), msgRecipientCount, getCurrentUserID());
+//                    for(int recipID : recipientIDs) {
+//                        subs.logRecipients(recipID);
+//                    }
                 }
             }
         });
@@ -189,13 +188,18 @@ public class NotificationForm {
     }
 
     /**
-     *
-     * @return
+     *  Return the String Value of the Message in the Notification Text Area
+     * @return String of the Message Text
      */
     public String getMessageText() {
         return notificationTextArea.getText();
     }
 
+    /**
+     * Check to make sure that there is actually text in the Message box, do not sent until
+     * something has been entered.
+     * @return A Boolean flag declaring if the message is valid or not.
+     */
     private Boolean checkMessageContent() {
         Boolean valid = false;
         if(getMessageText().equals("")) {
@@ -206,7 +210,21 @@ public class NotificationForm {
         return valid;
     }
 
+    /**
+     * Sets the
+     * @param groupID
+     */
     private void setGroupID(int groupID) {
         this.groupID = groupID;
+    }
+
+    private int getCurrentUserID() {
+        int currUserID = 0;
+        for(Recipient recipient : recipients) {
+            if(recipient.getUserName().equals(currentUser)) {
+                currUserID =  recipient.getUserID();
+            }
+        }
+        return currUserID;
     }
 }

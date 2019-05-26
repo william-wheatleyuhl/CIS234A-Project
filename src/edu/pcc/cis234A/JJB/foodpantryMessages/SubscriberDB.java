@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * SubsciberDB Class
  * Connects to the Database, Returns requested data based on SQL Queries.
  * @author Will Wheatley-Uhl
- * @version 2019.04.22
+ * @version 2019.05.25
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -18,7 +18,6 @@ public class SubscriberDB {
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
-    private int subscriberCount = 0;
 
 
     private static Connection getConnection() throws SQLException {
@@ -37,7 +36,6 @@ public class SubscriberDB {
                 PreparedStatement stmt = conn.prepareStatement(SUBSCRIBER_QUERY);
                 ResultSet rs = stmt.executeQuery()
                 ) {
-            System.out.println("Reading Subscribers...");
             while (rs.next()) {
                 receivers.add(new Recipient(rs.getInt("UserID"),
                         rs.getString("Username"),
@@ -74,10 +72,12 @@ public class SubscriberDB {
     }
 
     /**
-     *
+     * Log Messages to the Notification Table.
+     * Saves the TimeStamp the message was sent at, the Message Contents, the number of
+     * subscribers it was sent to, as well as
      * @param messageString
      */
-    public void logMessage(String messageString, int subCount) {
+    public void logMessage(String messageString, int subCount, int currentUserID) {
         try {
             Connection conn = getConnection();
             PreparedStatement stmt = conn.prepareStatement(LOG_MESSAGE);
@@ -85,7 +85,7 @@ public class SubscriberDB {
             stmt.setInt(1, getLastMessageID() + 1);
             stmt.setTimestamp(2, currTime);
             stmt.setString(3, messageString);
-            stmt.setInt(4, 3);
+            stmt.setInt(4, currentUserID);
             stmt.setInt(5, subCount);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -134,11 +134,9 @@ public class SubscriberDB {
                 PreparedStatement stmt = conn.prepareStatement(ID_QUERY);
                 ResultSet rs = stmt.executeQuery()
         ) {
-            System.out.println("Reading Messages...");
             while (rs.next()) {
                 lastMessageID = rs.getInt("MessageID");
             }
-            System.out.println("Last ID: "+ lastMessageID);
         } catch (SQLException e) {
             e.printStackTrace();
         }

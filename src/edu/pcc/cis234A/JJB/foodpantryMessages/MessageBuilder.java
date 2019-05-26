@@ -2,6 +2,7 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import javax.mail.*;
 import javax.mail.internet.*;
+import javax.swing.*;
 import java.util.Properties;
 
 /**
@@ -16,25 +17,25 @@ public class MessageBuilder {
     private final String username= "jjb.234a.test@gmail.com";
     private final String password = "xqaddkztgrcbdlda";  // App password for gmail, not actual password.
 
-    public MessageBuilder(String sendTo, String msgText) {
-        this.sendTo = sendTo;
-        this.msgText = msgText;
-    }
-
-//    public MessageBuilder(Recipient recipient, String msgText) {
-//        this.recipient = recipient;
-//        this.sendTo = recipient.getEmailAddr();
+//    public MessageBuilder(String sendTo, String msgText) {
+//        this.sendTo = sendTo;
 //        this.msgText = msgText;
 //    }
 
+    public MessageBuilder(Recipient recipient, String msgText) {
+        this.recipient = recipient;
+        this.sendTo = recipient.getEmailAddr();
+        this.msgText = msgText;
+    }
+
     /**
      *
+     * @param recipient
      * @param msgText
-     * @param name
      * @return
      */
-    public String formatMessage(String msgText, String name) {
-        String salutation = "Hello " + name + ",\n\n";
+    public String formatMessage(Recipient recipient, String msgText) {
+        String salutation = "Hello " + recipient.getFirstName() + ",\n\n";
         String closing = "\n\nCome on Down!\n" +
                 "PCC Foodbank Project\n" +
                 "jjb.234a.test@gmail.com\n" +
@@ -64,11 +65,13 @@ public class MessageBuilder {
             message.setFrom(new InternetAddress(sentFrom));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTo));
             message.setSubject("Test Message");
-            message.setText(formatMessage( msgText, "Will"));
+            message.setText(formatMessage( recipient, msgText));
             Transport.send(message, username, password);
             System.out.println("Message Sent to: " + sendTo);
         } catch(MessagingException e) {
             e.printStackTrace();
         }
+        JOptionPane.showMessageDialog(null, "Message Sent!");
+
     }
 }
