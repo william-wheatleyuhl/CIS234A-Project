@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * and send the message. The templates are pulled from the TEMPLATE table in the Database, and all sent messages will
  * be stored in the MESSAGES table and given a unique messageID.
  * @authors Syn Calvo and Will Wheatley-Uhl
- * @version 2019.05.07
+ * @version 2019.05.25
  */
 
 public class NotificationForm {
@@ -159,7 +159,7 @@ public class NotificationForm {
     }
 
     /**
-     *
+     * Return the Root Panel of the NotificationForm GUI.
      * @return
      */
     public JPanel getRootPanel() {
@@ -211,13 +211,18 @@ public class NotificationForm {
     }
 
     /**
-     * Sets the
+     * Sets the GroupID for the group that is to receive the message. This value will be matched against
+     * Subscriber Role IDs.
      * @param groupID
      */
     private void setGroupID(int groupID) {
         this.groupID = groupID;
     }
 
+    /**
+     * Obtains the current user's ID number from the DB, and adds this value to the notification log.
+     * @return Currently logged in userID.
+     */
     private int getCurrentUserID() {
         int currUserID = 0;
         for(Recipient recipient : recipients) {

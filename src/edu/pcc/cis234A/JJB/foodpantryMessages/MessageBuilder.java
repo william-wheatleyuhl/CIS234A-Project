@@ -6,8 +6,10 @@ import javax.swing.*;
 import java.util.Properties;
 
 /**
+ * This class prepares the selected message to be sent to it's recipients. The message text and recipient object are passed
+ * into the constructor. The message builder constructs the message using JavaMail Api and sends it.
  * @author William Wheatley-Uhl
- * @version 2019.05.06
+ * @version 2019.05.25
  */
 public class MessageBuilder {
     private Recipient recipient;
@@ -17,11 +19,6 @@ public class MessageBuilder {
     private final String username= "jjb.234a.test@gmail.com";
     private final String password = "xqaddkztgrcbdlda";  // App password for gmail, not actual password.
 
-//    public MessageBuilder(String sendTo, String msgText) {
-//        this.sendTo = sendTo;
-//        this.msgText = msgText;
-//    }
-
     public MessageBuilder(Recipient recipient, String msgText) {
         this.recipient = recipient;
         this.sendTo = recipient.getEmailAddr();
@@ -29,10 +26,10 @@ public class MessageBuilder {
     }
 
     /**
-     *
+     * Formats the message to have the recipient's first name, as well as a closing.
      * @param recipient
      * @param msgText
-     * @return
+     * @return Formatted Message String with Tags filled, Greeting, and Closing.
      */
     public String formatMessage(Recipient recipient, String msgText) {
         String salutation = "Hello " + recipient.getFirstName() + ",\n\n";
@@ -44,7 +41,8 @@ public class MessageBuilder {
     }
 
     /**
-     *
+     * Given all parameters of the message, send the message to the intended recipient.
+     * TODO: Implement one send message usage by providing list of recipient email addresses, rather than calling this method multiple times.
      */
     public void sendMessage() {
         Properties props = new Properties();

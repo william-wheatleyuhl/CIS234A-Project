@@ -7,9 +7,10 @@ import java.util.regex.*;
 
 /**
  * With the Given Structure of message tags, parse the text of a given message string to find the tags, and identify
- * their values.
+ * their values. Create TagPrompt to obtain tag values from user. Substitute tags for user provided values, return
+ * modified string.
  * @author William Wheatley-Uhl
- * @version 2019.05.06
+ * @version 2019.05.25
  */
 class TagParser {
     private String messageString;
@@ -75,7 +76,7 @@ class TagParser {
     /**
      * A method to validate that all tags have been provided with values in the TagPrompt.
      * If a value is present, increment the tagsFilled counter, this counter must match the number of tags to be filled.
-     * @return
+     * @return Boolean value of whether tags were filled or not.
      */
     private Boolean checkTagCount() {
         int tagsFilled = 0;
@@ -94,6 +95,10 @@ class TagParser {
         return filled;
     }
 
+    /**
+     * Parse tags out of message, prompt user to fill tags on message send, replace tags with provided values.
+     * @return messageString The message with tags filled in.
+     */
     public String returnParsedMessage() {
         parseTags();
         tagFillPrompt();
