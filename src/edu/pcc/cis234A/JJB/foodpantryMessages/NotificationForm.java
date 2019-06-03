@@ -1,9 +1,12 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * NotificationForm Class
@@ -21,53 +24,54 @@ public class NotificationForm {
     private JLabel editTextLabel;
     private JButton sendNotificationButton;
     private JLabel sendToLabel;
-    private JRadioButton allRadio;
-    private JRadioButton specificRadio;
-    private JComboBox groupSelect;
+//    private JRadioButton allRadio;
+//    private JRadioButton specificRadio;
+    private JList groupSelect;
     private JComboBox chooseTemplate;
     private String currentUser;
     private int groupID;
     private SubscriberDB subs = new SubscriberDB();
     private ArrayList<Template> templates = subs.readTemplates();
     private ArrayList<Recipient> recipients = subs.readSubscriberData();
+    private HashMap<Integer, ArrayList<Integer>> groups = subs.getGroupMakeup();
 
 
     public NotificationForm(String currUser) {
         this.currentUser = currUser;
         populateTemplateMenu();
-        poulateRecipientMenu();
+        populateRecipientMenu();
         getCurrentUserID();
 
-        /**
-        * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
-        * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
-        * field from editing.
-        */
-        allRadio.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if(allRadio.isSelected()) {
-                    groupID = 0;
-                    groupSelect.setEnabled(false);
-                    specificRadio.setSelected(false);
-                }
-            }
-        });
-        /**
-         * Action Listener for the "Specific Users" radio button. Disables the "All Users" radio, sets text of Recipient
-         * List to an empty text field.
-         * TODO: Parse Recipient field to detect usernames.
-         */
-        specificRadio.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if(specificRadio.isSelected()) {
-                    groupID = groupSelect.getSelectedIndex();
-                    groupSelect.setEnabled(true);
-                    allRadio.setSelected(false);
-                }
-            }
-        });
+//        /**
+//        * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
+//        * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
+//        * field from editing.
+//        */
+//        allRadio.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent actionEvent) {
+//                if(allRadio.isSelected()) {
+//                    groupID = 0;
+//                    groupSelect.setEnabled(false);
+//                    specificRadio.setSelected(false);
+//                }
+//            }
+//        });
+//        /**
+//         * Action Listener for the "Specific Users" radio button. Disables the "All Users" radio, sets text of Recipient
+//         * List to an empty text field.
+//         * TODO: Parse Recipient field to detect usernames.
+//         */
+//        specificRadio.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent actionEvent) {
+//                if(specificRadio.isSelected()) {
+//                    groupID = groupSelect.getSelectedIndex();
+//                    groupSelect.setEnabled(true);
+//                    allRadio.setSelected(false);
+//                }
+//            }
+//        });
        /**
          * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
          * clears the message field.
@@ -98,21 +102,21 @@ public class NotificationForm {
                 TagParser parser = new TagParser(getMessageText());
                 int msgRecipientCount = 0;
                 if(checkMessageContent()) {
-//                    String parsedMessage = parser.returnParsedMessage(); // Added here in case the next lines are commented out.
+                    String parsedMessage = parser.returnParsedMessage(); // Added here in case the next lines are commented out.
                     for(Recipient recipient: recipients) {
                         if(groupID == 0) {
                             msgRecipientCount++;
-                        } else if(recipient.getSubscriberRole() == groupID) {
+                        } else if(groups.get(groupID).contains(recipient.getUserID())) {
 //                            The following lines are disabled to prevent spam.
-                            SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
+//                            SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
 //                            MessageBuilder msg = new MessageBuilder(recipient, parser.returnParsedMessage());
-                            smsMsg.sendSMS();
+//                            smsMsg.sendSMS();
 //                            msg.sendMessage();
                             recipientIDs.add(recipient.getUserID());
                             msgRecipientCount++;
                         }
                     }
-//                    System.out.println(parsedMessage);
+                    System.out.println(parsedMessage);
 //                    subs.logMessage(getMessageText(), msgRecipientCount, getCurrentUserID());
 //                    for(int recipID : recipientIDs) {
 //                        subs.logRecipients(recipID);
@@ -123,10 +127,16 @@ public class NotificationForm {
         /**
          * Change the selected Group of Recipients.
          */
-        groupSelect.addActionListener(new ActionListener() {
+//        groupSelect.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent actionEvent) {
+//                setGroupID(groupSelect.getSelectedIndex());
+//            }
+//        });
+        groupSelect.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                setGroupID(groupSelect.getSelectedIndex());
+            public void valueChanged(ListSelectionEvent listSelectionEvent) {
+                int[] groups = groupSelect.getSelectedIndices();
             }
         });
     }
@@ -149,14 +159,18 @@ public class NotificationForm {
      * Create a model for the ComboBox pulldown menu for the message recipients and populate it with group
      * name and number of members of each group.
      */
-    public void poulateRecipientMenu() {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) groupSelect.getModel();
+    public void populateRecipientMenu() {
+//        ListModel model = (ListModel) groupSelect.getModel();
+        DefaultListModel model = new DefaultListModel();
         model.removeAllElements();
-        int[] groupCounts = getGroupCounts();
-        model.addElement("Select Recipients...");
-        model.addElement("Managers: " + groupCounts[0]);
-        model.addElement("Staff: " + groupCounts[1]);
-        model.addElement("Subscribers: " + groupCounts[2]);
+//        int[] groupCounts = getGroupCounts();
+        model.addElement("All Recipients");
+//        model.addElement("Managers: " + groupCounts[0]);
+//        model.addElement("Staff: " + groupCounts[1]);
+//        model.addElement("Subscribers: " + groupCounts[2]);
+        model.addElement("Managers: ");
+        model.addElement("Staff: ");
+        model.addElement("Subscribers: ");
         groupSelect.setModel(model);
     }
 
@@ -173,21 +187,21 @@ public class NotificationForm {
      * in the Subscribers List. Returns a string of all Usernames in the Database.
      * @return toList A list of all subscriber's Usernames
      */
-    public int[] getGroupCounts() {
-//        Iterator<Recipient> recipientStrings = recipients.iterator();
-        int[] groupCount = new int[3];
-        for(Recipient recipient : recipients) {
-            switch(recipient.getSubscriberRole()) {
-                case 1: groupCount[0]++;
-                        break;
-                case 2: groupCount[1]++;
-                        break;
-                case 3: groupCount[2]++;
-                        break;
-            }
-        }
-        return groupCount;
-    }
+//    public int[] getGroupCounts() {
+////        Iterator<Recipient> recipientStrings = recipients.iterator();
+//        int[] groupCount = new int[3];
+//        for(Recipient recipient : recipients) {
+//            switch(recipient.getSubscriberRole()) {
+//                case 1: groupCount[0]++;
+//                        break;
+//                case 2: groupCount[1]++;
+//                        break;
+//                case 3: groupCount[2]++;
+//                        break;
+//            }
+//        }
+//        return groupCount;
+//    }
 
     /**
      *  Return the String Value of the Message in the Notification Text Area
@@ -215,10 +229,10 @@ public class NotificationForm {
     /**
      * Sets the GroupID for the group that is to receive the message. This value will be matched against
      * Subscriber Role IDs.
-     * @param groupID
+     * @param groups
      */
-    private void setGroupID(int groupID) {
-        this.groupID = groupID;
+    private void setGroupID(int[] groups) {
+//        this.groupID = groups;
     }
 
     /**

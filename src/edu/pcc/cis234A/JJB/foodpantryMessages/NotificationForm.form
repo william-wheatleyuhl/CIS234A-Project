@@ -3,19 +3,20 @@
   <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="9" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="595" height="493"/>
+      <xy x="20" y="20" width="615" height="493"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <component id="ad5ba" class="javax.swing.JComboBox" binding="groupSelect">
+      <component id="32dba" class="javax.swing.JList" binding="groupSelect">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="2" column="1" row-span="2" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
         <properties>
-          <enabled value="false"/>
+          <enabled value="true"/>
+          <toolTipText value="Select One or More Groups..."/>
         </properties>
       </component>
       <component id="c9bd5" class="javax.swing.JComboBox" binding="chooseTemplate">
@@ -41,31 +42,6 @@
           <lineWrap value="true"/>
           <text value=""/>
           <wrapStyleWord value="true"/>
-        </properties>
-      </component>
-      <component id="303f7" class="javax.swing.JRadioButton" binding="allRadio">
-        <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <selected value="true"/>
-          <text value="All Subscribers"/>
-        </properties>
-      </component>
-      <component id="90da7" class="javax.swing.JLabel" binding="editTextLabel">
-        <constraints>
-          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Message Text:"/>
-        </properties>
-      </component>
-      <component id="76d8a" class="javax.swing.JLabel" binding="sendToLabel">
-        <constraints>
-          <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Send To:"/>
         </properties>
       </component>
       <vspacer id="5bcd8">
@@ -96,18 +72,33 @@
           </grid>
         </constraints>
       </hspacer>
-      <component id="16224" class="javax.swing.JRadioButton" binding="specificRadio">
+      <hspacer id="91f7a">
         <constraints>
-          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
+      <component id="90da7" class="javax.swing.JLabel" binding="editTextLabel">
+        <constraints>
+          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <enabled value="true"/>
-          <text value="Choose A Group"/>
+          <text value="Message Text:"/>
+        </properties>
+      </component>
+      <component id="76d8a" class="javax.swing.JLabel" binding="sendToLabel">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Send To:"/>
         </properties>
       </component>
       <component id="9b846" class="javax.swing.JButton" binding="sendNotificationButton">
         <constraints>
-          <grid row="7" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="1" use-parent-layout="false">
+            <minimum-size width="150" height="-1"/>
+            <preferred-size width="150" height="-1"/>
+          </grid>
         </constraints>
         <properties>
           <text value="Send"/>

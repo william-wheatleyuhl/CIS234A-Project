@@ -2,6 +2,8 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * SubsciberDB Class
@@ -13,13 +15,14 @@ public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
-    private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, RoleID FROM [USER]";
+    private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone FROM [USER]";
+    private static final String GROUPS_QUERY = "SELECT UserID, GroupID FROM USERGROUP";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
-
-
+    private ArrayList<Recipient> receivers = new ArrayList<>();
+    private HashMap<Integer, ArrayList<Integer>> groups = new HashMap<>();
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
     }
@@ -30,24 +33,44 @@ public class SubscriberDB {
      * @return recipients Return an ArrayList of Recipient Objects
      */
     public ArrayList readSubscriberData() {
-        ArrayList<Recipient> receivers = new ArrayList<>();
         try (
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SUBSCRIBER_QUERY);
                 ResultSet rs = stmt.executeQuery()
                 ) {
             while (rs.next()) {
-                receivers.add(new Recipient(rs.getInt("UserID"),
+                receivers.add(new Recipient(
+                        rs.getInt("UserID"),
                         rs.getString("Username"),
                         rs.getString("LastName"),
                         rs.getString("FirstName"),
                         rs.getString("Email"),
-                        rs.getInt("RoleID")));
+                        rs.getString("Phone")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return receivers;
+    }
+
+    public HashMap getGroupMakeup() {
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(GROUPS_QUERY);
+                ResultSet rs = stmt.executeQuery()
+                ) {
+            while(rs.next()) {
+                if(!groups.containsKey(rs.getInt("GroupID"))) {
+                    groups.computeIfAbsent(rs.getInt("GroupID"), k -> new ArrayList<>()).add(rs.getInt("UserID"));
+//                    groups.put(rs.getInt("GroupID"), List<Integer> members = new List<Integer>());
+                } else {
+                    groups.get(rs.getInt("GroupIO")).add(rs.getInt("UserID"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return groups;
     }
 
     /**

@@ -1,5 +1,7 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import java.util.List;
+
 /**
  *Recipient Class
  * This Class will model the recipient, and will store Recipient data.
@@ -12,15 +14,15 @@ public class Recipient {
     private String firstName;
     private String lastName;
     private String emailAddr;
-    private int subscriberRole;
+    private String phoneNbr;
 
-    public Recipient(int userID, String userName, String lastName, String firstName, String emailAddr, int subscriberRole) {
+    public Recipient(int userID, String userName, String lastName, String firstName, String emailAddr, String phoneNbr) {
         this.userID = userID;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddr = emailAddr;
-        this.subscriberRole = subscriberRole;
+        this.phoneNbr = phoneNbr;
     }
 
     //    Setters
@@ -58,7 +60,4 @@ public class Recipient {
         return emailAddr;
     }
 
-    public int getSubscriberRole() {
-        return subscriberRole;
-    }
 }
