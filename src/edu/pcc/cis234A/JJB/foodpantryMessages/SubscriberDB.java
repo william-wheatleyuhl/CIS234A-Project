@@ -16,7 +16,7 @@ public class SubscriberDB {
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone FROM [USER]";
-    private static final String GROUPS_QUERY = "SELECT UserID, GroupID FROM USERGROUP";
+    private static final String GROUPS_QUERY = "SELECT UserID, GroupID FROM USER_GROUP;";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
@@ -64,7 +64,7 @@ public class SubscriberDB {
                     groups.computeIfAbsent(rs.getInt("GroupID"), k -> new ArrayList<>()).add(rs.getInt("UserID"));
 //                    groups.put(rs.getInt("GroupID"), List<Integer> members = new List<Integer>());
                 } else {
-                    groups.get(rs.getInt("GroupIO")).add(rs.getInt("UserID"));
+                    groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));
                 }
             }
         } catch (SQLException e) {

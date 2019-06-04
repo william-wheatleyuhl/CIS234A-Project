@@ -24,15 +24,13 @@ public class NotificationForm {
     private JLabel editTextLabel;
     private JButton sendNotificationButton;
     private JLabel sendToLabel;
-//    private JRadioButton allRadio;
-//    private JRadioButton specificRadio;
     private JList groupSelect;
     private JComboBox chooseTemplate;
     private String currentUser;
-    private int groupID;
+    private ArrayList<Integer> selectedGroups = new ArrayList<>();
     private SubscriberDB subs = new SubscriberDB();
     private ArrayList<Template> templates = subs.readTemplates();
-    private ArrayList<Recipient> recipients = subs.readSubscriberData();
+    private ArrayList<Recipient> subscribers = subs.readSubscriberData();
     private HashMap<Integer, ArrayList<Integer>> groups = subs.getGroupMakeup();
 
 
@@ -41,37 +39,8 @@ public class NotificationForm {
         populateTemplateMenu();
         populateRecipientMenu();
         getCurrentUserID();
+        System.out.println(groups.toString());
 
-//        /**
-//        * Action Listener for the "All Recipient" radio button. Selecting this populates the recipient text field
-//        * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
-//        * field from editing.
-//        */
-//        allRadio.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent actionEvent) {
-//                if(allRadio.isSelected()) {
-//                    groupID = 0;
-//                    groupSelect.setEnabled(false);
-//                    specificRadio.setSelected(false);
-//                }
-//            }
-//        });
-//        /**
-//         * Action Listener for the "Specific Users" radio button. Disables the "All Users" radio, sets text of Recipient
-//         * List to an empty text field.
-//         * TODO: Parse Recipient field to detect usernames.
-//         */
-//        specificRadio.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent actionEvent) {
-//                if(specificRadio.isSelected()) {
-//                    groupID = groupSelect.getSelectedIndex();
-//                    groupSelect.setEnabled(true);
-//                    allRadio.setSelected(false);
-//                }
-//            }
-//        });
        /**
          * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
          * clears the message field.
@@ -102,20 +71,21 @@ public class NotificationForm {
                 TagParser parser = new TagParser(getMessageText());
                 int msgRecipientCount = 0;
                 if(checkMessageContent()) {
-                    String parsedMessage = parser.returnParsedMessage(); // Added here in case the next lines are commented out.
-                    for(Recipient recipient: recipients) {
-                        if(groupID == 0) {
-                            msgRecipientCount++;
-                        } else if(groups.get(groupID).contains(recipient.getUserID())) {
-//                            The following lines are disabled to prevent spam.
-//                            SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
-//                            MessageBuilder msg = new MessageBuilder(recipient, parser.returnParsedMessage());
-//                            smsMsg.sendSMS();
-//                            msg.sendMessage();
-                            recipientIDs.add(recipient.getUserID());
-                            msgRecipientCount++;
-                        }
-                    }
+                    String parsedMessage = parser.returnParsedMessage();
+                    // Added here in case the next lines are commented out.
+//                    for(Recipient recipient: subscribers) {
+//                        if(selectedGroups.contains(0)) {
+//                            msgRecipientCount++;
+//                        } else if(groups.get(groupID).contains(recipient.getUserID())) {
+////                            The following lines are disabled to prevent spam.
+////                            SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
+////                            MessageBuilder msg = new MessageBuilder(recipient, parser.returnParsedMessage());
+////                            smsMsg.sendSMS();
+////                            msg.sendMessage();
+//                            recipientIDs.add(recipient.getUserID());
+//                            msgRecipientCount++;
+//                        }
+//                    }
                     System.out.println(parsedMessage);
 //                    subs.logMessage(getMessageText(), msgRecipientCount, getCurrentUserID());
 //                    for(int recipID : recipientIDs) {
@@ -127,17 +97,25 @@ public class NotificationForm {
         /**
          * Change the selected Group of Recipients.
          */
-//        groupSelect.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent actionEvent) {
-//                setGroupID(groupSelect.getSelectedIndex());
-//            }
-//        });
         groupSelect.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
-                int[] groups = groupSelect.getSelectedIndices();
+                selectedGroups.clear();
+                if (!listSelectionEvent.getValueIsAdjusting()) {
+                    int[] groups = groupSelect.getSelectedIndices();
+                    for (int group : groups) {
+                        selectedGroups.add(group);
+                    }
+                }
+//                for(int group: selectedGroups) {
+//                    System.out.println(group);
+//                }
+                ArrayList<Recipient> recipients = buildRecipientList();
+                for(Recipient recipient: recipients) {
+                    System.out.println(recipient.getUserName());
+                }
             }
+
         });
     }
 
@@ -156,21 +134,17 @@ public class NotificationForm {
     }
 
     /**
-     * Create a model for the ComboBox pulldown menu for the message recipients and populate it with group
+     * Create a model for the ComboBox pulldown menu for the message subscribers and populate it with group
      * name and number of members of each group.
      */
     public void populateRecipientMenu() {
 //        ListModel model = (ListModel) groupSelect.getModel();
         DefaultListModel model = new DefaultListModel();
         model.removeAllElements();
-//        int[] groupCounts = getGroupCounts();
         model.addElement("All Recipients");
-//        model.addElement("Managers: " + groupCounts[0]);
-//        model.addElement("Staff: " + groupCounts[1]);
-//        model.addElement("Subscribers: " + groupCounts[2]);
-        model.addElement("Managers: ");
-        model.addElement("Staff: ");
-        model.addElement("Subscribers: ");
+        for(Integer key : groups.keySet()) {
+            model.addElement( key + ": " +  groups.get(key).size());
+        }
         groupSelect.setModel(model);
     }
 
@@ -182,26 +156,6 @@ public class NotificationForm {
         return rootPanel;
     }
 
-    /**
-     * Converts ArrayList of recipients into an Iterator Class.Iterates through the list of usernames
-     * in the Subscribers List. Returns a string of all Usernames in the Database.
-     * @return toList A list of all subscriber's Usernames
-     */
-//    public int[] getGroupCounts() {
-////        Iterator<Recipient> recipientStrings = recipients.iterator();
-//        int[] groupCount = new int[3];
-//        for(Recipient recipient : recipients) {
-//            switch(recipient.getSubscriberRole()) {
-//                case 1: groupCount[0]++;
-//                        break;
-//                case 2: groupCount[1]++;
-//                        break;
-//                case 3: groupCount[2]++;
-//                        break;
-//            }
-//        }
-//        return groupCount;
-//    }
 
     /**
      *  Return the String Value of the Message in the Notification Text Area
@@ -227,25 +181,32 @@ public class NotificationForm {
     }
 
     /**
-     * Sets the GroupID for the group that is to receive the message. This value will be matched against
-     * Subscriber Role IDs.
-     * @param groups
-     */
-    private void setGroupID(int[] groups) {
-//        this.groupID = groups;
-    }
-
-    /**
      * Obtains the current user's ID number from the DB, and adds this value to the notification log.
      * @return Currently logged in userID.
      */
     private int getCurrentUserID() {
         int currUserID = 0;
-        for(Recipient recipient : recipients) {
+        for(Recipient recipient : subscribers) {
             if(recipient.getUserName().equals(currentUser)) {
                 currUserID =  recipient.getUserID();
             }
         }
         return currUserID;
+    }
+
+    private ArrayList buildRecipientList() {
+        ArrayList<Recipient> recipients = new ArrayList<>();
+            if(selectedGroups.contains(0)) {
+                recipients = subscribers;
+            } else {
+                for (Recipient recipient : subscribers) {
+                    for(Integer groupID : selectedGroups) {
+                        if (groups.get(groupID).contains(recipient.getUserID()) && !recipients.contains(recipient)) {
+                            recipients.add(recipient);
+                        }
+                    }
+                }
+            }
+        return recipients;
     }
 }
