@@ -22,6 +22,10 @@ public class JavaneseJumpingBeansDB {
     private static final String NOTIFICATION_SQL = "SELECT * FROM NOTIFICATION " +
             "WHERE DateTime >= ? AND DateTime <= ? ORDER BY DateTime DESC, MessageID DESC";
     private static final String USER_SQL = "SELECT Username FROM [USER] WHERE UserID = ?";
+    private static final String USERID_SQL = "SELECT UserID FROM [USER] WHERE Username = ?";
+    private static final String SUBSCRIPTION_SETTINGS_SQL = "SELECT * FROM USER_SETTING WHERE UserID = ?";
+    private static final String USER_SETTINGS_SQL = "SELECT Email, AltEmail, Phone FROM [USER] WHERE UserID = ?";
+    private int userId;
 
     /**
      * Establishes the DB connection.
@@ -88,6 +92,7 @@ public class JavaneseJumpingBeansDB {
         ) {
             for (Notification not : notifications) {
                 stmt.setInt(1, not.getUserId());
+                stmt.getMetaData();
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
                     not.setUsername(rs.getString("Username"));
@@ -97,4 +102,106 @@ public class JavaneseJumpingBeansDB {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Reads and returns notifications along with their details and usernames
+     * @return A list of notifications
+     */
+    public void setUserId(String username) {
+        userId = -1;
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(USERID_SQL);
+        ) {
+            System.out.println("setUserId username: " + username);
+            stmt.setString(1, username);
+            System.out.println("PreparedStatement: " + stmt);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                userId = rs.getInt("UserID");
+            }
+            System.out.println("setUserId userId: " + userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Reads and returns notifications along with their details and usernames
+     * @return A list of notifications
+     */
+    public SubscriptionSetting readSubscriptionSettings(String username) {
+        SubscriptionSetting subscriptionSetting = new SubscriptionSetting();
+        System.out.println("readSettings username: " + username);
+        setUserId(username);
+        System.out.println("readingSettings userId: " + userId);
+
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(SUBSCRIPTION_SETTINGS_SQL);
+        ) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                subscriptionSetting.setUserId(rs.getInt("UserID"));
+                subscriptionSetting.setNotificationsOn(rs.getBoolean("NotificationsOn"));
+                subscriptionSetting.setCascadeOn(rs.getBoolean("CascadeOn"));
+                subscriptionSetting.setRockCreekOn(rs.getBoolean("RockCreekOn"));
+                subscriptionSetting.setSoutheastOn(rs.getBoolean("SoutheastOn"));
+                subscriptionSetting.setSylvaniaOn(rs.getBoolean("SylvaniaOn"));
+                subscriptionSetting.setEmailOn(rs.getBoolean("EmailOn"));
+                subscriptionSetting.setAltEmailOn(rs.getBoolean("AltEmailOn"));
+                subscriptionSetting.setSmsOn(rs.getBoolean("SMSOn"));
+            }
+            System.out.println("UserID: " + subscriptionSetting.getUserId() +
+                    " || NotificationsOn: " + subscriptionSetting.isNotificationsOn() +
+                    " || CascadeOn: " + subscriptionSetting.isCascadeOn() +
+                    " || RockCreekOn: " + subscriptionSetting.isRockCreekOn() +
+                    " || SoutheastOn: " + subscriptionSetting.isSoutheastOn() +
+                    " || SylvaniaOn: " + subscriptionSetting.isSylvaniaOn() +
+                    " || EmailOn: " + subscriptionSetting.isEmailOn() +
+                    " || AltEmailOn: " + subscriptionSetting.isAltEmailOn() +
+                    " || SMSOn: " + subscriptionSetting.isSmsOn());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return subscriptionSetting;
+    }
+
+    /**
+     * Reads and returns notifications along with their details and usernames
+     * @return A list of notifications
+     */
+    public UserSetting readUserSettings() {
+        UserSetting userSetting = new UserSetting();
+        System.out.println("readUserSettings userId: " + userId);
+
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(USER_SETTINGS_SQL);
+        ) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                userSetting.setEmail(rs.getString("Email"));
+                if (rs.getString("AltEmail") == null) {
+                    userSetting.setAltEmail("");
+                } else {
+                    userSetting.setAltEmail(rs.getString("AltEmail"));
+                }
+                if (rs.getString("Phone") == null) {
+                    userSetting.setPhoneNbr("");
+                } else {
+                    userSetting.setPhoneNbr(rs.getString("Phone"));
+                }
+            }
+            System.out.println("Email: " + userSetting.getEmail() +
+                    " || Alt Email: " + userSetting.getAltEmail() +
+                    " || Phone #: " + userSetting.getPhoneNbr());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userSetting;
+    }
+
 }

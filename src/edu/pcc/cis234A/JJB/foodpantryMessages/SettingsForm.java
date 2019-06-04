@@ -1,23 +1,9 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
-import com.toedter.calendar.JDateChooser;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * The Settings form class
@@ -28,46 +14,61 @@ import java.util.Date;
  */
 public class SettingsForm {
     private JPanel rootPanel;
-    private JTable notificationDataTable;
-    private JLabel minDateLabel;
-    private JPanel minDatePanel;
-    private JLabel maxDateLabel;
-    private JLabel campusesLabel;
     private JCheckBox notificationOnOffCheckBox;
     private JCheckBox cascadeCheckBox;
     private JCheckBox rockCreekCheckBox;
     private JCheckBox southeastCheckBox;
     private JCheckBox sylvaniaCheckBox;
     private JLabel subscriptionSettingsLabel;
+    private JLabel campusesLabel;
     private JLabel notificationMethodsLabel;
     private JCheckBox emailCheckBox;
     private JCheckBox alternateEmailCheckBox;
     private JCheckBox smsCheckBox;
+    private JLabel emailLabel;
     private JTextField emailTextField;
     private JLabel altEmailLabel;
-    private JLabel emailLabel;
     private JTextField altEmailTextField;
     private JLabel phoneNumberLabel;
     private JTextField phoneNumberTextField;
-    JCheckBox[] boxes;
-    private int id;
+    private JCheckBox[] boxes;
 
     /**
      * Creates the Food Pantry Settings form with notification and user settings.  Includes a method call to
      * initialize this tab with the user's settings from the database.  
      */
     public SettingsForm() {
+        UserLogin ul = new UserLogin();
+        String un = ul.getLoggedInUser();
+        JavaneseJumpingBeansDB jjb = new JavaneseJumpingBeansDB();
+        SubscriptionSetting subscriptionSettings;
+        UserSetting userSettings;
         boxes = new JCheckBox[]{ cascadeCheckBox, rockCreekCheckBox, southeastCheckBox, sylvaniaCheckBox,
             emailCheckBox, alternateEmailCheckBox, smsCheckBox };
-        // TODO: Replace below with loadSettings() method
-        notificationOnOffCheckBox.setSelected(true);
-        cascadeCheckBox.setSelected(true);
-        rockCreekCheckBox.setSelected(true);
-        southeastCheckBox.setSelected(true);
-        sylvaniaCheckBox.setSelected(true);
-        emailCheckBox.setSelected(true);
-        alternateEmailCheckBox.setSelected(true);
-        smsCheckBox.setSelected(true);
+        emailTextField.setMargin(new Insets(0,2,2,0));
+        altEmailTextField.setMargin(new Insets(0,2,2,0));
+        phoneNumberTextField.setMargin(new Insets(0,2,2,0));
+
+        subscriptionSettings = jjb.readSubscriptionSettings(un);
+        if(subscriptionSettings.isNotificationsOn()) {
+            setEnabledFieldStatus(true);
+        } else {
+            setEnabledFieldStatus(false);
+        }
+        notificationOnOffCheckBox.setSelected(subscriptionSettings.isNotificationsOn());
+        cascadeCheckBox.setSelected(subscriptionSettings.isCascadeOn());
+        rockCreekCheckBox.setSelected(subscriptionSettings.isRockCreekOn());
+        southeastCheckBox.setSelected(subscriptionSettings.isSoutheastOn());
+        sylvaniaCheckBox.setSelected(subscriptionSettings.isSylvaniaOn());
+        emailCheckBox.setSelected(subscriptionSettings.isEmailOn());
+        alternateEmailCheckBox.setSelected(subscriptionSettings.isAltEmailOn());
+        smsCheckBox.setSelected(subscriptionSettings.isSmsOn());
+
+        userSettings = jjb.readUserSettings();
+        emailTextField.setText(userSettings.getEmail());
+        altEmailTextField.setText(userSettings.getAltEmail());
+        String phone = userSettings.getPhoneNbr().replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
+        phoneNumberTextField.setText(phone);
 
         /**
          * Action Listener for top level notification settings check box. This is selected by default when a subscriber
@@ -79,31 +80,12 @@ public class SettingsForm {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(notificationOnOffCheckBox.isSelected()) {
-                    for (JCheckBox box : boxes) {
-                        box.setEnabled(true);
-                    }
+                    setEnabledFieldStatus(true);
                 } else {
-                    for (JCheckBox box : boxes) {
-                        box.setEnabled(false);
-                    }
+                    setEnabledFieldStatus(false);
                 }
             }
         });
-        /**
-         * Action Listener for the "Specific Users" radio button. Disables the "All Users" radio, sets text of Recipient
-         * List to an empty text field.
-         * TODO: Parse Recipient field to detect usernames.
-         */
-        /*specificRadio.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if(specificRadio.isSelected()) {
-                    groupID = groupSelect.getSelectedIndex();
-                    groupSelect.setEnabled(true);
-                    allRadio.setSelected(false);
-                }
-            }
-        });*/
     }
 
     /**
@@ -115,4 +97,11 @@ public class SettingsForm {
     }
 
 
+    public void setEnabledFieldStatus(Boolean status) {
+        for (JCheckBox box : boxes) {
+            box.setEnabled(status);
+        }
+        campusesLabel.setEnabled(status);
+        notificationMethodsLabel.setEnabled(status);
+    }
 }
