@@ -14,7 +14,10 @@ public class Presentation {
     private JTabbedPane tabbedPane1;
     private JPanel rootPanel;
     private UserLogin ul =  new UserLogin();
+    private UserLoginDB uldb = new UserLoginDB();
     private String username = ul.getLoggedInUser();
+    private int userID = uldb.getUsernameUserID(username);
+    private int roleID = uldb.getUserIDRoleID(userID);
     private JLabel userLoggedInLabel;
     private JPanel sendNotificationTab;
     private JPanel templateTab;
@@ -25,6 +28,8 @@ public class Presentation {
         sendNotificationTab.add(new NotificationForm().getRootPanel());
         templateTab.add(new createTemplateForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
+
+        System.out.println(username + " " + userID + " " + roleID);
     }
 
     /**

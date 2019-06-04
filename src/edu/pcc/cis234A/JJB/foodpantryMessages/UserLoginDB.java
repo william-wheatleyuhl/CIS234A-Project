@@ -1,5 +1,6 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 /**
@@ -64,7 +65,7 @@ public class UserLoginDB {
     public void insertUser(int highestUserID){
         try(
                 Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement("INSERT INTO [USER] VALUES ('"+highestUserID+"', '"+UserLoginGUI.usernameDB[0]+"', '"+UserLoginGUI.lastNameDB+"', '"+UserLoginGUI.firstNameDB+"', '"+UserLoginGUI.emailDB+"', 3, NULL, NULL, NULL)")
+                PreparedStatement stmt = conn.prepareStatement("INSERT INTO [USER] VALUES ('"+highestUserID+"', '"+UserLoginGUI.usernameDB[0]+"', '"+UserLoginGUI.lastNameDB+"', '"+UserLoginGUI.firstNameDB+"', '"+UserLoginGUI.emailDB+"', 3, 1, NULL, NULL)")
         ){
             stmt.executeUpdate();
         } catch(SQLException e){
@@ -72,20 +73,37 @@ public class UserLoginDB {
         }
     }
 
+    /**
+     * Inserts a new users password and salt into the database.
+     */
     public void insertUserPassword(int highestUserID){
         try(
-                Connection conn2 = getConnection();
-                PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('"+UserLoginGUI.passwordDB+"', "+highestUserID+", '"+UserLogin.salt+"')");
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement("INSERT INTO [PASSWORD] VALUES ('"+UserLoginGUI.passwordDB+"', "+highestUserID+", '"+UserLogin.salt+"')");
                 //PreparedStatement stmt2 = conn2.prepareStatement(insertPasswordString);
                 //PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('testhash',35 , NULL)");
         ){
-            stmt2.executeUpdate();
+            stmt.executeUpdate();
         } catch(SQLException e){
             e.printStackTrace();
         }
     }
 
-
+    /**
+     * Initializes some default user settings for a new user.
+     */
+    public void insertDefaultSettings(int highestUserID){
+        try(
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement("INSERT INTO [USER_SETTING] VALUES ("+highestUserID+", 1, 1, 1, 1, 1, 1, 0, 0)");
+                //PreparedStatement stmt2 = conn2.prepareStatement(insertPasswordString);
+                //PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('testhash',35 , NULL)");
+        ){
+            stmt.executeUpdate();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Checks if a username exists in the database
@@ -137,6 +155,24 @@ public class UserLoginDB {
         return userID;
     }
 
+    public int getUserIDRoleID(int userID){
+        int roleID = 0;
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(UserSelectStar)
+        ){
+            while(rs.next()){
+                if(rs.getInt("UserID") == userID){
+                    roleID = rs.getInt("RoleID");
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return roleID;
+    }
+
     /**
      * Iterates through the PASSWORD table in the database until it finds a row with the UserID and then checks the associated hashed PW
      * and makes sure it's the same as the inputted one.
@@ -181,6 +217,55 @@ public class UserLoginDB {
             e.printStackTrace();
         }
         return userSalt;
+    }
+
+    public boolean getUserActive(int userID){
+        boolean userActive = false;
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(UserSelectStar)
+        ){
+            while(rs.next()){
+                if(rs.getInt("UserID") == userID){
+                    if(!rs.getBoolean("Active")){
+                        userActive = false;
+                    }
+                    else{
+                        userActive = true;
+                    }
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return userActive;
+    }
+
+    public void deactivateUserAccount(int userID){
+        try(
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement("UPDATE [USER] SET Active = 0 WHERE UserID = "+userID+";");
+                //PreparedStatement stmt2 = conn2.prepareStatement(insertPasswordString);
+                //PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('testhash',35 , NULL)");
+        ){
+            stmt.executeUpdate();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void reactivateUserAccount(int userID){
+        try(
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement("UPDATE [USER] SET Active = 1 WHERE UserID = "+userID+";");
+                //PreparedStatement stmt2 = conn2.prepareStatement(insertPasswordString);
+                //PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('testhash',35 , NULL)");
+        ){
+            stmt.executeUpdate();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
     }
 
 

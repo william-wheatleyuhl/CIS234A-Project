@@ -29,6 +29,7 @@ public class UserLoginGUI {
     private JLabel suPasswordLabel2;
     private JTextField suPasswordField2;
     private JButton suButton;
+    private JButton deactivateButton;
 
     public static String[] usernameDB;
     public static String lastNameDB;
@@ -39,6 +40,8 @@ public class UserLoginGUI {
 
     private UserLoginDB database1 = new UserLoginDB();
     int highestUserID = database1.getHighestUserID();
+
+    private boolean deactivateAccount = false;
 
 
     public UserLoginGUI() {
@@ -103,6 +106,8 @@ public class UserLoginGUI {
                     database1.insertUser(highestUserID);
                     System.out.println("");
                     database1.insertUserPassword(highestUserID);
+                    System.out.println("");
+                    database1.insertDefaultSettings(highestUserID);
 
                     JOptionPane.showMessageDialog(null, "Successfully signed up!");
                 }
@@ -134,6 +139,8 @@ public class UserLoginGUI {
                 String signInPWHash;
                 boolean signInSuccess = false;
                 String signInUserSalt;
+                boolean userActive = false;
+                int dialogResult;
 
                 boolean userExists = database1.checkUserExists(siUsernameField.getText());
 
@@ -146,24 +153,36 @@ public class UserLoginGUI {
                     signInPW = new String(siPasswordField.getPassword());
                     signInPWHash = UserLogin.hashPassword(signInPW, signInUserSalt);
 
-                    //System.out.println(signInUserID);
-                    //System.out.println(signInPWHash);
-
-                    signInSuccess = database1.checkHashedPWUserMatch(signInPWHash, signInUserID);
-
-                    if(!signInSuccess){
-                        JOptionPane.showMessageDialog(null, "Invalid Sign-in");
+                    userActive = database1.getUserActive(signInUserID);
+                    if(!userActive){
+                        dialogResult = JOptionPane.showConfirmDialog(null, "Reactivate Account?");
+                        if(dialogResult == JOptionPane.YES_OPTION){
+                            database1.reactivateUserAccount(signInUserID);
+                            JOptionPane.showMessageDialog(null, "Account Reactivated");
+                        }
                     }
-                    else{
-                        //JOptionPane.showMessageDialog(null, "Signed in!");
-                        /**
-                         * This is where the splash screen code will execute
-                         */
-                        UserLogin loginSuccess = new UserLogin();
-                        loginSuccess.setLogin(true);
-                        loginSuccess.setLoggedInUser(siUsernameField.getText());
+                    else {
+                        if (deactivateAccount) {
+                            database1.deactivateUserAccount(signInUserID);
+                            JOptionPane.showMessageDialog(null, "Account Deactivated");
+                            deactivateAccount = false;
+                        } else {
+                            signInSuccess = database1.checkHashedPWUserMatch(signInPWHash, signInUserID);
+
+                            if (!signInSuccess) {
+                                JOptionPane.showMessageDialog(null, "Invalid Sign-in");
+                            } else {
+                                //JOptionPane.showMessageDialog(null, "Signed in!");
+                                /**
+                                 * This is where the splash screen code will execute
+                                 */
+                                UserLogin loginSuccess = new UserLogin();
+                                loginSuccess.setLogin(true);
+                                loginSuccess.setLoggedInUser(siUsernameField.getText());
 
 
+                            }
+                        }
                     }
                 }
                 else{
@@ -171,6 +190,14 @@ public class UserLoginGUI {
                 }
 
 
+            }
+        });
+
+        deactivateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deactivateAccount = true;
+                JOptionPane.showMessageDialog(null, "Sign in as usual and your account will be deactivated. Restart program if you changed your mind.");
             }
         });
     }
