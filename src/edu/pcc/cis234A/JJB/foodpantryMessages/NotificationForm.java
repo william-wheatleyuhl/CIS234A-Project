@@ -69,9 +69,20 @@ public class NotificationForm {
             public void actionPerformed(ActionEvent actionEvent) {
                 ArrayList<Integer> recipientIDs = new ArrayList<>();
                 TagParser parser = new TagParser(getMessageText());
-                int msgRecipientCount = 0;
                 if(checkMessageContent()) {
                     String parsedMessage = parser.returnParsedMessage();
+                    ArrayList<Recipient> recipients = buildRecipientList();
+                    for(Recipient recipient : recipients) {
+                        MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
+                        msg.sendMessage();
+                        System.out.println(recipient.getFullName());
+                        recipientIDs.add(recipient.getUserID());
+                    }
+                    System.out.println(parsedMessage);
+                    subs.logMessage(parsedMessage, recipients.size(), getCurrentUserID());
+                    for(int recipID : recipientIDs) {
+                        subs.logRecipients(recipID);
+                    }
                     // Added here in case the next lines are commented out.
 //                    for(Recipient recipient: subscribers) {
 //                        if(selectedGroups.contains(0)) {
@@ -82,14 +93,8 @@ public class NotificationForm {
 ////                            MessageBuilder msg = new MessageBuilder(recipient, parser.returnParsedMessage());
 ////                            smsMsg.sendSMS();
 ////                            msg.sendMessage();
-//                            recipientIDs.add(recipient.getUserID());
 //                            msgRecipientCount++;
 //                        }
-//                    }
-                    System.out.println(parsedMessage);
-//                    subs.logMessage(getMessageText(), msgRecipientCount, getCurrentUserID());
-//                    for(int recipID : recipientIDs) {
-//                        subs.logRecipients(recipID);
 //                    }
                 }
             }
