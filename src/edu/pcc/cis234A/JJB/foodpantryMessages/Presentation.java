@@ -29,7 +29,7 @@ public class Presentation {
         templateTab.add(new createTemplateForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
 
-        System.out.println(username + " " + userID + " " + roleID);
+        //System.out.println(username + " " + userID + " " + roleID);
     }
 
     /**
