@@ -7,15 +7,18 @@ import java.util.ArrayList;
  * Connects to the 234a_JavaneseJumpingBeans database & returns requested data based on SQL queries
  *
  * @author Syn
- * @version 2019.05.21
+ * @version 2019.06.04
  *
  * 20190521 SC - Updated UPDATE_TEMPLATE SQL to use UserID instead of RoleID
+ * 20190604 SC - Added LAST_EDIT to query USER table
+ * 20190604 SC - Added getLastEditUser() method
+ * 20190604 SC - Added UserID to readTemplates(), logNewTemplate(), & updateExistingTemplate()
  */
 public class TemplateDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
-    private static final String NAME_QUERY = "SELECT Username, LastName, FirstName FROM [USER]";
+    //private static final String NAME_QUERY = "SELECT Username, LastName, FirstName FROM [USER]";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText, UserID FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT TemplateID FROM TEMPLATE";
     private static final String LOG_TEMPLATE = "INSERT INTO TEMPLATE VALUES(?,?,?,?)";
@@ -30,7 +33,6 @@ public class TemplateDB {
      * Get username of the user who last edited a template
      * @return lastEditUser The username based on UserID
      */
-    //TODO: Fix this brokeness
     public String getLastEditUser(int lastEditUserID) {
         String lastEditUser = "";
         try (

@@ -8,10 +8,12 @@ import java.util.ArrayList;
 
 /**
  * @author Syn Calvo
- * @version 2019.05.21
+ * @version 2019.06.04
  *
  * 20190521 SC - Fixed layout of combobox
  * 20190521 SC - Reconstructed combobox listener to populate template fields dynamically
+ * 20190604 SC - Added loggedInUserID to template submissions
+ * 20190604 SC - Added labelLastEdit to combobox listener
  */
 public class CreateTemplateForm {
     private JPanel rootPanel;
@@ -85,6 +87,7 @@ public class CreateTemplateForm {
          * Action listener for the Edit Existing template comboBox.
          * Selecting a template from the list clears the Template Name and Template Text fields
          * and replaces them with name and text from DB for selected template
+         * Also sets the label at the bottom of the frame for the user who last edited that template
          */
         comboTemplates.addActionListener(new ActionListener() {
             @Override

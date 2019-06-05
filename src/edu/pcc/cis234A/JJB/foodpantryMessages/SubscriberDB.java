@@ -7,7 +7,11 @@ import java.util.ArrayList;
  * SubsciberDB Class
  * Connects to the Database, Returns requested data based on SQL Queries.
  * @author Will Wheatley-Uhl
- * @version 2019.04.22
+ * @version 2019.06.04
+ *
+ * Changelog:
+ * 20190604 SC - Added UserID to TEMPLATE_QUERY
+ * 20190604 SC - Added UserID to readTemplates()
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
