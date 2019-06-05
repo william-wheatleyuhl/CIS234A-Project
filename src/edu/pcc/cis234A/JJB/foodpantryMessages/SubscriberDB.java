@@ -16,13 +16,13 @@ public class SubscriberDB {
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone FROM [USER]";
-    private static final String GROUPS_QUERY = "SELECT UserID, GroupID FROM USER_GROUP;";
+    private static final String GROUPS_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
     private ArrayList<Recipient> receivers = new ArrayList<>();
-    private HashMap<Integer, ArrayList<Integer>> groups = new HashMap<>();
+    private HashMap<Integer, ArrayList<Object>> groups = new HashMap<>();
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
     }
@@ -53,6 +53,10 @@ public class SubscriberDB {
         return receivers;
     }
 
+    /**
+     *
+     * @return
+     */
     public HashMap getGroupMakeup() {
         try (
                 Connection conn = getConnection();
@@ -61,7 +65,8 @@ public class SubscriberDB {
                 ) {
             while(rs.next()) {
                 if(!groups.containsKey(rs.getInt("GroupID"))) {
-                    groups.computeIfAbsent(rs.getInt("GroupID"), k -> new ArrayList<>()).add(rs.getInt("UserID"));
+                    groups.computeIfAbsent(rs.getInt("GroupID"), k -> new ArrayList<>()).add(rs.getString("GroupName"));
+                    groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));
 //                    groups.put(rs.getInt("GroupID"), List<Integer> members = new List<Integer>());
                 } else {
                     groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));

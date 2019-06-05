@@ -69,7 +69,5 @@ public class MessageBuilder {
         } catch(MessagingException e) {
             e.printStackTrace();
         }
-        JOptionPane.showMessageDialog(null, "Message Sent!");
-
     }
 }

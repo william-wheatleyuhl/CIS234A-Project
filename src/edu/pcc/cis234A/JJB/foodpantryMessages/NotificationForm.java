@@ -3,6 +3,7 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -26,12 +27,13 @@ public class NotificationForm {
     private JLabel sendToLabel;
     private JList groupSelect;
     private JComboBox chooseTemplate;
+    private JScrollPane scrollList;
     private String currentUser;
     private ArrayList<Integer> selectedGroups = new ArrayList<>();
     private SubscriberDB subs = new SubscriberDB();
     private ArrayList<Template> templates = subs.readTemplates();
     private ArrayList<Recipient> subscribers = subs.readSubscriberData();
-    private HashMap<Integer, ArrayList<Integer>> groups = subs.getGroupMakeup();
+    private HashMap<Integer, ArrayList<Object>> groups = subs.getGroupMakeup();
 
 
     public NotificationForm(String currUser) {
@@ -39,7 +41,6 @@ public class NotificationForm {
         populateTemplateMenu();
         populateRecipientMenu();
         getCurrentUserID();
-        System.out.println(groups.toString());
 
        /**
          * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
@@ -83,6 +84,8 @@ public class NotificationForm {
                     for(int recipID : recipientIDs) {
                         subs.logRecipients(recipID);
                     }
+                    JOptionPane.showMessageDialog(null, "Message Sent!");
+                    //OLD CODE
                     // Added here in case the next lines are commented out.
 //                    for(Recipient recipient: subscribers) {
 //                        if(selectedGroups.contains(0)) {
@@ -112,9 +115,6 @@ public class NotificationForm {
                         selectedGroups.add(group);
                     }
                 }
-//                for(int group: selectedGroups) {
-//                    System.out.println(group);
-//                }
                 ArrayList<Recipient> recipients = buildRecipientList();
                 for(Recipient recipient: recipients) {
                     System.out.println(recipient.getUserName());
@@ -144,13 +144,17 @@ public class NotificationForm {
      */
     public void populateRecipientMenu() {
 //        ListModel model = (ListModel) groupSelect.getModel();
+        this.groupSelect = new JList();
         DefaultListModel model = new DefaultListModel();
         model.removeAllElements();
         model.addElement("All Recipients");
         for(Integer key : groups.keySet()) {
-            model.addElement( key + ": " +  groups.get(key).size());
+            model.addElement( groups.get(key).get(0) + ":\t\t " +  (groups.get(key).size() - 1));
         }
         groupSelect.setModel(model);
+//        scrollList = new JScrollPane();
+        scrollList.setViewportView(groupSelect);
+//        scrollList.setMinimumSize(new Dimension(50, 150));
     }
 
     /**
@@ -166,7 +170,7 @@ public class NotificationForm {
      *  Return the String Value of the Message in the Notification Text Area
      * @return String of the Message Text
      */
-    public String getMessageText() {
+    private String getMessageText() {
         return notificationTextArea.getText();
     }
 
@@ -175,8 +179,8 @@ public class NotificationForm {
      * something has been entered.
      * @return A Boolean flag declaring if the message is valid or not.
      */
-    private Boolean checkMessageContent() {
-        Boolean valid = false;
+    private boolean checkMessageContent() {
+        boolean valid = false;
         if(getMessageText().equals("")) {
             JOptionPane.showMessageDialog(null, "Message Text may not be Blank");
         } else {
@@ -199,6 +203,10 @@ public class NotificationForm {
         return currUserID;
     }
 
+    /**
+     *
+     * @return
+     */
     private ArrayList buildRecipientList() {
         ArrayList<Recipient> recipients = new ArrayList<>();
             if(selectedGroups.contains(0)) {
