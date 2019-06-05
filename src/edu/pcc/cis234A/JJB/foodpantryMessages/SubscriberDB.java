@@ -9,7 +9,7 @@ import java.util.List;
  * SubsciberDB Class
  * Connects to the Database, Returns requested data based on SQL Queries.
  * @author Will Wheatley-Uhl
- * @version 2019.05.25
+ * @version 2019.06.03
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";

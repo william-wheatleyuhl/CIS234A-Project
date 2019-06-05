@@ -16,7 +16,7 @@ import java.util.HashMap;
  * and send the message. The templates are pulled from the TEMPLATE table in the Database, and all sent messages will
  * be stored in the MESSAGES table and given a unique messageID.
  * @authors Syn Calvo and Will Wheatley-Uhl
- * @version 2019.05.25
+ * @version 2019.06.03
  */
 
 public class NotificationForm {
@@ -74,31 +74,19 @@ public class NotificationForm {
                     String parsedMessage = parser.returnParsedMessage();
                     ArrayList<Recipient> recipients = buildRecipientList();
                     for(Recipient recipient : recipients) {
-                        MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
-                        msg.sendMessage();
+//                        MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
+//                        msg.sendMessage();
+//                        SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
+//                        smsMsg.sendSMS();
                         System.out.println(recipient.getFullName());
                         recipientIDs.add(recipient.getUserID());
                     }
                     System.out.println(parsedMessage);
-                    subs.logMessage(parsedMessage, recipients.size(), getCurrentUserID());
-                    for(int recipID : recipientIDs) {
-                        subs.logRecipients(recipID);
-                    }
-                    JOptionPane.showMessageDialog(null, "Message Sent!");
-                    //OLD CODE
-                    // Added here in case the next lines are commented out.
-//                    for(Recipient recipient: subscribers) {
-//                        if(selectedGroups.contains(0)) {
-//                            msgRecipientCount++;
-//                        } else if(groups.get(groupID).contains(recipient.getUserID())) {
-////                            The following lines are disabled to prevent spam.
-////                            SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
-////                            MessageBuilder msg = new MessageBuilder(recipient, parser.returnParsedMessage());
-////                            smsMsg.sendSMS();
-////                            msg.sendMessage();
-//                            msgRecipientCount++;
-//                        }
+//                    subs.logMessage(parsedMessage, recipients.size(), getCurrentUserID());
+//                    for(int recipID : recipientIDs) {
+//                        subs.logRecipients(recipID);
 //                    }
+                    JOptionPane.showMessageDialog(null, "Message Sent!");
                 }
             }
         });

@@ -6,7 +6,7 @@ import java.util.List;
  *Recipient Class
  * This Class will model the recipient, and will store Recipient data.
  * @author Will Wheatley-Uhl
- * @version 2019.04.23
+ * @version 2019.06.03
  */
 public class Recipient {
     private int userID;
