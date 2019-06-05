@@ -1,10 +1,10 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 /**
- * The Notification table class
+ * The UserSetting class
  *
  * @author Liana Schweitzer
- * @version 2019.04.21
+ * @version 2019.06.03
  */
 public class UserSetting {
     private String email;

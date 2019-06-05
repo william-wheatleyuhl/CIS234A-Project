@@ -25,14 +25,14 @@ public class Presentation {
     private JPanel sendNotificationTab;
     private JPanel templateTab;
     private JPanel msgLogTab;
-    private JPanel fpSetTab;
+    private JPanel fpSettingsTab;
 
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
         sendNotificationTab.add(new NotificationForm(username).getRootPanel());
         templateTab.add(new CreateTemplateForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
-        fpSetTab.add(new SettingsForm().getRootPanel());
+        fpSettingsTab.add(new SettingsForm().getRootPanel());
     }
 
     /**

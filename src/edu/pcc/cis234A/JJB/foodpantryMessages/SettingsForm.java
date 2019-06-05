@@ -71,18 +71,123 @@ public class SettingsForm {
         phoneNumberTextField.setText(phone);
 
         /**
-         * Action Listener for top level notification settings check box. This is selected by default when a subscriber
+         * Action Listener for the top level notification settings check box. This is selected by default when a subscriber
          * first signs up for food pantry notifications.
-         * with the usernames from the Database. Deselects the "Specific Recipients" radio, and disables the Recipients
-         * field from editing.
          */
         notificationOnOffCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(notificationOnOffCheckBox.isSelected()) {
                     setEnabledFieldStatus(true);
+                    jjb.updateNotificationsOn(true);
                 } else {
                     setEnabledFieldStatus(false);
+                    jjb.updateNotificationsOn(false);
+                }
+            }
+        });
+
+        /**
+         * Action Listener for the Cascade check box. This is selected by default when a subscriber
+         * first signs up for food pantry notifications.
+         */
+        cascadeCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(cascadeCheckBox.isSelected()) {
+                    jjb.updateCascadeOn(true);
+                } else {
+                    jjb.updateCascadeOn(false);
+                }
+            }
+        });
+
+        /**
+         * Action Listener for the Rock Creek check box. This is selected by default when a subscriber
+         * first signs up for food pantry notifications.
+         */
+        rockCreekCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(rockCreekCheckBox.isSelected()) {
+                    jjb.updateRockCreekOn(true);
+                } else {
+                    jjb.updateRockCreekOn(false);
+                }
+            }
+        });
+
+        /**
+         * Action Listener for the Southeast check box. This is selected by default when a subscriber
+         * first signs up for food pantry notifications.
+         */
+        southeastCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(southeastCheckBox.isSelected()) {
+                    jjb.updateSoutheastOn(true);
+                } else {
+                    jjb.updateSoutheastOn(false);
+                }
+            }
+        });
+
+        /**
+         * Action Listener for the Sylvania check box. This is selected by default when a subscriber
+         * first signs up for food pantry notifications.
+         */
+        sylvaniaCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(sylvaniaCheckBox.isSelected()) {
+                    jjb.updateSylvaniaOn(true);
+                } else {
+                    jjb.updateSylvaniaOn(false);
+                }
+            }
+        });
+
+        /**
+         * Action Listener for the Email check box. This is selected by default when a subscriber
+         * first signs up for food pantry notifications.
+         */
+        emailCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(emailCheckBox.isSelected()) {
+                    jjb.updateEmailOn(true);
+                } else {
+                    jjb.updateEmailOn(false);
+                }
+            }
+        });
+
+        /**
+         * Action Listener for the Alternate Email check box. This is selected by default when a subscriber
+         * first signs up for food pantry notifications.
+         */
+        alternateEmailCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(alternateEmailCheckBox.isSelected()) {
+                    jjb.updateAltEmailOn(true);
+                } else {
+                    jjb.updateAltEmailOn(false);
+                }
+            }
+        });
+
+        /**
+         * Action Listener for the SMS check box. This is selected by default when a subscriber
+         * first signs up for food pantry notifications.
+         */
+        smsCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(smsCheckBox.isSelected()) {
+                    jjb.updateSmsOn(true);
+                } else {
+                    jjb.updateSmsOn(false);
                 }
             }
         });

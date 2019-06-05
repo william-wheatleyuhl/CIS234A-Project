@@ -1,12 +1,10 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
-import java.sql.Timestamp;
-
 /**
- * The Notification table class
+ * The SubscriptionSetting class
  *
  * @author Liana Schweitzer
- * @version 2019.04.21
+ * @version 2019.06.03
  */
 public class SubscriptionSetting {
     private int userId;
@@ -20,17 +18,6 @@ public class SubscriptionSetting {
     private boolean smsOn;
 
     public SubscriptionSetting() {
-        /*
-        int userId, boolean notificationsOn, boolean cascadeOn, boolean rockCreekOn, boolean southeastOn, boolean sylvaniaOn, boolean emailOn, boolean altEmailOn, boolean smsOn
-        this.userId = userId;
-        this.notificationsOn = notificationsOn;
-        this.cascadeOn = cascadeOn;
-        this.rockCreekOn = rockCreekOn;
-        this.southeastOn = southeastOn;
-        this.sylvaniaOn = sylvaniaOn;
-        this.emailOn = emailOn;
-        this.altEmailOn = altEmailOn;
-        this.smsOn = smsOn;*/
     }
 
     public int getUserId() {
