@@ -129,14 +129,12 @@ public class JavaneseJumpingBeansDB {
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(USER_ID_SQL);
         ) {
-            System.out.println("setUserId username: " + username);
             stmt.setString(1, username);
-            System.out.println("PreparedStatement: " + stmt);
+            //System.out.println("PreparedStatement: " + stmt);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 userId = rs.getInt("UserID");
             }
-            System.out.println("setUserId userId: " + userId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -148,9 +146,7 @@ public class JavaneseJumpingBeansDB {
      */
     public SubscriptionSetting readSubscriptionSettings(String username) {
         SubscriptionSetting subscriptionSetting = new SubscriptionSetting();
-        System.out.println("readSettings username: " + username);
         setUserId(username);
-        System.out.println("readingSettings userId: " + userId);
 
         try (
                 Connection conn = getConnection();
@@ -169,15 +165,6 @@ public class JavaneseJumpingBeansDB {
                 subscriptionSetting.setAltEmailOn(rs.getBoolean("AltEmailOn"));
                 subscriptionSetting.setSmsOn(rs.getBoolean("SMSOn"));
             }
-            System.out.println("UserID: " + subscriptionSetting.getUserId() +
-                    " || NotificationsOn: " + subscriptionSetting.isNotificationsOn() +
-                    " || CascadeOn: " + subscriptionSetting.isCascadeOn() +
-                    " || RockCreekOn: " + subscriptionSetting.isRockCreekOn() +
-                    " || SoutheastOn: " + subscriptionSetting.isSoutheastOn() +
-                    " || SylvaniaOn: " + subscriptionSetting.isSylvaniaOn() +
-                    " || EmailOn: " + subscriptionSetting.isEmailOn() +
-                    " || AltEmailOn: " + subscriptionSetting.isAltEmailOn() +
-                    " || SMSOn: " + subscriptionSetting.isSmsOn());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -190,7 +177,6 @@ public class JavaneseJumpingBeansDB {
      */
     public UserSetting readUserSettings() {
         UserSetting userSetting = new UserSetting();
-        System.out.println("readUserSettings userId: " + userId);
 
         try (
                 Connection conn = getConnection();
@@ -211,9 +197,9 @@ public class JavaneseJumpingBeansDB {
                     userSetting.setPhoneNbr(rs.getString("Phone"));
                 }
             }
-            System.out.println("Email: " + userSetting.getEmail() +
+            /*System.out.println("Email: " + userSetting.getEmail() +
                     " || Alt Email: " + userSetting.getAltEmail() +
-                    " || Phone #: " + userSetting.getPhoneNbr());
+                    " || Phone #: " + userSetting.getPhoneNbr());*/
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -231,7 +217,6 @@ public class JavaneseJumpingBeansDB {
         ) {
             stmt.setBoolean(1, newNotficationsOn);
             stmt.setInt(2, userId);
-            System.out.println("PreparedStatement: " + stmt);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -249,7 +234,6 @@ public class JavaneseJumpingBeansDB {
         ) {
             stmt.setBoolean(1, newCascadeOn);
             stmt.setInt(2, userId);
-            System.out.println("PreparedStatement: " + stmt);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -267,7 +251,6 @@ public class JavaneseJumpingBeansDB {
         ) {
             stmt.setBoolean(1, newRockCreekOn);
             stmt.setInt(2, userId);
-            System.out.println("PreparedStatement: " + stmt);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -285,7 +268,6 @@ public class JavaneseJumpingBeansDB {
         ) {
             stmt.setBoolean(1, newSoutheastOn);
             stmt.setInt(2, userId);
-            System.out.println("PreparedStatement: " + stmt);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -303,7 +285,6 @@ public class JavaneseJumpingBeansDB {
         ) {
             stmt.setBoolean(1, newSylvaniaOn);
             stmt.setInt(2, userId);
-            System.out.println("PreparedStatement: " + stmt);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -321,7 +302,6 @@ public class JavaneseJumpingBeansDB {
         ) {
             stmt.setBoolean(1, newEmailOn);
             stmt.setInt(2, userId);
-            System.out.println("PreparedStatement: " + stmt);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -339,7 +319,6 @@ public class JavaneseJumpingBeansDB {
         ) {
             stmt.setBoolean(1, newAltEmailOn);
             stmt.setInt(2, userId);
-            System.out.println("PreparedStatement: " + stmt);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -357,7 +336,6 @@ public class JavaneseJumpingBeansDB {
         ) {
             stmt.setBoolean(1, newSmsOn);
             stmt.setInt(2, userId);
-            System.out.println("PreparedStatement: " + stmt);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
