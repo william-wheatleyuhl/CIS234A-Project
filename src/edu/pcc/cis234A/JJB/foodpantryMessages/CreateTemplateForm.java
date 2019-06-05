@@ -29,6 +29,7 @@ public class CreateTemplateForm {
     private JButton buttonSave;
     private JComboBox comboTemplates;
     private JLabel labelLastEdit;
+    private JLabel labelCharCount;
     TemplateDB temps = new TemplateDB();
     ArrayList<Template> templates = temps.readTemplates();
     UserLoginDB session = new UserLoginDB();
@@ -62,6 +63,7 @@ public class CreateTemplateForm {
                     fieldTemplateName.setText("");
                     areaTemplateText.setEnabled(true);
                     fieldTemplateName.setEnabled(true);
+                    labelLastEdit.setText("");
                 }
             }
         });
@@ -109,6 +111,7 @@ public class CreateTemplateForm {
             public void actionPerformed(ActionEvent e) {
                 boolean checkTemplateName = false;
                 boolean checkTemplateText = false;
+                boolean checkTemplateChars = false;
 
                 // Check that the Template Name Field has something in it
                 if(fieldTemplateName.getText().equals("")) {
@@ -128,19 +131,23 @@ public class CreateTemplateForm {
                     checkTemplateText = true;
                 }
 
-                if (checkTemplateName && checkTemplateText) {
+                // Check that the Template Text Area is under 500 characters
+                if(areaTemplateText.getText().length() > 500) {
+                    JOptionPane.showMessageDialog(null, "Please limit messages to 500 characters or less");
+                }
+                else {
+                    checkTemplateChars = true;
+                }
+
+                // Make sure the template has both fields filled in
+                if (checkTemplateName && checkTemplateText && checkTemplateChars) {
                     if(radioCreateNew.isSelected()) {
                         JOptionPane.showMessageDialog(null, "New template saved saved as \"" + newTemplateName + "\"");
-//                        System.out.println("Template name: " + newTemplateName); //testing
-//                        System.out.println("Template text: " + newTemplateText); //testing
                         temps.logNewTemplate(newTemplateName, newTemplateText, loggedInUserID);
                     }
                     else if(radioEditExisting.isSelected()) {
                         existingTemplateID = comboTemplates.getSelectedIndex();
                         JOptionPane.showMessageDialog(null, "Changes to \"" + newTemplateName + "\" saved");
-//                        System.out.println("Template name: " + newTemplateName); //testing
-//                        System.out.println("Template text: " + newTemplateText); //testing
-//                        System.out.println("TemplateID: " + existingTemplateID); //testing
                         temps.updateExistingTemplate(newTemplateName, newTemplateText, loggedInUserID, existingTemplateID);
                     }
                     else {
