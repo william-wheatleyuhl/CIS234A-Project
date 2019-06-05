@@ -189,11 +189,15 @@ public class CreateTemplateForm {
                     if(radioCreateNew.isSelected()) {
                         JOptionPane.showMessageDialog(null, "New template saved saved as \"" + newTemplateName + "\"");
                         temps.logNewTemplate(newTemplateName, newTemplateText, loggedInUserID);
+                        // Clear labels and text areas / fields
+                        //resetAllTheThings();
                     }
                     else if(radioEditExisting.isSelected()) {
                         existingTemplateID = comboTemplates.getSelectedIndex();
                         JOptionPane.showMessageDialog(null, "Changes to \"" + newTemplateName + "\" saved");
                         temps.updateExistingTemplate(newTemplateName, newTemplateText, loggedInUserID, existingTemplateID);
+                        // Clear labels and text areas / fields
+                        //resetAllTheThings();
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Choose \"Create New\" or select an existing template to save");
@@ -201,6 +205,20 @@ public class CreateTemplateForm {
                 }
             }
         });
+    }
+    /**
+     * Clear EVERYTHING //test
+     */
+    //TODO Don't leave me like this
+    public void resetAllTheThings() {
+        areaTemplateText.setText("");
+        fieldTemplateName.setText("");
+        labelLastEdit.setText("");
+        labelCharCount.setText("");
+        radioCreateNew.setSelected(false);
+        radioEditExisting.setSelected(false);
+        comboTemplates.setEnabled(false);
+        updateComboBox();
     }
 
     /**
@@ -213,6 +231,16 @@ public class CreateTemplateForm {
         for(Template temp : templates) {
             model.addElement(temp.templateName);
         }
+        comboTemplates.setModel(model);
+    }
+
+    /**
+     * Update the combo box after saving changes
+     */
+    public void updateComboBox() {
+        DefaultComboBoxModel model = (DefaultComboBoxModel) comboTemplates.getModel();
+        model.removeElementAt(comboTemplates.getSelectedIndex());
+        model.addElement(newTemplateName);
         comboTemplates.setModel(model);
     }
 
