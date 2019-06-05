@@ -14,7 +14,7 @@ public class SubscriberDB {
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String SUBSCRIBER_QUERY = "SELECT Username, LastName, FirstName, Email, RoleID FROM [USER]";
-    private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
+    private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText, UserID FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private int subscriberCount = 0;
@@ -63,7 +63,7 @@ public class SubscriberDB {
                 ResultSet rs = stmt.executeQuery()
                 ) {
             while (rs.next()) {
-                templates.add(new Template(rs.getInt("TemplateID"), rs.getString("TemplateName"), rs.getString("MessageText")));
+                templates.add(new Template(rs.getInt("TemplateID"), rs.getString("TemplateName"), rs.getString("MessageText"), rs.getInt("UserID")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

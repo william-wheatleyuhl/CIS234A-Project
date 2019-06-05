@@ -26,18 +26,22 @@ public class CreateTemplateForm {
     private JLabel labelTip;
     private JButton buttonSave;
     private JComboBox comboTemplates;
+    private JLabel labelLastEdit;
     TemplateDB temps = new TemplateDB();
     ArrayList<Template> templates = temps.readTemplates();
+    UserLoginDB session = new UserLoginDB();
+    UserLogin login = new UserLogin();
     private String newTemplateName;
     private String newTemplateText;
     private int existingTemplateID;
-    private int userID;
+    private int loggedInUserID = session.getUsernameUserID(login.getLoggedInUser());
 
     public CreateTemplateForm() {
         populateComboBox();
         areaTemplateText.setEnabled(false);
         fieldTemplateName.setEnabled(false);
         comboTemplates.setEnabled(false);
+
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
 
@@ -88,30 +92,7 @@ public class CreateTemplateForm {
                 int selectedIndex = comboTemplates.getSelectedIndex() -1;
                 areaTemplateText.setText(templates.get(selectedIndex).messageText);
                 fieldTemplateName.setText(templates.get(selectedIndex).templateName);
-//                switch(comboTemplates.getSelectedIndex()) {
-//                    case 0: areaTemplateText.setText("");
-//                        break;
-//                    case 1: areaTemplateText.setText(templates.get(0).messageText);
-//                        break;
-//                    case 2: areaTemplateText.setText(templates.get(1).messageText);
-//                        break;
-//                    case 3: areaTemplateText.setText(templates.get(2).messageText);
-//                        break;
-//                    case 4: areaTemplateText.setText(templates.get(3).messageText);
-//                        break;
-//                }
-//                switch(comboTemplates.getSelectedIndex()) {
-//                    case 0: fieldTemplateName.setText("");
-//                        break;
-//                    case 1: fieldTemplateName.setText(templates.get(0).templateName);
-//                        break;
-//                    case 2: fieldTemplateName.setText(templates.get(1).templateName);
-//                        break;
-//                    case 3: fieldTemplateName.setText(templates.get(2).templateName);
-//                        break;
-//                    case 4: fieldTemplateName.setText(templates.get(3).templateName);
-//                        break;
-//                }
+                labelLastEdit.setText("Last edit by " + temps.getLastEditUser(templates.get(selectedIndex).getUserID()));
             }
         });
 
@@ -149,7 +130,7 @@ public class CreateTemplateForm {
                         JOptionPane.showMessageDialog(null, "New template saved saved as \"" + newTemplateName + "\"");
 //                        System.out.println("Template name: " + newTemplateName); //testing
 //                        System.out.println("Template text: " + newTemplateText); //testing
-                        temps.logNewTemplate(newTemplateName, newTemplateText);
+                        temps.logNewTemplate(newTemplateName, newTemplateText, loggedInUserID);
                     }
                     else if(radioEditExisting.isSelected()) {
                         existingTemplateID = comboTemplates.getSelectedIndex();
@@ -157,7 +138,7 @@ public class CreateTemplateForm {
 //                        System.out.println("Template name: " + newTemplateName); //testing
 //                        System.out.println("Template text: " + newTemplateText); //testing
 //                        System.out.println("TemplateID: " + existingTemplateID); //testing
-                        temps.updateExistingTemplate(newTemplateName, newTemplateText, existingTemplateID);
+                        temps.updateExistingTemplate(newTemplateName, newTemplateText, loggedInUserID, existingTemplateID);
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Choose \"Create New\" or select an existing template to save");
