@@ -1,10 +1,13 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.awt.Color;
 
 /**
  * @author Syn Calvo
@@ -39,6 +42,7 @@ public class CreateTemplateForm {
     private int existingTemplateID;
     private int loggedInUserID = session.getUsernameUserID(login.getLoggedInUser());
 
+
     public CreateTemplateForm() {
         populateComboBox();
         areaTemplateText.setEnabled(false);
@@ -47,6 +51,47 @@ public class CreateTemplateForm {
 
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
+
+        areaTemplateText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if(areaTemplateText.getText().length() > 500) {
+                    labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
+                    labelCharCount.setForeground(Color.red);
+                    //labelCharCount.setText(String.valueOf(areaTemplateText.getText().length()));
+                }
+                else {
+                    labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
+                    labelCharCount.setForeground(new Color(0, 133, 66));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if(areaTemplateText.getText().length() > 500) {
+                    labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
+                    labelCharCount.setForeground(Color.red);
+                    //labelCharCount.setText(String.valueOf(areaTemplateText.getText().length()));
+                }
+                else {
+                    labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
+                    labelCharCount.setForeground(new Color(0, 133, 66));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if(areaTemplateText.getText().length() > 500) {
+                    labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
+                    labelCharCount.setForeground(Color.red);
+                    //labelCharCount.setText(String.valueOf(areaTemplateText.getText().length()));
+                }
+                else {
+                    labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
+                    labelCharCount.setForeground(new Color(0, 133, 66));
+                }
+            }
+        });
 
         /**
          * Action listener for the "Create New" radio button.
