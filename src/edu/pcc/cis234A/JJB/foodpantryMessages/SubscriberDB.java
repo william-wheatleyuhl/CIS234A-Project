@@ -3,7 +3,8 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * SubsciberDB Class
@@ -17,7 +18,10 @@ public class SubscriberDB {
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone FROM [USER]";
     private static final String SUB_SETTINGS_QUERY = "SELECT UserID, NotificationsOn, CascadeOn, RockCreekOn, SoutheastOn, SylvaniaOn, EmailOn, AltEmailOn, SMSOn FROM USER_SETTING";
-    private static final String GROUPS_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
+    private static final String USER_GROUPS_UPDATE = "INSERT INTO USER_GROUP (UserID, GroupID) VALUES(?, ?)";
+    private static final String USER_GROUPS_DELETE = "DELETE USER_GROUP WHERE UserID=? AND GroupID=?";
+    private static final String USER_GROUP_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
+    private static final String GROUPS_QUERY = "SELECT GroupID FROM [GROUP]";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
@@ -55,7 +59,10 @@ public class SubscriberDB {
         return receivers;
     }
 
-    public void readSubscriberSettings() {
+    /**
+     *
+     */
+    private void readSubscriberSettings() {
         try (
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SUB_SETTINGS_QUERY);
@@ -65,10 +72,10 @@ public class SubscriberDB {
                 for(Recipient recipient : receivers) {
                     if(recipient.getUserID() == rs.getInt("UserID")){
                         recipient.setUserSettings("NotificationsOn", rs.getBoolean("NotificationsOn"));
+                        recipient.setUserSettings("SylvaniaOn", rs.getBoolean("SylvaniaOn"));
                         recipient.setUserSettings("CascadeOn", rs.getBoolean("CascadeOn"));
                         recipient.setUserSettings("RockCreekOn", rs.getBoolean("RockCreekOn"));
                         recipient.setUserSettings("SoutheastOn", rs.getBoolean("SoutheastOn"));
-                        recipient.setUserSettings("SylvaniaOn", rs.getBoolean("SylvaniaOn"));
                         recipient.setUserSettings("EmailOn", rs.getBoolean("EmailOn"));
                         recipient.setUserSettings("AltEmailOn", rs.getBoolean("AltEmailOn"));
                         recipient.setUserSettings("SMSOn", rs.getBoolean("SMSOn"));
@@ -81,6 +88,62 @@ public class SubscriberDB {
         }
 
     }
+    private boolean checkUserGroup(int userID, int groupID) {
+        boolean groupSet = false;
+        if(groups.get(groupID).contains(userID)) {
+            groupSet = true;
+        }
+        return groupSet;
+    }
+
+    private void checkSettingsAgainstGroups(int groupID, String key) {
+        for(Recipient recipient : receivers) {
+            HashMap<String, Boolean> settings = recipient.getUserSettings();
+            if(settings.containsKey(key) && settings.get(key).equals(true)) {
+                if(!checkUserGroup(recipient.getUserID(), groupID)) {
+                    System.out.println("Setting found, not in USER_GROUP. Setting in USER_GROUP");
+                    addUserGroup(recipient.getUserID(), groupID);
+                    groups.get(groupID).add(recipient.getUserID());
+                }
+            } else if(settings.containsKey(key) && settings.get(key).equals(false)) {
+                if (checkUserGroup(recipient.getUserID(), groupID)) {
+                    System.out.println("Setting found, in USER_GROUP. not Setting in USER_GROUP");
+                    deleteUserGroup(recipient.getUserID(), groupID);
+                    groups.get(groupID).remove(recipient.getUserID());
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private void addUserGroup(int userID, int groupID) {
+        System.out.println("Adding User Group Setting for " + userID);
+        try {
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(USER_GROUPS_UPDATE);
+                stmt.setInt(1, userID);
+                stmt.setInt(2, groupID);
+                stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteUserGroup(int userID, int groupID) {
+        try {
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(USER_GROUPS_DELETE);
+            stmt.setInt(1, userID);
+            stmt.setInt(2, groupID);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      *
@@ -89,7 +152,7 @@ public class SubscriberDB {
     public HashMap getGroupMakeup() {
         try (
                 Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(GROUPS_QUERY);
+                PreparedStatement stmt = conn.prepareStatement(USER_GROUP_QUERY);
                 ResultSet rs = stmt.executeQuery()
                 ) {
             while(rs.next()) {
@@ -103,6 +166,27 @@ public class SubscriberDB {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        System.out.println("Checking User Settings against USER_GROUP table.");
+        for(Integer groupID : new HashSet<Integer>(groups.keySet())) {
+            switch(groupID) {
+                case 1:
+                    checkSettingsAgainstGroups(groupID, "SylvaniaOn");
+                    break;
+
+                case 2:
+                    checkSettingsAgainstGroups(groupID, "CascadeOn");
+                    break;
+
+                case 3:
+                    checkSettingsAgainstGroups(groupID, "RockCreekOn");
+                    break;
+
+                case 4:
+                    checkSettingsAgainstGroups(groupID, "SoutheastOn");
+                    break;
+            }
         }
         return groups;
     }
