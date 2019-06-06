@@ -3,7 +3,6 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -104,10 +103,11 @@ public class NotificationForm {
                         selectedGroups.add(group);
                     }
                 }
-                ArrayList<Recipient> recipients = buildRecipientList();
-                for(Recipient recipient: recipients) {
-                    System.out.println(recipient.getUserName());
-                }
+                //Output for debugging
+//                ArrayList<Recipient> recipients = buildRecipientList();
+//                for(Recipient recipient: recipients) {
+//                    System.out.println(recipient.getUserName());
+//                }
             }
 
         });
@@ -132,7 +132,6 @@ public class NotificationForm {
      * name and number of members of each group.
      */
     public void populateRecipientMenu() {
-//        ListModel model = (ListModel) groupSelect.getModel();
         this.groupSelect = new JList();
         DefaultListModel model = new DefaultListModel();
         model.removeAllElements();
@@ -141,9 +140,7 @@ public class NotificationForm {
             model.addElement( groups.get(key).get(0) + ":\t\t " +  (groups.get(key).size() - 1));
         }
         groupSelect.setModel(model);
-//        scrollList = new JScrollPane();
         scrollList.setViewportView(groupSelect);
-//        scrollList.setMinimumSize(new Dimension(50, 150));
     }
 
     /**
@@ -193,8 +190,8 @@ public class NotificationForm {
     }
 
     /**
-     *
-     * @return
+     * Determine which subscribers will be receiving notifications based on the selected groups.
+     * @return An ArrayList of Recipient objects of the subscribers to receive the notification.
      */
     private ArrayList buildRecipientList() {
         ArrayList<Recipient> recipients = new ArrayList<>();

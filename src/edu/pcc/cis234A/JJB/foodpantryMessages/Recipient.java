@@ -1,8 +1,6 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import java.util.HashMap;
-import java.util.List;
-
 /**
  *Recipient Class
  * This Class will model the recipient, and will store Recipient data.

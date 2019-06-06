@@ -10,7 +10,7 @@ import java.util.Set;
  * SubsciberDB Class
  * Connects to the Database, Returns requested data based on SQL Queries.
  * @author Will Wheatley-Uhl
- * @version 2019.06.03
+ * @version 2019.06.05
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -21,7 +21,6 @@ public class SubscriberDB {
     private static final String USER_GROUPS_UPDATE = "INSERT INTO USER_GROUP (UserID, GroupID) VALUES(?, ?)";
     private static final String USER_GROUPS_DELETE = "DELETE USER_GROUP WHERE UserID=? AND GroupID=?";
     private static final String USER_GROUP_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
-    private static final String GROUPS_QUERY = "SELECT GroupID FROM [GROUP]";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
@@ -60,7 +59,7 @@ public class SubscriberDB {
     }
 
     /**
-     *
+     * Read subscriber settings from the USER_SETTING table, populate HashMap with individual user settings.
      */
     private void readSubscriberSettings() {
         try (
@@ -86,8 +85,14 @@ public class SubscriberDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
+
+    /**
+     * Checks if USER_GROUP contains user/group membership listing
+     * @param userID UserID to be checked.
+     * @param groupID GroupID of Group to check membership of user against
+     * @return Boolean value of whether the user is a member of the group or not.
+     */
     private boolean checkUserGroup(int userID, int groupID) {
         boolean groupSet = false;
         if(groups.get(groupID).contains(userID)) {
@@ -96,18 +101,26 @@ public class SubscriberDB {
         return groupSet;
     }
 
+    /**
+     * Check USER_SETTINGS against the listing in USER_GROUP. Add user's preferences if not in USER_GROUP, remove
+     * them from USER_GROUP if they are set to false in USER_SETTINGS.
+     * @param groupID The ID # of the group being checked against.
+     * @param key The Setting text to be checked against.
+     */
     private void checkSettingsAgainstGroups(int groupID, String key) {
         for(Recipient recipient : receivers) {
             HashMap<String, Boolean> settings = recipient.getUserSettings();
             if(settings.containsKey(key) && settings.get(key).equals(true)) {
                 if(!checkUserGroup(recipient.getUserID(), groupID)) {
-                    System.out.println("Setting found, not in USER_GROUP. Setting in USER_GROUP");
+//                    Output for debugging
+//                    System.out.println("Setting found, not in USER_GROUP. Setting in USER_GROUP");
                     addUserGroup(recipient.getUserID(), groupID);
                     groups.get(groupID).add(recipient.getUserID());
                 }
             } else if(settings.containsKey(key) && settings.get(key).equals(false)) {
                 if (checkUserGroup(recipient.getUserID(), groupID)) {
-                    System.out.println("Setting found, in USER_GROUP. not Setting in USER_GROUP");
+//                    Output for debugging
+//                    System.out.println("Setting found, in USER_GROUP. not Setting in USER_GROUP");
                     deleteUserGroup(recipient.getUserID(), groupID);
                     groups.get(groupID).remove(recipient.getUserID());
                 }
@@ -116,10 +129,13 @@ public class SubscriberDB {
     }
 
     /**
-     *
+     * Add specified listing from the USER_GROUPS table.
+     * @param userID The integer UserID identifying the Recipient.
+     * @param groupID The integer GroupID identifying the Group.
      */
     private void addUserGroup(int userID, int groupID) {
-        System.out.println("Adding User Group Setting for " + userID);
+//        Output for debugging
+//        System.out.println("Adding User Group Setting for " + userID);
         try {
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(USER_GROUPS_UPDATE);
@@ -132,6 +148,11 @@ public class SubscriberDB {
         }
     }
 
+    /**
+     * Remove specified listing from the USER_GROUPS table.
+     * @param userID The integer UserID identifying the Recipient.
+     * @param groupID The integer GroupID identifying the Group.
+     */
     private void deleteUserGroup(int userID, int groupID) {
         try {
             Connection conn = getConnection();
@@ -146,8 +167,11 @@ public class SubscriberDB {
     }
 
     /**
-     *
-     * @return
+     * Parse rows in USER_GROUP. Get UserID's for each member of each group. Next, populate or remove rows of USER_GROUPS
+     * based on the entries in USER_SETTINGS. If a setting is set to true, but does not exist in USER_GROUPS, add it. If
+     * the setting is false but does exist in USER_GROUPS, remove it. Don't return group listings for distribution until
+     * they've been populated and rechecked.
+     * @return A HashMap containing GroupID numbers as Keys, and ArrayLists of UserID's who are members of that group.
      */
     public HashMap getGroupMakeup() {
         try (
@@ -159,7 +183,6 @@ public class SubscriberDB {
                 if(!groups.containsKey(rs.getInt("GroupID"))) {
                     groups.computeIfAbsent(rs.getInt("GroupID"), k -> new ArrayList<>()).add(rs.getString("GroupName"));
                     groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));
-//                    groups.put(rs.getInt("GroupID"), List<Integer> members = new List<Integer>());
                 } else {
                     groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));
                 }
@@ -168,7 +191,8 @@ public class SubscriberDB {
             e.printStackTrace();
         }
 
-        System.out.println("Checking User Settings against USER_GROUP table.");
+//        Output for debugging
+//        System.out.println("Checking User Settings against USER_GROUP table.");
         for(Integer groupID : new HashSet<Integer>(groups.keySet())) {
             switch(groupID) {
                 case 1:
