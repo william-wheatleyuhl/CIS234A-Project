@@ -16,6 +16,7 @@ public class SubscriberDB {
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone FROM [USER]";
+    private static final String SUB_SETTINGS_QUERY = "SELECT UserID, NotificationsOn, CascadeOn, RockCreekOn, SoutheastOn, SylvaniaOn, EmailOn, AltEmailOn, SMSOn FROM USER_SETTING";
     private static final String GROUPS_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
@@ -50,7 +51,35 @@ public class SubscriberDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        readSubscriberSettings();
         return receivers;
+    }
+
+    public void readSubscriberSettings() {
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(SUB_SETTINGS_QUERY);
+                ResultSet rs = stmt.executeQuery()
+                ) {
+            while (rs.next()) {
+                for(Recipient recipient : receivers) {
+                    if(recipient.getUserID() == rs.getInt("UserID")){
+                        recipient.setUserSettings("NotificationsOn", rs.getBoolean("NotificationsOn"));
+                        recipient.setUserSettings("CascadeOn", rs.getBoolean("CascadeOn"));
+                        recipient.setUserSettings("RockCreekOn", rs.getBoolean("RockCreekOn"));
+                        recipient.setUserSettings("SoutheastOn", rs.getBoolean("SoutheastOn"));
+                        recipient.setUserSettings("SylvaniaOn", rs.getBoolean("SylvaniaOn"));
+                        recipient.setUserSettings("EmailOn", rs.getBoolean("EmailOn"));
+                        recipient.setUserSettings("AltEmailOn", rs.getBoolean("AltEmailOn"));
+                        recipient.setUserSettings("SMSOn", rs.getBoolean("SMSOn"));
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

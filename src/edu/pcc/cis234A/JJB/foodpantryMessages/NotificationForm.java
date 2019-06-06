@@ -42,6 +42,7 @@ public class NotificationForm {
         populateRecipientMenu();
         getCurrentUserID();
 
+
        /**
          * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
          * clears the message field.
