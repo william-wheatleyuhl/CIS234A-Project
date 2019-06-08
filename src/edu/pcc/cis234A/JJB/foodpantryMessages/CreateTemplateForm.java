@@ -4,8 +4,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.awt.Color;
 
@@ -41,6 +40,11 @@ public class CreateTemplateForm {
     private String newTemplateText;
     private int existingTemplateID;
     private int loggedInUserID = session.getUsernameUserID(login.getLoggedInUser());
+    DefaultComboBoxModel model = (DefaultComboBoxModel) comboTemplates.getModel();
+    // @WILL - SEE ME
+    NotificationForm notificationForm = new NotificationForm();
+    //refreshNotificationForm = notificatio
+
 
 
     public CreateTemplateForm() {
@@ -136,15 +140,44 @@ public class CreateTemplateForm {
          * and replaces them with name and text from DB for selected template
          * Also sets the label at the bottom of the frame for the user who last edited that template
          */
-        comboTemplates.addActionListener(new ActionListener() {
+        comboTemplates.addItemListener(new ItemListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedIndex = comboTemplates.getSelectedIndex() -1;
-                areaTemplateText.setText(templates.get(selectedIndex).messageText);
-                fieldTemplateName.setText(templates.get(selectedIndex).templateName);
-                labelLastEdit.setText("Last edit by " + temps.getLastEditUser(templates.get(selectedIndex).getUserID()));
+            public void itemStateChanged(ItemEvent e) {
+                if (comboTemplates.getModel().getSize() > 1) {
+                    int selectedIndex = comboTemplates.getSelectedIndex();
+                    if (selectedIndex == 0) {
+                        areaTemplateText.setText("");
+                        fieldTemplateName.setText("");
+                        labelLastEdit.setText("");
+                    } else {
+                        areaTemplateText.setText(templates.get(selectedIndex - 1).messageText);
+                        fieldTemplateName.setText(templates.get(selectedIndex - 1).templateName);
+                        labelLastEdit.setText("Last edit by " + temps.getLastEditUser(templates.get(selectedIndex).getUserID()));
+                    }
+                }
             }
         });
+//        comboTemplates.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                int selectedIndex = comboTemplates.getSelectedIndex() -1;
+//                areaTemplateText.setText(templates.get(selectedIndex).messageText);
+//                fieldTemplateName.setText(templates.get(selectedIndex).templateName);
+//                labelLastEdit.setText("Last edit by " + temps.getLastEditUser(templates.get(selectedIndex).getUserID()));
+//            }
+//        });
+
+        /**
+         * Mouseover the comboBox refreshes the template list from the DB
+         */
+//        comboTemplates.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseEntered(MouseEvent e) {
+//                super.mouseEntered(e);
+//                refreshTemplates();
+//                populateComboBox();
+//            }
+//        });
 
         /**
          * Action listener for the "Save" button.
@@ -190,14 +223,16 @@ public class CreateTemplateForm {
                         JOptionPane.showMessageDialog(null, "New template saved saved as \"" + newTemplateName + "\"");
                         temps.logNewTemplate(newTemplateName, newTemplateText, loggedInUserID);
                         // Clear labels and text areas / fields
-                        //resetAllTheThings();
+                        refreshTemplates();
+                        populateComboBox();
                     }
                     else if(radioEditExisting.isSelected()) {
                         existingTemplateID = comboTemplates.getSelectedIndex();
                         JOptionPane.showMessageDialog(null, "Changes to \"" + newTemplateName + "\" saved");
                         temps.updateExistingTemplate(newTemplateName, newTemplateText, loggedInUserID, existingTemplateID);
                         // Clear labels and text areas / fields
-                        //resetAllTheThings();
+                        refreshTemplates();
+                        populateComboBox();
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Choose \"Create New\" or select an existing template to save");
@@ -210,22 +245,22 @@ public class CreateTemplateForm {
      * Clear EVERYTHING //test
      */
     //TODO Don't leave me like this
-    public void resetAllTheThings() {
-        areaTemplateText.setText("");
-        fieldTemplateName.setText("");
-        labelLastEdit.setText("");
-        labelCharCount.setText("");
-        radioCreateNew.setSelected(false);
-        radioEditExisting.setSelected(false);
-        comboTemplates.setEnabled(false);
-        updateComboBox();
-    }
+//    public void resetAllTheThings() {
+//        areaTemplateText.setText("");
+//        fieldTemplateName.setText("");
+//        labelLastEdit.setText("");
+//        labelCharCount.setText("");
+//        radioCreateNew.setSelected(false);
+//        radioEditExisting.setSelected(false);
+//        comboTemplates.setEnabled(false);
+//        refreshTemplates();
+//        populateComboBox();
+//    }
 
     /**
      * Model for the drop down menu to select existing templates found in DB.
      */
     public void populateComboBox() {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) comboTemplates.getModel();
         model.removeAllElements();
         model.addElement("Choose one...");
         for(Template temp : templates) {
@@ -235,13 +270,11 @@ public class CreateTemplateForm {
     }
 
     /**
-     * Update the combo box after saving changes
+     * Clear the ArrayList of templates and reload from the DB
      */
-    public void updateComboBox() {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) comboTemplates.getModel();
-        model.removeElementAt(comboTemplates.getSelectedIndex());
-        model.addElement(newTemplateName);
-        comboTemplates.setModel(model);
+    public void refreshTemplates() {
+        templates.clear();
+        templates = temps.readTemplates();
     }
 
     /**
