@@ -49,6 +49,23 @@ public class NotificationForm {
           * clears the message field.
           * TODO: Cache Message when switching between templates and new messages.
           */
+        chooseTemplate.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent itemEvent) {
+                if (chooseTemplate.getModel().getSize() > 1) {
+                    int selectedIndex = chooseTemplate.getSelectedIndex();
+                    if (selectedIndex == 0) {
+                        notificationTextArea.setText("");
+                        notificationTextArea.setEnabled(true);
+                    } else {
+                        notificationTextArea.setText(templates.get(selectedIndex-1).messageText);
+                        notificationTextArea.setEditable(false);
+                    }
+                }
+            }
+        });
+
+        //OLD CODE
 //        chooseTemplate.addActionListener(new ActionListener() {
 //            @Override
 //            public void actionPerformed(ActionEvent actionEvent) {
@@ -62,6 +79,18 @@ public class NotificationForm {
 //                }
 //            }
 //        });
+
+        /**
+         * On Mouse-Over, refresh the list of available templates.
+         */
+        chooseTemplate.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {
+                super.mouseEntered(mouseEvent);
+                refreshTemplates();
+                populateTemplateMenu();
+            }
+        });
 
         /**
          * Action Listener for the "Send" button. Checks if message is empty, parses for tags, sends message, logs
@@ -113,37 +142,13 @@ public class NotificationForm {
             }
 
         });
-        chooseTemplate.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent mouseEvent) {
-                super.mouseEntered(mouseEvent);
-                refreshTemplates();
-                populateTemplateMenu();
-            }
-        });
-        chooseTemplate.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent itemEvent) {
-                System.out.println(chooseTemplate.getSelectedIndex());
-                if (chooseTemplate.getModel().getSize() > 1) {
-                    int selectedIndex = chooseTemplate.getSelectedIndex();
-                    if (selectedIndex == 0) {
-                        notificationTextArea.setText("");
-                        notificationTextArea.setEnabled(true);
-                    } else {
-                        notificationTextArea.setText(templates.get(selectedIndex-1).messageText);
-                        notificationTextArea.setEditable(false);
-                    }
-                }
-            }
-        });
     }
 
     /**
      * Create a Model for the ComboBox pulldown menu for message templates and populate it from saved Templates
      * found in the database. Currently set with one default option and 3 template options.
      */
-    public void populateTemplateMenu() {
+    private void populateTemplateMenu() {
         model.removeAllElements();
         model.addElement("No Template");
         for(Template temp : templates) {
@@ -156,7 +161,7 @@ public class NotificationForm {
      * Create a model for the ComboBox pulldown menu for the message subscribers and populate it with group
      * name and number of members of each group.
      */
-    public void populateRecipientMenu() {
+    private void populateRecipientMenu() {
         this.groupSelect = new JList();
         DefaultListModel model = new DefaultListModel();
         model.removeAllElements();
@@ -234,6 +239,9 @@ public class NotificationForm {
         return recipients;
     }
 
+    /**
+     * Clear the current ArrayList of Templates. Reload available templates from DB.
+     */
     private void refreshTemplates() {
         templates.clear();
         templates = subs.readTemplates();
