@@ -3,8 +3,7 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,6 +32,8 @@ public class NotificationForm {
     private ArrayList<Template> templates = subs.readTemplates();
     private ArrayList<Recipient> subscribers = subs.readSubscriberData();
     private HashMap<Integer, ArrayList<Object>> groups = subs.getGroupMakeup();
+    private DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
+
 
 
     public NotificationForm(String currUser) {
@@ -42,24 +43,25 @@ public class NotificationForm {
         getCurrentUserID();
 
 
-       /**
-         * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
-         * clears the message field.
-         * TODO: Cache Message when switching between templates and new messages.
-         */
-        chooseTemplate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
-                if(chooseTemplate.getSelectedIndex() == 0) {
-                    notificationTextArea.setText("");
-                    notificationTextArea.setEnabled(true);
-                } else {
-                notificationTextArea.setText(templates.get(selectedIndex).messageText);
-                notificationTextArea.setEnabled(false);
-                }
-            }
-        });
+
+        /**
+          * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
+          * clears the message field.
+          * TODO: Cache Message when switching between templates and new messages.
+          */
+//        chooseTemplate.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent actionEvent) {
+//                int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
+//                if(chooseTemplate.getSelectedIndex() == 0) {
+//                    notificationTextArea.setText("");
+//                    notificationTextArea.setEnabled(true);
+//                } else {
+//                notificationTextArea.setText(templates.get(selectedIndex).messageText);
+//                notificationTextArea.setEnabled(false);
+//                }
+//            }
+//        });
 
         /**
          * Action Listener for the "Send" button. Checks if message is empty, parses for tags, sends message, logs
@@ -111,6 +113,30 @@ public class NotificationForm {
             }
 
         });
+        chooseTemplate.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {
+                super.mouseEntered(mouseEvent);
+                refreshTemplates();
+                populateTemplateMenu();
+            }
+        });
+        chooseTemplate.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent itemEvent) {
+                System.out.println(chooseTemplate.getSelectedIndex());
+                if (chooseTemplate.getModel().getSize() > 1) {
+                    int selectedIndex = chooseTemplate.getSelectedIndex();
+                    if (selectedIndex == 0) {
+                        notificationTextArea.setText("");
+                        notificationTextArea.setEnabled(true);
+                    } else {
+                        notificationTextArea.setText(templates.get(selectedIndex-1).messageText);
+                        notificationTextArea.setEditable(false);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -118,7 +144,6 @@ public class NotificationForm {
      * found in the database. Currently set with one default option and 3 template options.
      */
     public void populateTemplateMenu() {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
         model.removeAllElements();
         model.addElement("No Template");
         for(Template temp : templates) {
@@ -207,5 +232,10 @@ public class NotificationForm {
                 }
             }
         return recipients;
+    }
+
+    private void refreshTemplates() {
+        templates.clear();
+        templates = subs.readTemplates();
     }
 }
