@@ -10,18 +10,27 @@ import java.util.Set;
  * SubsciberDB Class
  * Connects to the Database, Returns requested data based on SQL Queries.
  * @author Will Wheatley-Uhl
+<<<<<<< HEAD
  * @version 2019.06.05
+=======
+ * @version 2019.06.04
+ *
+ * Changelog:
+ * 20190604 SC - Added UserID to TEMPLATE_QUERY
+ * 20190604 SC - Added UserID to readTemplates()
+ * @version 2019.06.03
+>>>>>>> fca465face6474e5116e471834faaf9dedb972d7
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
+    private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText, UserID FROM TEMPLATE";
     private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone FROM [USER]";
     private static final String SUB_SETTINGS_QUERY = "SELECT UserID, NotificationsOn, CascadeOn, RockCreekOn, SoutheastOn, SylvaniaOn, EmailOn, AltEmailOn, SMSOn FROM USER_SETTING";
     private static final String USER_GROUPS_UPDATE = "INSERT INTO USER_GROUP (UserID, GroupID) VALUES(?, ?)";
     private static final String USER_GROUPS_DELETE = "DELETE USER_GROUP WHERE UserID=? AND GroupID=?";
     private static final String USER_GROUP_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
-    private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText FROM TEMPLATE";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
@@ -228,7 +237,7 @@ public class SubscriberDB {
                 ResultSet rs = stmt.executeQuery()
                 ) {
             while (rs.next()) {
-                templates.add(new Template(rs.getInt("TemplateID"), rs.getString("TemplateName"), rs.getString("MessageText")));
+                templates.add(new Template(rs.getInt("TemplateID"), rs.getString("TemplateName"), rs.getString("MessageText"), rs.getInt("UserID")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

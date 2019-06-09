@@ -28,6 +28,7 @@ public class Presentation {
     private JPanel sendNotificationTab;
     private JPanel templateTab;
     private JPanel msgLogTab;
+    private JPanel manageRolesTab;
     private JPanel fpSettingsTab;
 
     public Presentation() {
@@ -35,6 +36,7 @@ public class Presentation {
         sendNotificationTab.add(new NotificationForm(username).getRootPanel());
         templateTab.add(new CreateTemplateForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
+        manageRolesTab.add(new ManageRolesForm().getRootPanel());
         fpSettingsTab.add(new SettingsForm().getRootPanel());
     }
 

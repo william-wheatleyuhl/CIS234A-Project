@@ -11,9 +11,9 @@ public class Template {
     public int templateID;
     public String templateName;
     public String messageText;
-    private int userID;
+    public int userID;
 
-    public Template(int templateID, String templateName, String messageText) {
+    public Template(int templateID, String templateName, String messageText, int userID) {
         this.templateID = templateID;
         this.templateName = templateName;
         this.messageText = messageText;

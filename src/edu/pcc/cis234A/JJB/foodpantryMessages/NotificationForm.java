@@ -3,6 +3,7 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,8 @@ public class NotificationForm {
         populateTemplateMenu();
         populateRecipientMenu();
         getCurrentUserID();
+
+        rootPanel.setPreferredSize(new Dimension(800, 600));
 
 
 
@@ -225,17 +228,17 @@ public class NotificationForm {
      */
     private ArrayList buildRecipientList() {
         ArrayList<Recipient> recipients = new ArrayList<>();
-            if(selectedGroups.contains(0)) {
-                recipients = subscribers;
-            } else {
-                for (Recipient recipient : subscribers) {
-                    for(Integer groupID : selectedGroups) {
-                        if (groups.get(groupID).contains(recipient.getUserID()) && !recipients.contains(recipient)) {
-                            recipients.add(recipient);
-                        }
+        if(selectedGroups.contains(0)) {
+            recipients = subscribers;
+        } else {
+            for (Recipient recipient : subscribers) {
+                for(Integer groupID : selectedGroups) {
+                    if (groups.get(groupID).contains(recipient.getUserID()) && !recipients.contains(recipient)) {
+                        recipients.add(recipient);
                     }
                 }
             }
+        }
         return recipients;
     }
 
@@ -247,3 +250,4 @@ public class NotificationForm {
         templates = subs.readTemplates();
     }
 }
+
