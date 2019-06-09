@@ -37,10 +37,12 @@ public class ManageRolesForm {
     private JLabel labelManageRoles;
     private JComboBox comboBoxGroups;
     private JScrollPane scrollPaneUsers;
-    private SubscriberDB subs = new SubscriberDB();
-    private ArrayList<Recipient> subscribers = subs.readSubscriberData();
+    SubscriberDB subs = new SubscriberDB();
+    private ArrayList<Recipient> recipients = subs.readSubscriberData();
+    //private ArrayList<Role> roles = subs.readRoles();
 
-    private String newUserRole;
+    private int newUserRole;
+    private int newUserID;
 
     DefaultComboBoxModel modelUsers = (DefaultComboBoxModel) comboBoxUsers.getModel();
     DefaultComboBoxModel modelRoles = (DefaultComboBoxModel) comboBoxRoles.getModel();
@@ -73,7 +75,7 @@ public class ManageRolesForm {
                         comboBoxRoles.setEnabled(false);
                     } else {
                         comboBoxRoles.setEnabled(true);
-                        //TODO: Populate with user's role
+                        //TODO: Populate with user's current role
                         labelCurrentRole.setText("Placeholder for user's current role");
                     }
                 }
@@ -137,8 +139,8 @@ public class ManageRolesForm {
                 //Check that everything is true/selected before submitting to DB
                 if(checkUserRole && checkCheckBox && checkUserSelected) {
                     JOptionPane.showMessageDialog(null, "User's role has been updated");
-                    //TODO: Update DB with new user role
-                    //subs.updateUserRole(userID, newUserRole);
+                    //TODO: Update DB with new user role (get the user ID & Role ID selected in combo boxes)
+                    subs.updateUserRole(newUserRole, newUserID);
                 }
             }
         });
@@ -179,7 +181,7 @@ public class ManageRolesForm {
     private void populateUsers() {
         modelUsers.removeAllElements();
         modelUsers.addElement("Choose one...");
-        for(Recipient recipient : subscribers) {
+        for(Recipient recipient : recipients) {
             modelUsers.addElement(recipient.getUserName());
         }
         comboBoxUsers.setModel(modelUsers);
@@ -190,8 +192,11 @@ public class ManageRolesForm {
      */
     private void populateRoles() {
         modelRoles.removeAllElements();
-        //TODO: Change from manual entry to pull from DB
         modelRoles.addElement("Choose one...");
+        //TODO: Change from manual entry to pull from DB
+//        for(Role role : roles) {
+//            modelRoles.addElement(roles.getRole());
+//        }
         modelRoles.addElement("Subscriber");
         modelRoles.addElement("Staff");
         modelRoles.addElement("Manager");

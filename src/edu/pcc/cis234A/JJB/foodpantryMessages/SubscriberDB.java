@@ -15,7 +15,7 @@ import java.util.Set;
  * Changelog:
  * 20190604 SC - Added UserID to TEMPLATE_QUERY
  * 20190604 SC - Added UserID to readTemplates()
- * 20190609 SC - Added USER_ROLES_QUERY
+ * 20190609 SC - Added ROLES_QUERY
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -29,7 +29,7 @@ public class SubscriberDB {
     private static final String USER_GROUPS_UPDATE = "INSERT INTO USER_GROUP (UserID, GroupID) VALUES(?, ?)";
     private static final String USER_GROUPS_DELETE = "DELETE USER_GROUP WHERE UserID=? AND GroupID=?";
     private static final String USER_GROUP_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
-    private static final String USER_ROLES_QUERY = "SELECT [USER].UserID, [USER].Username, [USER].RoleID, [ROLE].RoleName FROM [USER] JOIN [ROLE] ON [USER].RoleID = [ROLE].RoleID";
+    private static final String ROLES_QUERY = "SELECT RoleID, RoleName FROM [ROLE]";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
@@ -137,7 +137,7 @@ public class SubscriberDB {
             }
         }
     }
-    private void updateUserRole(int roleID, int userID) {
+    protected void updateUserRole(int roleID, int userID) {
 //        Output for debugging
 //        System.out.println("Adding User Group Setting for " + userID);
         try {
