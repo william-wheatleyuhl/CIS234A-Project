@@ -6,8 +6,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,7 +15,6 @@ import java.util.HashMap;
  * The user is able to select what subscribers the message is sent to, type a message, select a message from a template,
  * and send the message. The templates are pulled from the TEMPLATE table in the Database, and all sent messages will
  * be stored in the MESSAGES table and given a unique messageID.
- *
  * @authors Syn Calvo and Will Wheatley-Uhl
  * @version 2019.06.03
  */
@@ -30,13 +27,6 @@ public class NotificationForm {
     private JLabel sendToLabel;
     private JList groupSelect;
     private JComboBox chooseTemplate;
-<<<<<<< HEAD
-    private int groupID;
-    SubscriberDB subs = new SubscriberDB();
-    ArrayList<Template> templates = subs.readTemplates();
-    ArrayList<Recipient> recipients = subs.readSubscriberData();
-    DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
-=======
     private JScrollPane scrollList;
     private String currentUser;
     private ArrayList<Integer> selectedGroups = new ArrayList<>();
@@ -44,7 +34,6 @@ public class NotificationForm {
     private ArrayList<Template> templates = subs.readTemplates();
     private ArrayList<Recipient> subscribers = subs.readSubscriberData();
     private HashMap<Integer, ArrayList<Object>> groups = subs.getGroupMakeup();
->>>>>>> 20a8b40107767e53fad9d59361ef0cf679879259
 
 
     public NotificationForm(String currUser) {
@@ -53,23 +42,21 @@ public class NotificationForm {
         populateRecipientMenu();
         getCurrentUserID();
 
-       /**
+        /**
          * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
          * clears the message field.
          * TODO: Cache Message when switching between templates and new messages.
          */
-        chooseTemplate.addItemListener(new ItemListener() {
+        chooseTemplate.addActionListener(new ActionListener() {
             @Override
-            public void itemStateChanged(ItemEvent itemEvent) {
-                if(chooseTemplate.getModel().getSize() > 1) {
-                    int selectedIndex = chooseTemplate.getSelectedIndex();
-                    if (selectedIndex == 0) {
-                        notificationTextArea.setText("");
-                        notificationTextArea.setEnabled(true);
-                    } else {
-                        notificationTextArea.setText(templates.get(selectedIndex-1).messageText);
-                        notificationTextArea.setEnabled(false);
-                    }
+            public void actionPerformed(ActionEvent actionEvent) {
+                int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
+                if(chooseTemplate.getSelectedIndex() == 0) {
+                    notificationTextArea.setText("");
+                    notificationTextArea.setEnabled(true);
+                } else {
+                    notificationTextArea.setText(templates.get(selectedIndex).messageText);
+                    notificationTextArea.setEnabled(false);
                 }
             }
         });
@@ -130,6 +117,7 @@ public class NotificationForm {
      * found in the database. Currently set with one default option and 3 template options.
      */
     public void populateTemplateMenu() {
+        DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
         model.removeAllElements();
         model.addElement("No Template");
         for(Template temp : templates) {
@@ -209,25 +197,17 @@ public class NotificationForm {
      */
     private ArrayList buildRecipientList() {
         ArrayList<Recipient> recipients = new ArrayList<>();
-            if(selectedGroups.contains(0)) {
-                recipients = subscribers;
-            } else {
-                for (Recipient recipient : subscribers) {
-                    for(Integer groupID : selectedGroups) {
-                        if (groups.get(groupID).contains(recipient.getUserID()) && !recipients.contains(recipient)) {
-                            recipients.add(recipient);
-                        }
+        if(selectedGroups.contains(0)) {
+            recipients = subscribers;
+        } else {
+            for (Recipient recipient : subscribers) {
+                for(Integer groupID : selectedGroups) {
+                    if (groups.get(groupID).contains(recipient.getUserID()) && !recipients.contains(recipient)) {
+                        recipients.add(recipient);
                     }
                 }
             }
+        }
         return recipients;
-    }
-
-    /**
-     * Clear the current ArrayList of Templates. Reload available templates from DB.
-     */
-    private void refreshTemplates() {
-        templates.clear();
-        templates = subs.readTemplates();
     }
 }
