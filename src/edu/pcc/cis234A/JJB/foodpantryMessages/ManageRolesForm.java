@@ -1,5 +1,6 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import javax.mail.FetchProfile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -39,10 +40,11 @@ public class ManageRolesForm {
     private JScrollPane scrollPaneUsers;
     SubscriberDB subs = new SubscriberDB();
     private ArrayList<Recipient> recipients = subs.readSubscriberData();
-    //private ArrayList<Role> roles = subs.readRoles();
+    //private ArrayList<Role> roles = subs.readRoles(); //TODO: - Will
 
     private int newUserRole;
     private int newUserID;
+    private String newGroupName;
 
     DefaultComboBoxModel modelUsers = (DefaultComboBoxModel) comboBoxUsers.getModel();
     DefaultComboBoxModel modelRoles = (DefaultComboBoxModel) comboBoxRoles.getModel();
@@ -150,21 +152,54 @@ public class ManageRolesForm {
          * Deselects radioEditExisting
          * Enables fieldGroupName and scrollPaneUsers
          */
-        //TODO: Add listener for radio Create New
+        radioCreateNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(radioCreateNew.isSelected()) {
+                    radioEditExisting.setSelected(false);
+                    fieldGroupName.setEnabled(true);
+                    fieldGroupName.setText("");
+                    scrollPaneUsers.setEnabled(true);
+                }
+            }
+        });
 
         /**
          * Listener for radioEditExisting
          * Deselects radioCreateNew
          * Enables comboBoxGroups
          */
-        //TODO: Add listener for radio Edit Existing
+        radioEditExisting.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(radioEditExisting.isSelected()) {
+                    radioCreateNew.setSelected(false);
+                    comboBoxGroups.setEnabled(true);
+                    fieldGroupName.setEnabled(true);
+                    scrollPaneUsers.setEnabled(true);
+                }
+            }
+        });
 
         /**
          * Listener for comboBoxGroups selection
          * Enables fieldGroupName and scrollPaneUsers
          * Populates fieldGroupName with the group name from DB for selected index
          */
-        //TODO: Add listener for comboBoxGroups selection
+        comboBoxGroups.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (comboBoxGroups.getModel().getSize() > 1) {
+                    int selectedIndex = comboBoxGroups.getSelectedIndex();
+                    if (selectedIndex == 0) {
+                        fieldGroupName.setText("");
+                    } else {
+                        //TODO: Need groups and groupName (Group class? like Template class?)
+                        //fieldGroupName.setText(groups.get(selectedIndex - 1).groupName);
+                    }
+                }
+            }
+        });
 
         /**
          * Listener for buttonSaveGroup
@@ -172,7 +207,30 @@ public class ManageRolesForm {
          * Does not require users to save a group
          * Adds users selected to the DB for that group
          */
-        //TODO: Add listener for buttonSaveGroup
+        buttonSaveGroup.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean checkGroupName = false;
+
+                if(fieldGroupName.getText().equals("")) {
+                    JOptionPane.showMessageDialog(null, "Please enter a Group Name");
+                } else {
+                    newGroupName = fieldGroupName.getText();
+                    checkGroupName = true;
+                }
+
+                if(checkGroupName) {
+                    if(radioCreateNew.isSelected()) {
+                        //TODO: Save new Group details to DB
+                        JOptionPane.showMessageDialog(null, "Group Created");
+                    }
+                    else if (radioEditExisting.isSelected()) {
+                        //TODO: Update group details in DB
+                        JOptionPane.showMessageDialog(null, "Group Updated");
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -193,9 +251,9 @@ public class ManageRolesForm {
     private void populateRoles() {
         modelRoles.removeAllElements();
         modelRoles.addElement("Choose one...");
-        //TODO: Change from manual entry to pull from DB
+        //TODO: Will - Change from manual entry to pull from DB (add getRole() method to SubscriberDB?)
 //        for(Role role : roles) {
-//            modelRoles.addElement(roles.getRole());
+//            modelRoles.addElement(roles.getRoleName());
 //        }
         modelRoles.addElement("Subscriber");
         modelRoles.addElement("Staff");
@@ -214,7 +272,7 @@ public class ManageRolesForm {
     }
 
     private void populateSubscribers() {
-        //this.
+        //TODO: populate multi-select list (scrollPaneUsers) with all users
     }
 
     /**
