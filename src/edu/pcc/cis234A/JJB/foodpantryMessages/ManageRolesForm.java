@@ -2,6 +2,8 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ public class ManageRolesForm {
     private SubscriberDB subs = new SubscriberDB();
     private ArrayList<Recipient> subscribers = subs.readSubscriberData();
 
+    private String newUserRole;
+
     DefaultComboBoxModel modelUsers = (DefaultComboBoxModel) comboBoxUsers.getModel();
     DefaultComboBoxModel modelRoles = (DefaultComboBoxModel) comboBoxRoles.getModel();
     DefaultComboBoxModel modelGroups = (DefaultComboBoxModel) comboBoxGroups.getModel();
@@ -51,11 +55,12 @@ public class ManageRolesForm {
         comboBoxGroups.setEnabled(false);
         fieldGroupName.setEnabled(false);
         scrollPaneUsers.setEnabled(false);
+        buttonSubmitRole.setEnabled(false);
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
 
         /**
-         * Item listener for the first combo box
+         * Item listener for the first combo box (Users)
          * Displays the selected user's role
          * Enables second combo box for role selection
          */
@@ -76,7 +81,7 @@ public class ManageRolesForm {
         });
 
         /**
-         * Item listener for the second combo box
+         * Item listener for the second combo box (Roles)
          * Displays a check box to confirm the changes to the user's role
          */
         comboBoxRoles.addItemListener(new ItemListener() {
@@ -85,9 +90,10 @@ public class ManageRolesForm {
                 if (comboBoxRoles.getModel().getSize() > 1) {
                     int selectedIndex = comboBoxRoles.getSelectedIndex();
                     if (selectedIndex > 0) {
+                        buttonSubmitRole.setEnabled(true);
                         checkBoxConfirm.setVisible(true);
                         checkBoxConfirm.setEnabled(true);
-                        checkBoxConfirm.setText("Check this box to confirm you want to change this user's role");
+                        checkBoxConfirm.setText("Check here to confirm you want to change this user's role");
                     }
                 }
             }
@@ -99,6 +105,42 @@ public class ManageRolesForm {
          * Checks to verify checkBoxConfirm is selected
          */
         //TODO: Add listener for buttonSubmit (change role)
+        buttonSubmitRole.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean checkUserRole = false;
+                boolean checkCheckBox = false;
+                boolean checkUserSelected = false;
+
+                //Check that a user is selected
+                if(comboBoxUsers.getSelectedIndex() > 0) {
+                    checkUserSelected = true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a user to change role");
+                }
+
+                //Check that a role is selected for the user
+                if(comboBoxRoles.getSelectedIndex() > 0) {
+                    checkUserRole = true;
+                    //TODO: Add user role variable
+                    //newUserRole =
+                } else {
+                    JOptionPane.showMessageDialog(null, "You have not selected a role for the user");
+                }
+
+                if(checkBoxConfirm.isSelected()) {
+                    checkCheckBox = true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please check the confirmation box to continue");
+                }
+
+                if(checkUserRole && checkCheckBox && checkUserSelected) {
+                    JOptionPane.showMessageDialog(null, "User's role has been updated");
+                    //TODO: Update DB with new user role
+                    //subs.updateUserRole(userID, newUserRole);
+                }
+            }
+        });
 
         /**
          * Listener for radioCreateNew
@@ -147,6 +189,7 @@ public class ManageRolesForm {
      */
     private void populateRoles() {
         modelRoles.removeAllElements();
+        //TODO: Change from manual entry to pull from DB
         modelRoles.addElement("Choose one...");
         modelRoles.addElement("Subscriber");
         modelRoles.addElement("Staff");
@@ -162,6 +205,10 @@ public class ManageRolesForm {
         modelGroups.addElement("Choose one...");
         //TODO: Add for loop to get groups
         comboBoxGroups.setModel(modelGroups);
+    }
+
+    private void populateSubscribers() {
+        //this.
     }
 
     /**

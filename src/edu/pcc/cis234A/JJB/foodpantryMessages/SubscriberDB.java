@@ -9,17 +9,13 @@ import java.util.Set;
 /**
  * SubsciberDB Class
  * Connects to the Database, Returns requested data based on SQL Queries.
- * @author Will Wheatley-Uhl
-<<<<<<< HEAD
- * @version 2019.06.05
-=======
- * @version 2019.06.04
+ * @author Will Wheatley-Uhl & Syn Calvo
+ * @version 2019.06.09
  *
  * Changelog:
  * 20190604 SC - Added UserID to TEMPLATE_QUERY
  * 20190604 SC - Added UserID to readTemplates()
- * @version 2019.06.03
->>>>>>> fca465face6474e5116e471834faaf9dedb972d7
+ * 20190609 SC - Added USER_ROLES_QUERY
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -31,6 +27,7 @@ public class SubscriberDB {
     private static final String USER_GROUPS_UPDATE = "INSERT INTO USER_GROUP (UserID, GroupID) VALUES(?, ?)";
     private static final String USER_GROUPS_DELETE = "DELETE USER_GROUP WHERE UserID=? AND GroupID=?";
     private static final String USER_GROUP_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
+    private static final String USER_ROLES_QUERY = "SELECT [USER].UserID, [USER].Username, [USER].RoleID, [ROLE].RoleName FROM [USER] JOIN [ROLE] ON [USER].RoleID = [ROLE].RoleID";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
@@ -43,7 +40,7 @@ public class SubscriberDB {
     /**
      * Query the Database for enough data to populate the recipient Constructor. Add the newly created Recipient
      * objects to the recipients ArrayList.
-     * @return recipients Return an ArrayList of Recipient Objects
+     * @return receivers Return an ArrayList of Recipient Objects
      */
     public ArrayList readSubscriberData() {
         try (
