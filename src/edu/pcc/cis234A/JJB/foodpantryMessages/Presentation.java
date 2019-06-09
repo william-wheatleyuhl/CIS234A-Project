@@ -1,6 +1,12 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 
 /**
@@ -19,12 +25,14 @@ public class Presentation {
     private JPanel sendNotificationTab;
     private JPanel templateTab;
     private JPanel msgLogTab;
+    private JPanel fpSettingsTab;
 
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
         sendNotificationTab.add(new NotificationForm(username).getRootPanel());
         templateTab.add(new CreateTemplateForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
+        fpSettingsTab.add(new SettingsForm().getRootPanel());
     }
 
     /**
