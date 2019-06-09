@@ -8,7 +8,8 @@ import java.util.ArrayList;
 
 /**
  * A class to define the functionality of the Manage Roles GUI
- * Allows a Manager to
+ * Allows a Manager to change user roles and edit or create
+ * user groups (subscriber lists)
  *
  * @author Syn
  * @version 2019.06.08
@@ -53,6 +54,11 @@ public class ManageRolesForm {
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
 
+        /**
+         * Item listener for the first combo box
+         * Displays the selected user's role
+         * Enables second combo box for role selection
+         */
         comboBoxUsers.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -69,6 +75,10 @@ public class ManageRolesForm {
             }
         });
 
+        /**
+         * Item listener for the second combo box
+         * Displays a check box to confirm the changes to the user's role
+         */
         comboBoxRoles.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -83,11 +93,41 @@ public class ManageRolesForm {
             }
         });
 
+        /**
+         * Listener for buttonSubmit
+         * Submits the changes to the user's role to the DB
+         * Checks to verify checkBoxConfirm is selected
+         */
         //TODO: Add listener for buttonSubmit (change role)
+
+        /**
+         * Listener for radioCreateNew
+         * Deselects radioEditExisting
+         * Enables fieldGroupName and scrollPaneUsers
+         */
         //TODO: Add listener for radio Create New
+
+        /**
+         * Listener for radioEditExisting
+         * Deselects radioCreateNew
+         * Enables comboBoxGroups
+         */
         //TODO: Add listener for radio Edit Existing
+
+        /**
+         * Listener for comboBoxGroups selection
+         * Enables fieldGroupName and scrollPaneUsers
+         * Populates fieldGroupName with the group name from DB for selected index
+         */
         //TODO: Add listener for comboBoxGroups selection
-        //TODO: Add listener for buttonSave (save group)
+
+        /**
+         * Listener for buttonSaveGroup
+         * Checks that fieldGroupName has content
+         * Does not require users to save a group
+         * Adds users selected to the DB for that group
+         */
+        //TODO: Add listener for buttonSaveGroup
     }
 
     /**
