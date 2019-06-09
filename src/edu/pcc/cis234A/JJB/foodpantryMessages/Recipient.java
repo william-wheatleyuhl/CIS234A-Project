@@ -14,15 +14,21 @@ public class Recipient {
     private String lastName;
     private String emailAddr;
     private String phoneNbr;
+    private String altEmailAddr;
+    private int roleID;
+    private String roleTitle;
     private HashMap<String, Boolean> userSettings = new HashMap();
 
-    public Recipient(int userID, String userName, String lastName, String firstName, String emailAddr, String phoneNbr) {
+    public Recipient(int userID, String userName, String lastName, String firstName, String emailAddr, String phoneNbr,
+                     int roleID, String roleTitle) {
         this.userID = userID;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddr = emailAddr;
         this.phoneNbr = phoneNbr;
+        this.roleID = roleID;
+        this.roleTitle = roleTitle;
     }
 
     //    Setters
@@ -68,4 +74,11 @@ public class Recipient {
         return userSettings;
     }
 
+    public int getRoleID() {
+        return roleID;
+    }
+
+    public String getRoleTitle() {
+        return roleTitle;
+    }
 }
