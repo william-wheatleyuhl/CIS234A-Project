@@ -19,12 +19,14 @@ public class Presentation {
     private JPanel sendNotificationTab;
     private JPanel templateTab;
     private JPanel msgLogTab;
+    private JPanel manageRolesTab;
 
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
         sendNotificationTab.add(new NotificationForm().getRootPanel());
         templateTab.add(new CreateTemplateForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
+        manageRolesTab.add(new ManageRolesForm().getRootPanel());
     }
 
     /**
