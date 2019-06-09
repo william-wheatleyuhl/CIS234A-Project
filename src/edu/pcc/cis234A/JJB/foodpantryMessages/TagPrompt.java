@@ -1,7 +1,10 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 /**
@@ -14,9 +17,12 @@ import java.util.HashMap;
 
 public class TagPrompt {
     private JPanel panel = new JPanel();
+    private JFileChooser chooser = new JFileChooser();
+    private JButton imgButton = new JButton("Select File");
     private GridBagConstraints left = new GridBagConstraints();
     private GridBagConstraints right = new GridBagConstraints();
     private HashMap<String, JTextField> tagValues = new HashMap<String, JTextField>();
+    private String imageFileSrc;
 
     public TagPrompt() {
         panel.setLayout(new GridBagLayout());
@@ -25,6 +31,18 @@ public class TagPrompt {
         right.insets = new Insets(5,5,5,5);
         right.weightx = 2.0;
         right.gridwidth = GridBagConstraints.REMAINDER;
+
+        imgButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif");
+                chooser.setFileFilter(filter);
+                int returnVal = chooser.showOpenDialog(panel);
+                if(returnVal == JFileChooser.APPROVE_OPTION) {
+                    imageFileSrc = chooser.getSelectedFile().getAbsolutePath();
+                    System.out.println("You Chose this file: " + imageFileSrc);
+                }
+            }
+        });
     }
 
     /**
@@ -33,10 +51,17 @@ public class TagPrompt {
      * @param tag String value of an individual tag to be filled.
      */
     public void populateTagFrame(String tag) {
-        JLabel label = new JLabel("What should the value of " + tag + " be?");
-        tagValues.put(tag, new JTextField(15));
-        panel.add(label, left);
-        panel.add(tagValues.get(tag), right);
+        if(tag.contains("image") || tag.contains("<image>")){
+            JLabel label = new JLabel("Choose Image File:");
+//            tagValues.put(tag, imgButton);
+            panel.add(label, left);
+            panel.add(imgButton, right);
+        } else {
+            JLabel label = new JLabel("What should the value of " + tag + " be?");
+            tagValues.put(tag, new JTextField(15));
+            panel.add(label, left);
+            panel.add(tagValues.get(tag), right);
+        }
     }
 
     /**

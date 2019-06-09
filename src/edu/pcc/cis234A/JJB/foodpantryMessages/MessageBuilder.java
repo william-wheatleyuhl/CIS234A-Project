@@ -1,5 +1,8 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.swing.*;
@@ -18,11 +21,26 @@ public class MessageBuilder {
     private String msgText;
     private final String username= "jjb.234a.test@gmail.com";
     private final String password = "xqaddkztgrcbdlda";  // App password for gmail, not actual password.
+    private Session session;
 
     public MessageBuilder(Recipient recipient, String msgText) {
         this.recipient = recipient;
         this.sendTo = recipient.getEmailAddr();
         this.msgText = msgText;
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.socketFactory.port", "465");
+        props.put("mail.smtp.socketFactory.class",
+                "javax.net.ssl.SSLSocketFactory");
+
+        this.session = Session.getDefaultInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPassWordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
     }
 
     /**
@@ -44,26 +62,47 @@ public class MessageBuilder {
      * Given all parameters of the message, send the message to the intended recipient.
      * TODO: Implement one send message usage by providing list of recipient email addresses, rather than calling this method multiple times.
      */
-    public void sendMessage() {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class",
-                "javax.net.ssl.SSLSocketFactory");
-
-        Session session = Session.getDefaultInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPassWordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+    public void sendPlainMessage() {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sentFrom));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTo));
             message.setSubject("Test Message");
             message.setText(formatMessage( recipient, msgText));
+            Transport.send(message, username, password);
+            System.out.println("Message Sent to: " + sendTo);
+        } catch(MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessageWithImage(String imagePath) {
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(sentFrom));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTo));
+            message.setSubject("Test Message");
+
+            // Add Message Body.
+            MimeMultipart multipart = new MimeMultipart("related");
+            BodyPart messageBodyPart = new MimeBodyPart();
+            String htmlMessageText = "<H1>Hello, " + recipient.getFirstName() + "</H1><br>" +
+                    "<p>" + msgText + "</p>" +
+                    "<br>Come on Down!\n" +
+                    "PCC Foodbank Project\n" +
+                    "jjb.234a.test@gmail.com\n" +
+                    "(555)-867-5309";
+            messageBodyPart.setContent(htmlMessageText, "text/html");
+            multipart.addBodyPart(messageBodyPart);
+
+            // Add Image
+            messageBodyPart = new MimeBodyPart();
+            DataSource fds = new FileDataSource(imagePath);
+            messageBodyPart.setDataHandler(new DataHandler(fds));
+            messageBodyPart.setHeader("Content-ID", "<image>");
+            multipart.addBodyPart(messageBodyPart);
+
+            message.setContent(multipart);
             Transport.send(message, username, password);
             System.out.println("Message Sent to: " + sendTo);
         } catch(MessagingException e) {
