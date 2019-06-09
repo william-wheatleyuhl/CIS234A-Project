@@ -31,6 +31,7 @@ public class SettingsForm {
     private JTextField altEmailTextField;
     private JLabel phoneNumberLabel;
     private JTextField phoneNumberTextField;
+    private JButton upateMyUserSettingsButton;
     private JCheckBox[] boxes;
 
     /**
