@@ -41,6 +41,9 @@ public class JavaneseJumpingBeansDB {
     private static final String UPDATE_EMAIL_ON_SQL = "UPDATE USER_SETTING SET EmailOn = ? WHERE UserID = ?";
     private static final String UPDATE_ALT_EMAIL_ON_SQL = "UPDATE USER_SETTING SET AltEmailOn = ? WHERE UserID = ?";
     private static final String UPDATE_SMS_ON_SQL = "UPDATE USER_SETTING SET SMSOn = ? WHERE UserID = ?";
+    private static final String UPDATE_ALT_EMAIL_PHONE_USER_SETTINGS_SQL = "UPDATE [USER] SET AltEmail = ?, Phone = ? WHERE UserID = ?";
+    private static final String UPDATE_ALT_EMAIL_USER_SETTINGS_SQL = "UPDATE [USER] SET AltEmail = ? WHERE UserID = ?";
+    private static final String UPDATE_PHONE_USER_SETTINGS_SQL = "UPDATE [USER] SET Phone = ? WHERE UserID = ?";
     private int userId;
 
     /**
@@ -337,6 +340,79 @@ public class JavaneseJumpingBeansDB {
             stmt.setBoolean(1, newSmsOn);
             stmt.setInt(2, userId);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Updates the alternate email and phone number in the USER table of the database based on values provided by
+     * the logged in user.
+     */
+    public void updateUserSettings(String altEmail, String phoneNbr) {
+        String sql = "";
+        int i = 0;
+        if (!altEmail.isEmpty() && !phoneNbr.isEmpty()) {
+            sql = UPDATE_ALT_EMAIL_PHONE_USER_SETTINGS_SQL;
+            i = 1;
+        } else if (!altEmail.isEmpty()) {
+            sql = UPDATE_ALT_EMAIL_USER_SETTINGS_SQL;
+            i = 2;
+        } else if (!phoneNbr.isEmpty()) {
+            sql = UPDATE_PHONE_USER_SETTINGS_SQL;
+            i = 3;
+        } else if (altEmail.isEmpty() && !phoneNbr.isEmpty()) {
+            sql = UPDATE_ALT_EMAIL_USER_SETTINGS_SQL;
+            i = 4;
+        } else if (!altEmail.isEmpty() && phoneNbr.isEmpty()) {
+            sql = UPDATE_PHONE_USER_SETTINGS_SQL;
+            i = 5;
+        } else if (altEmail.isEmpty() && phoneNbr.isEmpty()) {
+            sql = UPDATE_ALT_EMAIL_PHONE_USER_SETTINGS_SQL;
+            i = 6;
+        }
+        else {
+            System.out.println("Entered else statement.  Returning ...");
+            return;
+        }
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            System.out.println("Update User Settings sql value: " + sql);
+            System.out.println("Alt Email: " + altEmail);
+            System.out.println("Phone #: " + phoneNbr);
+            System.out.println("User ID: " + userId);
+            if (i == 1) {
+                System.out.println("Entered #1 if statement ...");
+                stmt.setString(1, altEmail);
+                stmt.setString(2, phoneNbr);
+                stmt.setInt(3, userId);
+            } else if (i == 2) {
+                System.out.println("Entered #2 if statement ...");
+                stmt.setString(1, altEmail);
+                stmt.setInt(2, userId);
+            } else if (i == 3) {
+                System.out.println("Entered #3 if statement ...");
+                stmt.setString(1, phoneNbr);
+                stmt.setInt(2, userId);
+            } else if (i == 4) {
+                System.out.println("Entered #4 if statement ...");
+                stmt.setNull(1, java.sql.Types.VARCHAR);
+                stmt.setInt(2, userId);
+            } else if (i == 5) {
+                System.out.println("Entered #5 if statement ...");
+                stmt.setNull(1, java.sql.Types.VARCHAR);
+                stmt.setInt(2, userId);
+            } else if (i == 6) {
+                System.out.println("Entered #6 if statement ...");
+                stmt.setNull(1, java.sql.Types.VARCHAR);
+                stmt.setNull(2, java.sql.Types.VARCHAR);
+                stmt.setInt(3, userId);
+            }
+            if (!sql.isEmpty()) {
+                stmt.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

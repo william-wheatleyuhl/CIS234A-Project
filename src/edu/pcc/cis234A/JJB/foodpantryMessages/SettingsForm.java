@@ -192,6 +192,19 @@ public class SettingsForm {
                 }
             }
         });
+
+        /**
+         * Action Listener for the Update My User Settings button. If the update is successful, then a message will pop
+         * up to notify the user of this.  Otherwise if there is an error, a message will pop up to notify them of the
+         * issue.
+         */
+        upateMyUserSettingsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+               jjb.updateUserSettings(altEmailTextField.getText().trim(), phoneNumberTextField.getText().trim());
+                JOptionPane.showMessageDialog(null, "You have updated your user settings successfully!");
+            }
+        });
     }
 
     /**
