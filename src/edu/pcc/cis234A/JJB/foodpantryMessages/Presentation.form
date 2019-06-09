@@ -38,7 +38,7 @@
               </grid>
               <grid id="94556" binding="templateTab" layout-manager="CardLayout" hgap="0" vgap="0">
                 <constraints>
-                  <tabbedpane title="Create/Edit Templates"/>
+                  <tabbedpane title="Template Editor"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -54,12 +54,12 @@
               </grid>
               <grid id="d9189" binding="manageRolesTab" layout-manager="CardLayout" hgap="0" vgap="0">
                 <constraints>
-                  <tabbedpane title="Manage Roles"/>
-								</constraints>
-								<properties/>
+                  <tabbedpane title="Manage Users"/>
+                </constraints>
+                <properties/>
                 <border type="none"/>
                 <children/>
-							</grid>
+              </grid>
               <grid id="1c1b3" binding="fpSettingsTab" layout-manager="CardLayout" hgap="0" vgap="0">
                 <constraints>
                   <tabbedpane title="Settings"/>

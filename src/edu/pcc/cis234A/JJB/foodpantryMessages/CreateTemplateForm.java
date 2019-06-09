@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.awt.Color;
 
 /**
+ * A class to define the functionality of the Template Editor GUI
+ * Allows a user to create a new template or select a saved template from the DB
+ * and make changes to it.
+ *
  * @author Syn Calvo
  * @version 2019.06.04
  *
