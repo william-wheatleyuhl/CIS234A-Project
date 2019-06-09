@@ -16,6 +16,10 @@ import java.awt.Color;
  * 20190521 SC - Reconstructed combobox listener to populate template fields dynamically
  * 20190604 SC - Added loggedInUserID to template submissions
  * 20190604 SC - Added labelLastEdit to combobox listener
+ * 20190608 SC - Added refreshTemplates() method
+ * 20190608 SC - Restructured action listener to item listener for combo box w/ if statements
+ * 20190608 SC - Moved comboBox model outside of the populateComboBox() method
+ * 20190608 SC - Uncommented resetAllTheThings() method and added it to Save button listener
  */
 public class CreateTemplateForm {
     private JPanel rootPanel;
@@ -41,28 +45,27 @@ public class CreateTemplateForm {
     private int existingTemplateID;
     private int loggedInUserID = session.getUsernameUserID(login.getLoggedInUser());
     DefaultComboBoxModel model = (DefaultComboBoxModel) comboTemplates.getModel();
-    // @WILL - SEE ME
-    NotificationForm notificationForm = new NotificationForm();
-    //refreshNotificationForm = notificatio
-
-
 
     public CreateTemplateForm() {
         populateComboBox();
+        // Set fields unusable until radio choice is selected
         areaTemplateText.setEnabled(false);
         fieldTemplateName.setEnabled(false);
         comboTemplates.setEnabled(false);
 
-
         rootPanel.setPreferredSize(new Dimension(800, 600));
 
+        /**
+         * Document Listener that counts characters in the "document" created
+         * in the text area and displays as green if within 500 or red if over
+         * Note: Char limit in DB is 500 for MessageText column
+         */
         areaTemplateText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 if(areaTemplateText.getText().length() > 500) {
                     labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
                     labelCharCount.setForeground(Color.red);
-                    //labelCharCount.setText(String.valueOf(areaTemplateText.getText().length()));
                 }
                 else {
                     labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
@@ -75,7 +78,6 @@ public class CreateTemplateForm {
                 if(areaTemplateText.getText().length() > 500) {
                     labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
                     labelCharCount.setForeground(Color.red);
-                    //labelCharCount.setText(String.valueOf(areaTemplateText.getText().length()));
                 }
                 else {
                     labelCharCount.setText("Character count: " + areaTemplateText.getText().length());
@@ -100,7 +102,10 @@ public class CreateTemplateForm {
         /**
          * Action listener for the "Create New" radio button.
          * Deselects the "Edit Existing" radio button.
-         * Disables the existing templates list field.
+         * Disables the existing templates comboBox.
+         * Clears any text in text area and text fields.
+         * Enables text area and text fields for editing.
+         * Clears "Last edit by" label.
          */
         radioCreateNew.addActionListener(new ActionListener() {
             @Override
@@ -119,8 +124,8 @@ public class CreateTemplateForm {
 
         /**
          * Action listener for the "Edit Existing" radio button.
-         * Deselects the "Create New" radio button and enables
-         * template text and name fields
+         * Deselects the "Create New" radio button.
+         * Enables template text and name fields.
          */
         radioEditExisting.addActionListener(new ActionListener() {
             @Override
@@ -157,6 +162,7 @@ public class CreateTemplateForm {
                 }
             }
         });
+        // OLD CODE for reference TODO: REMOVE LATER
 //        comboTemplates.addActionListener(new ActionListener() {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
@@ -168,21 +174,9 @@ public class CreateTemplateForm {
 //        });
 
         /**
-         * Mouseover the comboBox refreshes the template list from the DB
-         */
-//        comboTemplates.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseEntered(MouseEvent e) {
-//                super.mouseEntered(e);
-//                refreshTemplates();
-//                populateComboBox();
-//            }
-//        });
-
-        /**
          * Action listener for the "Save" button.
          * Checks that form fields are completed and calls methods to submit changes to DB.
-         * TODO: Refresh ComboBox dropdown with new changes
+         * Calls refresh and populate methods to refresh ComboBox with updated templates from DB.
          */
         buttonSave.addActionListener(new ActionListener() {
             @Override
@@ -217,22 +211,20 @@ public class CreateTemplateForm {
                     checkTemplateChars = true;
                 }
 
-                // Make sure the template has both fields filled in
+                // Make sure the template has both fields filled in and is under 500 characters
                 if (checkTemplateName && checkTemplateText && checkTemplateChars) {
                     if(radioCreateNew.isSelected()) {
                         JOptionPane.showMessageDialog(null, "New template saved saved as \"" + newTemplateName + "\"");
                         temps.logNewTemplate(newTemplateName, newTemplateText, loggedInUserID);
-                        // Clear labels and text areas / fields
-                        refreshTemplates();
-                        populateComboBox();
+                        // Reset the frame
+                        resetAllTheThings();
                     }
                     else if(radioEditExisting.isSelected()) {
                         existingTemplateID = comboTemplates.getSelectedIndex();
                         JOptionPane.showMessageDialog(null, "Changes to \"" + newTemplateName + "\" saved");
                         temps.updateExistingTemplate(newTemplateName, newTemplateText, loggedInUserID, existingTemplateID);
-                        // Clear labels and text areas / fields
-                        refreshTemplates();
-                        populateComboBox();
+                        // Reset the frame
+                        resetAllTheThings();
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Choose \"Create New\" or select an existing template to save");
@@ -242,25 +234,27 @@ public class CreateTemplateForm {
         });
     }
     /**
-     * Clear EVERYTHING //test
+     * Reset the Template Editor
+     * For use in the Save button action listener
+     * Clears text area, text field, last edit by, and character count
+     * Calls methods to refresh the template array and repopulate the combo box
      */
-    //TODO Don't leave me like this
-//    public void resetAllTheThings() {
-//        areaTemplateText.setText("");
-//        fieldTemplateName.setText("");
-//        labelLastEdit.setText("");
-//        labelCharCount.setText("");
-//        radioCreateNew.setSelected(false);
-//        radioEditExisting.setSelected(false);
-//        comboTemplates.setEnabled(false);
-//        refreshTemplates();
-//        populateComboBox();
-//    }
+    private void resetAllTheThings() {
+        areaTemplateText.setText("");
+        fieldTemplateName.setText("");
+        labelLastEdit.setText("");
+        labelCharCount.setText("");
+        //radioCreateNew.setSelected(false);
+        //radioEditExisting.setSelected(false);
+        //comboTemplates.setEnabled(false);
+        refreshTemplates();
+        populateComboBox();
+    }
 
     /**
      * Model for the drop down menu to select existing templates found in DB.
      */
-    public void populateComboBox() {
+    private void populateComboBox() {
         model.removeAllElements();
         model.addElement("Choose one...");
         for(Template temp : templates) {
@@ -272,7 +266,7 @@ public class CreateTemplateForm {
     /**
      * Clear the ArrayList of templates and reload from the DB
      */
-    public void refreshTemplates() {
+    private void refreshTemplates() {
         templates.clear();
         templates = temps.readTemplates();
     }

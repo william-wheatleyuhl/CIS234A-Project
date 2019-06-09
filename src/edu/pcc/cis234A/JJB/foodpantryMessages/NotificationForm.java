@@ -3,6 +3,8 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 /**
@@ -11,6 +13,7 @@ import java.util.ArrayList;
  * The user is able to select what subscribers the message is sent to, type a message, select a message from a template,
  * and send the message. The templates are pulled from the TEMPLATE table in the Database, and all sent messages will
  * be stored in the MESSAGES table and given a unique messageID.
+ *
  * @authors Syn Calvo and Will Wheatley-Uhl
  * @version 2019.05.07
  */
@@ -29,6 +32,7 @@ public class NotificationForm {
     SubscriberDB subs = new SubscriberDB();
     ArrayList<Template> templates = subs.readTemplates();
     ArrayList<Recipient> recipients = subs.readSubscriberData();
+    DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
 
 
     public NotificationForm() {
@@ -70,16 +74,18 @@ public class NotificationForm {
          * clears the message field.
          * TODO: Cache Message when switching between templates and new messages.
          */
-        chooseTemplate.addActionListener(new ActionListener() {
+        chooseTemplate.addItemListener(new ItemListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
-                if(chooseTemplate.getSelectedIndex() == 0) {
-                    notificationTextArea.setText("");
-                    notificationTextArea.setEnabled(true);
-                } else {
-                notificationTextArea.setText(templates.get(selectedIndex).messageText);
-                notificationTextArea.setEnabled(false);
+            public void itemStateChanged(ItemEvent itemEvent) {
+                if(chooseTemplate.getModel().getSize() > 1) {
+                    int selectedIndex = chooseTemplate.getSelectedIndex();
+                    if (selectedIndex == 0) {
+                        notificationTextArea.setText("");
+                        notificationTextArea.setEnabled(true);
+                    } else {
+                        notificationTextArea.setText(templates.get(selectedIndex-1).messageText);
+                        notificationTextArea.setEnabled(false);
+                    }
                 }
             }
         });
@@ -130,7 +136,6 @@ public class NotificationForm {
      * found in the database. Currently set with one default option and 3 template options.
      */
     public void populateTemplateMenu() {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
         model.removeAllElements();
         model.addElement("No Template");
         for(Template temp : templates) {
@@ -203,5 +208,13 @@ public class NotificationForm {
 
     private void setGroupID(int groupID) {
         this.groupID = groupID;
+    }
+
+    /**
+     * Clear the current ArrayList of Templates. Reload available templates from DB.
+     */
+    private void refreshTemplates() {
+        templates.clear();
+        templates = subs.readTemplates();
     }
 }
