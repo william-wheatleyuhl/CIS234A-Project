@@ -140,7 +140,7 @@ public class NotificationForm {
                 //Output for debugging
 //                ArrayList<Recipient> recipients = buildRecipientList();
 //                for(Recipient recipient: recipients) {
-//                    System.out.println(recipient.getUserName());
+//                    System.out.println("NAME: " + recipient.getUserName() + " " + recipient.getRoleID() + " " + recipient.getRoleTitle());
 //                }
             }
 
