@@ -1,7 +1,6 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
-import java.util.List;
-
+import java.util.HashMap;
 /**
  *Recipient Class
  * This Class will model the recipient, and will store Recipient data.
@@ -15,6 +14,7 @@ public class Recipient {
     private String lastName;
     private String emailAddr;
     private String phoneNbr;
+    private HashMap<String, Boolean> userSettings = new HashMap();
 
     public Recipient(int userID, String userName, String lastName, String firstName, String emailAddr, String phoneNbr) {
         this.userID = userID;
@@ -38,6 +38,10 @@ public class Recipient {
         this.emailAddr = emailAddr;
     }
 
+    public void setUserSettings(String key, Boolean value) {
+        userSettings.put(key, value);
+    }
+
     //    Getters
     public int getUserID() {
         return userID;
@@ -58,6 +62,10 @@ public class Recipient {
 
     public String getEmailAddr() {
         return emailAddr;
+    }
+
+    public HashMap getUserSettings() {
+        return userSettings;
     }
 
 }

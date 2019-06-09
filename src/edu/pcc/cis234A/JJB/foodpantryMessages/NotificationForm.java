@@ -3,9 +3,7 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,6 +32,8 @@ public class NotificationForm {
     private ArrayList<Template> templates = subs.readTemplates();
     private ArrayList<Recipient> subscribers = subs.readSubscriberData();
     private HashMap<Integer, ArrayList<Object>> groups = subs.getGroupMakeup();
+    private DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
+
 
 
     public NotificationForm(String currUser) {
@@ -42,22 +42,53 @@ public class NotificationForm {
         populateRecipientMenu();
         getCurrentUserID();
 
-       /**
-         * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
-         * clears the message field.
-         * TODO: Cache Message when switching between templates and new messages.
-         */
-        chooseTemplate.addActionListener(new ActionListener() {
+
+
+        /**
+          * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
+          * clears the message field.
+          * TODO: Cache Message when switching between templates and new messages.
+          */
+        chooseTemplate.addItemListener(new ItemListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
-                if(chooseTemplate.getSelectedIndex() == 0) {
-                    notificationTextArea.setText("");
-                    notificationTextArea.setEnabled(true);
-                } else {
-                notificationTextArea.setText(templates.get(selectedIndex).messageText);
-                notificationTextArea.setEnabled(false);
+            public void itemStateChanged(ItemEvent itemEvent) {
+                if (chooseTemplate.getModel().getSize() > 1) {
+                    int selectedIndex = chooseTemplate.getSelectedIndex();
+                    if (selectedIndex == 0) {
+                        notificationTextArea.setText("");
+                        notificationTextArea.setEnabled(true);
+                    } else {
+                        notificationTextArea.setText(templates.get(selectedIndex-1).messageText);
+                        notificationTextArea.setEditable(false);
+                    }
                 }
+            }
+        });
+
+        //OLD CODE
+//        chooseTemplate.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent actionEvent) {
+//                int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
+//                if(chooseTemplate.getSelectedIndex() == 0) {
+//                    notificationTextArea.setText("");
+//                    notificationTextArea.setEnabled(true);
+//                } else {
+//                notificationTextArea.setText(templates.get(selectedIndex).messageText);
+//                notificationTextArea.setEnabled(false);
+//                }
+//            }
+//        });
+
+        /**
+         * On Mouse-Over, refresh the list of available templates.
+         */
+        chooseTemplate.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {
+                super.mouseEntered(mouseEvent);
+                refreshTemplates();
+                populateTemplateMenu();
             }
         });
 
@@ -103,10 +134,11 @@ public class NotificationForm {
                         selectedGroups.add(group);
                     }
                 }
-                ArrayList<Recipient> recipients = buildRecipientList();
-                for(Recipient recipient: recipients) {
-                    System.out.println(recipient.getUserName());
-                }
+                //Output for debugging
+//                ArrayList<Recipient> recipients = buildRecipientList();
+//                for(Recipient recipient: recipients) {
+//                    System.out.println(recipient.getUserName());
+//                }
             }
 
         });
@@ -116,8 +148,7 @@ public class NotificationForm {
      * Create a Model for the ComboBox pulldown menu for message templates and populate it from saved Templates
      * found in the database. Currently set with one default option and 3 template options.
      */
-    public void populateTemplateMenu() {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) chooseTemplate.getModel();
+    private void populateTemplateMenu() {
         model.removeAllElements();
         model.addElement("No Template");
         for(Template temp : templates) {
@@ -130,8 +161,7 @@ public class NotificationForm {
      * Create a model for the ComboBox pulldown menu for the message subscribers and populate it with group
      * name and number of members of each group.
      */
-    public void populateRecipientMenu() {
-//        ListModel model = (ListModel) groupSelect.getModel();
+    private void populateRecipientMenu() {
         this.groupSelect = new JList();
         DefaultListModel model = new DefaultListModel();
         model.removeAllElements();
@@ -140,9 +170,7 @@ public class NotificationForm {
             model.addElement( groups.get(key).get(0) + ":\t\t " +  (groups.get(key).size() - 1));
         }
         groupSelect.setModel(model);
-//        scrollList = new JScrollPane();
         scrollList.setViewportView(groupSelect);
-//        scrollList.setMinimumSize(new Dimension(50, 150));
     }
 
     /**
@@ -192,8 +220,8 @@ public class NotificationForm {
     }
 
     /**
-     *
-     * @return
+     * Determine which subscribers will be receiving notifications based on the selected groups.
+     * @return An ArrayList of Recipient objects of the subscribers to receive the notification.
      */
     private ArrayList buildRecipientList() {
         ArrayList<Recipient> recipients = new ArrayList<>();
@@ -209,5 +237,13 @@ public class NotificationForm {
                 }
             }
         return recipients;
+    }
+
+    /**
+     * Clear the current ArrayList of Templates. Reload available templates from DB.
+     */
+    private void refreshTemplates() {
+        templates.clear();
+        templates = subs.readTemplates();
     }
 }
