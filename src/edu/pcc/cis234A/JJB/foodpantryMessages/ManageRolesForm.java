@@ -104,7 +104,6 @@ public class ManageRolesForm {
          * Submits the changes to the user's role to the DB
          * Checks to verify checkBoxConfirm is selected
          */
-        //TODO: Add listener for buttonSubmit (change role)
         buttonSubmitRole.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -128,12 +127,14 @@ public class ManageRolesForm {
                     JOptionPane.showMessageDialog(null, "You have not selected a role for the user");
                 }
 
+                //Check that the Check Box is selected
                 if(checkBoxConfirm.isSelected()) {
                     checkCheckBox = true;
                 } else {
                     JOptionPane.showMessageDialog(null, "Please check the confirmation box to continue");
                 }
 
+                //Check that everything is true/selected before submitting to DB
                 if(checkUserRole && checkCheckBox && checkUserSelected) {
                     JOptionPane.showMessageDialog(null, "User's role has been updated");
                     //TODO: Update DB with new user role
