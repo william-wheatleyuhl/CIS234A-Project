@@ -26,7 +26,9 @@ public class SubscriberDB {
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText, UserID FROM TEMPLATE";
-    private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone FROM [USER]";
+    private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone, [USER].RoleID, ROLE.RoleName FROM [USER]" +
+            "JOIN ROLE ON [USER].RoleID = ROLE.RoleID";
+    private static final String ROLE_UPDATE = "UPDATE [USER] SET RoleID = ? WHERE UserID = ?";
     private static final String SUB_SETTINGS_QUERY = "SELECT UserID, NotificationsOn, CascadeOn, RockCreekOn, SoutheastOn, SylvaniaOn, EmailOn, AltEmailOn, SMSOn FROM USER_SETTING";
     private static final String USER_GROUPS_UPDATE = "INSERT INTO USER_GROUP (UserID, GroupID) VALUES(?, ?)";
     private static final String USER_GROUPS_DELETE = "DELETE USER_GROUP WHERE UserID=? AND GroupID=?";
@@ -58,7 +60,9 @@ public class SubscriberDB {
                         rs.getString("LastName"),
                         rs.getString("FirstName"),
                         rs.getString("Email"),
-                        rs.getString("Phone")));
+                        rs.getString("Phone"),
+                        rs.getInt("RoleID"),
+                        rs.getString("RoleName")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -136,7 +140,20 @@ public class SubscriberDB {
             }
         }
     }
+    private void updateUserRole(int roleID, int userID) {
+//        Output for debugging
+//        System.out.println("Adding User Group Setting for " + userID);
+        try {
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(ROLE_UPDATE);
+            stmt.setInt(1, roleID);
+            stmt.setInt(2, userID);
+            stmt.executeUpdate();
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Add specified listing from the USER_GROUPS table.
      * @param userID The integer UserID identifying the Recipient.
