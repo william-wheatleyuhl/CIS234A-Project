@@ -1,24 +1,28 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import java.util.List;
+
 /**
  *Recipient Class
  * This Class will model the recipient, and will store Recipient data.
  * @author Will Wheatley-Uhl
- * @version 2019.04.23
+ * @version 2019.06.03
  */
 public class Recipient {
-    public String userName;
-    public String firstName;
-    public String lastName;
-    public String emailAddr;
-    public int subscriberRole;
+    private int userID;
+    private String userName;
+    private String firstName;
+    private String lastName;
+    private String emailAddr;
+    private String phoneNbr;
 
-    public Recipient(String userName, String lastName, String firstName, String emailAddr, int subscriberRole) {
+    public Recipient(int userID, String userName, String lastName, String firstName, String emailAddr, String phoneNbr) {
+        this.userID = userID;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddr = emailAddr;
-        this.subscriberRole = subscriberRole;
+        this.phoneNbr = phoneNbr;
     }
 
     //    Setters
@@ -35,6 +39,9 @@ public class Recipient {
     }
 
     //    Getters
+    public int getUserID() {
+        return userID;
+    }
     public String getFirstName() {
         return firstName;
     }
@@ -53,7 +60,4 @@ public class Recipient {
         return emailAddr;
     }
 
-    public int getSubscriberRole() {
-        return subscriberRole;
-    }
 }
