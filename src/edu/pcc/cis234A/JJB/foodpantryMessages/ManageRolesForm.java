@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -44,6 +45,7 @@ public class ManageRolesForm {
     private JLabel labelManageRoles;
     private JComboBox comboBoxGroups;
     private JScrollPane scrollPaneUsers;
+    private JList listUsers;
     SubscriberDB subs = new SubscriberDB();
     private ArrayList<Recipient> recipients = subs.readSubscriberData();
     private ArrayList<Role> roles = subs.readRoles();
@@ -291,6 +293,17 @@ public class ManageRolesForm {
 
     private void populateSubscribers() {
         //TODO: populate multi-select list (scrollPaneUsers) with all users
+        this.listUsers = new JList();
+        //TODO: Convert recipients ArrayList to JList
+        listUsers.setListData(recipients.toArray());
+        DefaultListModel model = new DefaultListModel();
+        model.removeAllElements();
+        model.addElement("All Users");
+        for(Recipient recipient : recipients) {
+            model.addElement(recipient.getUserName());
+        }
+        listUsers.setModel(model);
+        scrollPaneUsers.setViewportView(listUsers);
     }
 
     /**

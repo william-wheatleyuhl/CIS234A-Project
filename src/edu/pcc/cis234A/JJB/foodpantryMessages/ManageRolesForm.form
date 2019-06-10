@@ -219,7 +219,9 @@
             <preferred-size width="150" height="100"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <name value="scrollPaneUsers"/>
+        </properties>
         <border type="none"/>
         <children/>
       </scrollpane>
