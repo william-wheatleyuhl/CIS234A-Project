@@ -1,10 +1,8 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.sql.Date;
+import java.util.*;
 
 /**
  * SubsciberDB Class
@@ -16,6 +14,7 @@ import java.util.Set;
  * 20190604 SC - Added UserID to TEMPLATE_QUERY
  * 20190604 SC - Added UserID to readTemplates()
  * 20190609 SC - Added ROLES_QUERY
+ * 20190609 WWU - Added readRoles() Method
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -33,8 +32,11 @@ public class SubscriberDB {
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
+
+    private ArrayList<Role> roles = new ArrayList<>();
     private ArrayList<Recipient> receivers = new ArrayList<>();
     private HashMap<Integer, ArrayList<Object>> groups = new HashMap<>();
+
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
     }
@@ -95,6 +97,28 @@ public class SubscriberDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    protected ArrayList readRoles() {
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(ROLES_QUERY);
+                ResultSet rs = stmt.executeQuery()
+        ) {
+            while (rs.next()) {
+                roles.add(new Role(rs.getInt("RoleID"), rs.getString( "RoleName")));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        readSubscriberSettings();
+        return roles;
     }
 
     /**

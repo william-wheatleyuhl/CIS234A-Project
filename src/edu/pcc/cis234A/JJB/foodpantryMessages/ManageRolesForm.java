@@ -40,7 +40,7 @@ public class ManageRolesForm {
     private JScrollPane scrollPaneUsers;
     SubscriberDB subs = new SubscriberDB();
     private ArrayList<Recipient> recipients = subs.readSubscriberData();
-    //private ArrayList<Role> roles = subs.readRoles(); //TODO: - Will
+    private ArrayList<Role> roles = subs.readRoles(); //TODO: - Will - DONE
 
     private int newUserRole;
     private int newUserID;
@@ -77,8 +77,14 @@ public class ManageRolesForm {
                         comboBoxRoles.setEnabled(false);
                     } else {
                         comboBoxRoles.setEnabled(true);
-                        //TODO: Populate with user's current role
-                        labelCurrentRole.setText("Placeholder for user's current role");
+                        //TODO: Populate with user's current role - DONE
+                        String currentRole = "";
+                        for(Recipient recipient : recipients) {
+                            if(recipient.getUserID() == selectedIndex) {
+                                currentRole = recipient.getRoleTitle();
+                            }
+                        }
+                        labelCurrentRole.setText(currentRole);
                     }
                 }
             }
