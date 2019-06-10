@@ -88,7 +88,7 @@ public class TemplateDB {
             while (rs.next()) {
                 lastTemplateID = rs.getInt("TemplateID");
             }
-            System.out.println("Last TemplateID: " + lastTemplateID); //For testing purposes only
+            //System.out.println("Last TemplateID: " + lastTemplateID); //For testing purposes only
         } catch (SQLException e) {
             e.printStackTrace();
         }
