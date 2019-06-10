@@ -235,6 +235,7 @@ public class SubscriberDB {
                 if(!groups.containsKey(rs.getInt("GroupID"))) {
                     groups.computeIfAbsent(rs.getInt("GroupID"), k -> new ArrayList<>()).add(
                             rs.getString("GroupName"));
+                    groups.get(rs.getInt("GroupID")).add(rs.getString("Description"));
                     groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));
                 } else {
                     groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));

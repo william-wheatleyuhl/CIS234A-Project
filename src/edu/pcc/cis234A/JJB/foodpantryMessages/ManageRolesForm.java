@@ -246,15 +246,15 @@ public class ManageRolesForm {
                     } else {
                         //TODO: Get the group Description in addition to GroupName - Will
                         String fieldText = "";
-                        //String fieldDesc = "";
+                        String fieldDesc = "";
                         for(Integer key : groups.keySet()) {
                             if(selectedIndex == key) {
                                 fieldText = groups.get(key).get(0).toString();
-                                //fieldDesc =
+                                fieldDesc = groups.get(key).get(1).toString();
                             }
                         }
                         fieldGroupName.setText(fieldText);
-                        //fieldGroupDesc.setText(fieldDesc);
+                        fieldGroupDesc.setText(fieldDesc);
                     }
                 }
             }
