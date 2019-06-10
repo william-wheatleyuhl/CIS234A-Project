@@ -107,6 +107,12 @@ public class NotificationForm {
                 if(checkMessageContent()) {
                     String parsedMessage = parser.returnParsedMessage();
                     ArrayList<Recipient> recipients = buildRecipientList();
+                    if(getMessageText().contains("image")) {
+                        for(Recipient recipient : recipients) {
+                            MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
+                            msg.sendMessageWithImage(parser.getImageSrcPath());
+                        }
+                    }
                     for(Recipient recipient : recipients) {
 //                        MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
 //                        msg.sendMessage();

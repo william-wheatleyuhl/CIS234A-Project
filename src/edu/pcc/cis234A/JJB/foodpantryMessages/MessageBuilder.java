@@ -28,19 +28,19 @@ public class MessageBuilder {
         this.sendTo = recipient.getEmailAddr();
         this.msgText = msgText;
 
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class",
-                "javax.net.ssl.SSLSocketFactory");
-
-        this.session = Session.getDefaultInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPassWordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+//        Properties props = new Properties();
+//        props.put("mail.smtp.auth", "true");
+//        props.put("mail.smtp.starttls.enable", "true");
+//        props.put("mail.smtp.host", "smtp.gmail.com");
+//        props.put("mail.smtp.socketFactory.port", "465");
+//        props.put("mail.smtp.socketFactory.class",
+//                "javax.net.ssl.SSLSocketFactory");
+//
+//        this.session = Session.getDefaultInstance(props, new Authenticator() {
+//            protected PasswordAuthentication getPassWordAuthentication() {
+//                return new PasswordAuthentication(username, password);
+//            }
+//        });
     }
 
     /**
@@ -77,10 +77,23 @@ public class MessageBuilder {
     }
 
     public void sendMessageWithImage(String imagePath) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.socketFactory.port", "465");
+        props.put("mail.smtp.socketFactory.class",
+                "javax.net.ssl.SSLSocketFactory");
+
+        this.session = Session.getDefaultInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPassWordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sentFrom));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTo));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress("william.wheatleyuhl@pcc.edu"));
             message.setSubject("Test Message");
 
             // Add Message Body.

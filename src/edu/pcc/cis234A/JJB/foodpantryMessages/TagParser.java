@@ -19,6 +19,7 @@ class TagParser {
     private Pattern p = Pattern.compile(pattern);
     private ArrayList<String> tags = new ArrayList<>();
     private TagPrompt prompt;
+    private String imageSrcPath;
 
     public TagParser(String msg) {
         this.messageString = msg.replaceAll("><", "> <");
@@ -68,9 +69,14 @@ class TagParser {
      */
     private void replaceTags() {
         for(String tag : tags) {
-            String newValue = prompt.getTagValue(tag);
-            messageString = messageString.replaceAll(tag, newValue);
+            if(tag.contains("image")) {
+                messageString = messageString.replaceAll(tag, "<img src=\"cid:image\">");
+            } else {
+                String newValue = prompt.getTagValue(tag);
+                messageString = messageString.replaceAll(tag, newValue);
+            }
         }
+        System.out.println(messageString);
     }
 
     /**
@@ -103,7 +109,16 @@ class TagParser {
         parseTags();
         tagFillPrompt();
         replaceTags();
+        if(prompt.getImageFileSrc() != null) {
+            imageSrcPath = prompt.getImageFileSrc();
+        }
         return messageString;
     }
 
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+    public String getImageSrcPath() {
+        return imageSrcPath;
+    }
 }
