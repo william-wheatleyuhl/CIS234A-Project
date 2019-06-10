@@ -63,6 +63,7 @@ public class ManageRolesForm {
         populateUsers();
         populateRoles();
         populateGroups();
+        populateSubscribers();
         comboBoxRoles.setEnabled(false);
         checkBoxConfirm.setEnabled(false);
         checkBoxConfirm.setVisible(false);
@@ -295,7 +296,11 @@ public class ManageRolesForm {
         //TODO: populate multi-select list (scrollPaneUsers) with all users
         this.listUsers = new JList();
         //TODO: Convert recipients ArrayList to JList
+<<<<<<< HEAD
         //listUsers.setListData(recipients.toArray());
+=======
+//        listUsers.setListData(recipients.toArray());
+>>>>>>> origin/synSprint2
         DefaultListModel model = new DefaultListModel();
         model.removeAllElements();
         model.addElement("All Users");
