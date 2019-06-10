@@ -70,7 +70,7 @@ class TagParser {
     private void replaceTags() {
         for(String tag : tags) {
             if(tag.contains("image")) {
-                messageString = messageString.replaceAll(tag, "<img src=\"cid:image\">");
+                messageString = messageString.replaceAll(tag, "<img style=\"max-height:300px;\" src=\"cid:image\">");
             } else {
                 String newValue = prompt.getTagValue(tag);
                 messageString = messageString.replaceAll(tag, newValue);
