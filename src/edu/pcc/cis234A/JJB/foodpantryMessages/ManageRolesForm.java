@@ -14,7 +14,7 @@ import java.util.HashMap;
  * Allows a Manager to change user roles and edit or create
  * user groups (subscriber lists)
  *
- * @author Syn
+ * @author Syn Calvo & William Wheatley-Uhl
  * @version 2019.06.08
  *
  * Changelog:
@@ -46,9 +46,8 @@ public class ManageRolesForm {
     private JScrollPane scrollPaneUsers;
     SubscriberDB subs = new SubscriberDB();
     private ArrayList<Recipient> recipients = subs.readSubscriberData();
-    private ArrayList<Role> roles = subs.readRoles(); //TODO: - Will - DONE
+    private ArrayList<Role> roles = subs.readRoles();
     private HashMap<Integer, ArrayList<Object>> groups = subs.getGroupMakeup();
-
 
     private int roleID;
     private int userID;
@@ -86,7 +85,6 @@ public class ManageRolesForm {
                         comboBoxRoles.setEnabled(false);
                     } else {
                         comboBoxRoles.setEnabled(true);
-                        //TODO: Populate with user's current role - DONE
                         String currentRole = "";
                         for(Recipient recipient : recipients) {
                             if(recipient.getUserID() == selectedIndex) {
@@ -141,9 +139,8 @@ public class ManageRolesForm {
                 //Check that a role is selected for the user
                 if(comboBoxRoles.getSelectedIndex() > 0) {
                     checkUserRole = true;
-                    //TODO: Add user role variable - DONE
                     roleID = comboBoxRoles.getSelectedIndex();
-                    System.out.println(roleID);
+                    //System.out.println(roleID); testing
                 } else {
 
                     JOptionPane.showMessageDialog(null, "You have not selected a role for the user");
@@ -159,7 +156,6 @@ public class ManageRolesForm {
                 //Check that everything is true/selected before submitting to DB
                 if(checkUserRole && checkCheckBox && checkUserSelected) {
                     JOptionPane.showMessageDialog(null, "User's role has been updated");
-                    //TODO: Update DB with new user role (get the user ID & Role ID selected in combo boxes) - DONE
                     subs.updateUserRole(roleID, userID);
                 }
             }
@@ -178,6 +174,7 @@ public class ManageRolesForm {
                     fieldGroupName.setEnabled(true);
                     fieldGroupName.setText("");
                     scrollPaneUsers.setEnabled(true);
+                    comboBoxGroups.setEnabled(false);
                 }
             }
         });
@@ -212,7 +209,6 @@ public class ManageRolesForm {
                     if (selectedIndex == 0) {
                         fieldGroupName.setText("");
                     } else {
-                        //TODO: Need groups and groupName (Group class? like Template class?) - DONE
                         String fieldText = "";
                         for(Integer key : groups.keySet()) {
                             if(selectedIndex == key) {
@@ -275,13 +271,9 @@ public class ManageRolesForm {
     private void populateRoles() {
         modelRoles.removeAllElements();
         modelRoles.addElement("Choose one...");
-        //TODO: Will - Change from manual entry to pull from DB (add getRole() method to SubscriberDB?) - DONE
         for(Role role : roles) {
             modelRoles.addElement(role.getRoleName());
         }
-//        modelRoles.addElement("Subscriber");
-//        modelRoles.addElement("Staff");
-//        modelRoles.addElement("Manager");
         comboBoxRoles.setModel(modelRoles);
     }
 
@@ -291,7 +283,6 @@ public class ManageRolesForm {
     private void populateGroups() {
         modelGroups.removeAllElements();
         modelGroups.addElement("Choose one...");
-        //TODO: Add for loop to get groups - DONE
         for(Integer key : groups.keySet()) {
             modelGroups.addElement( groups.get(key).get(0));
         }
