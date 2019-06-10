@@ -54,6 +54,7 @@ public class ManageRolesForm {
     private ArrayList<Recipient> recipients = subs.readSubscriberData();
     private ArrayList<Role> roles = subs.readRoles();
     private HashMap<Integer, ArrayList<Object>> groups = subs.getGroupMakeup();
+    private int currentRoleID;
 
     private int roleID;
     private int userID;
@@ -72,12 +73,14 @@ public class ManageRolesForm {
         populateSubscribers();
         comboBoxRoles.setEnabled(false);
         checkBoxConfirm.setEnabled(false);
-        checkBoxConfirm.setVisible(false);
+        //checkBoxConfirm.setVisible(false);
         comboBoxGroups.setEnabled(false);
         fieldGroupName.setEnabled(false);
         scrollPaneUsers.setEnabled(false);
         listUsers.setEnabled(false);
         buttonSubmitRole.setEnabled(false);
+        fieldGroupDesc.setEnabled(false);
+        labelCurrentRole.setText("None");
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
 
@@ -93,6 +96,9 @@ public class ManageRolesForm {
                     int selectedIndex = comboBoxUsers.getSelectedIndex();
                     if (selectedIndex == 0) {
                         comboBoxRoles.setEnabled(false);
+                        labelCurrentRole.setText("None");
+                        checkBoxConfirm.setSelected(false);
+                        comboBoxRoles.setSelectedIndex(0);
                     } else {
                         comboBoxRoles.setEnabled(true);
                         String currentRole = "";
@@ -118,7 +124,7 @@ public class ManageRolesForm {
                     int selectedIndex = comboBoxRoles.getSelectedIndex();
                     if (selectedIndex > 0) {
                         buttonSubmitRole.setEnabled(true);
-                        checkBoxConfirm.setVisible(true);
+                        //checkBoxConfirm.setVisible(true);
                         checkBoxConfirm.setEnabled(true);
                         checkBoxConfirm.setText("Check here to confirm you want to change this user's role");
                     }
@@ -137,6 +143,8 @@ public class ManageRolesForm {
                 boolean checkUserRole = false;
                 boolean checkCheckBox = false;
                 boolean checkUserSelected = false;
+                boolean checkRoles = false;
+                currentRoleID = subs.getRoleNameRoleID(labelCurrentRole.getText());
 
                 //Check that a user is selected
                 if(comboBoxUsers.getSelectedIndex() > 0) {
@@ -163,10 +171,18 @@ public class ManageRolesForm {
                     JOptionPane.showMessageDialog(null, "Please check the confirmation box to continue");
                 }
 
+                //Check that the user's role is not the same as the role selected
+                if(currentRoleID == roleID) {
+                    JOptionPane.showMessageDialog(null, "Current role and selected role cannot be the same");
+                } else {
+                    checkRoles = true;
+                }
+
                 //Check that everything is true/selected before submitting to DB
-                if(checkUserRole && checkCheckBox && checkUserSelected) {
+                if(checkUserRole && checkCheckBox && checkUserSelected && checkRoles) {
                     JOptionPane.showMessageDialog(null, "User's role has been updated");
                     subs.updateUserRole(roleID, userID);
+                    resetManageUserRoles();
                 }
             }
         });
@@ -186,6 +202,8 @@ public class ManageRolesForm {
                     scrollPaneUsers.setEnabled(true);
                     comboBoxGroups.setEnabled(false);
                     listUsers.setEnabled(true);
+                    fieldGroupDesc.setEnabled(true);
+                    fieldGroupDesc.setText("");
                 }
             }
         });
@@ -204,6 +222,7 @@ public class ManageRolesForm {
                     fieldGroupName.setEnabled(true);
                     scrollPaneUsers.setEnabled(true);
                     listUsers.setEnabled(true);
+                    fieldGroupDesc.setEnabled(true);
                 }
             }
         });
@@ -341,6 +360,20 @@ public class ManageRolesForm {
         }
         listUsers.setModel(model);
         scrollPaneUsers.setViewportView(listUsers);
+    }
+
+    private void resetManageUserRoles() {
+        labelCurrentRole.setText("None");
+        comboBoxRoles.setSelectedIndex(0);
+        checkBoxConfirm.setSelected(false);
+        //checkBoxConfirm.setVisible(false);
+        refreshComboBoxUsers();
+        populateUsers();
+    }
+
+    private void refreshComboBoxUsers() {
+        recipients.clear();
+        recipients = subs.readSubscriberData();
     }
 
     /**
