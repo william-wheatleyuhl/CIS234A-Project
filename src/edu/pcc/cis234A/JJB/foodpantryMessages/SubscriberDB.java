@@ -15,6 +15,7 @@ import java.util.*;
  * 20190604 SC - Added UserID to readTemplates()
  * 20190609 SC - Added ROLES_QUERY
  * 20190609 WWU - Added readRoles() Method
+ * 20190609 SC - Added GROUP_INSERT & GROUP_UPDATE
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -32,6 +33,8 @@ public class SubscriberDB {
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
+    private static final String GROUP_INSERT = "INSERT INTO [GROUP] VALUES(?,?,?)";
+    private static final String GROUP_UPDATE = "UPDATE [GROUP] SET GroupName = ? WHERE GroupID = ?";
 
     private ArrayList<Role> roles = new ArrayList<>();
     private ArrayList<Recipient> receivers = new ArrayList<>();
@@ -364,4 +367,18 @@ public class SubscriberDB {
         Timestamp timeStamp = new Timestamp(sysDate.getTime());
         return timeStamp;
     }
+
+    /**
+     * Add a new Group to the GROUP table in DB
+     * @param newGroupName
+     * @param newGroupDescription
+     */
+    //TODO: create method to update GROUP table in DB with a new group
+
+    /**
+     * Update an existing Group in DB
+     * @param existingGroupName
+     * @param existingGroupDesc
+     * @param existingGroupID
+     */
 }
