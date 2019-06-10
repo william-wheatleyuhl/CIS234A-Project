@@ -334,7 +334,8 @@ public class ManageRolesForm {
         //TODO: FUTURE FEATURE 01.a:
         // Add Check Boxes next to users to indicate if they're in the selected group or not
         this.listUsers = new JList();
-        //listUsers.setListData(recipients.toArray());
+        //TODO: Convert recipients ArrayList to JList
+//        listUsers.setListData(recipients.toArray());
         DefaultListModel model = new DefaultListModel();
         model.removeAllElements();
         for(Recipient recipient : recipients) {
