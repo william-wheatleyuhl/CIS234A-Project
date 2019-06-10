@@ -62,7 +62,7 @@ public class NotificationForm {
                         notificationTextArea.setEnabled(true);
                     } else {
                         notificationTextArea.setText(templates.get(selectedIndex-1).messageText);
-                        notificationTextArea.setEditable(false);
+                        notificationTextArea.setEnabled(false);
                     }
                 }
             }
@@ -83,17 +83,17 @@ public class NotificationForm {
 //            }
 //        });
 
-        /**
-         * On Mouse-Over, refresh the list of available templates.
-         */
-        chooseTemplate.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent mouseEvent) {
-                super.mouseEntered(mouseEvent);
-                refreshTemplates();
-                populateTemplateMenu();
-            }
-        });
+//        /**
+//         * On Mouse-Over, refresh the list of available templates.
+//         */
+//        chooseTemplate.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseEntered(MouseEvent mouseEvent) {
+//                super.mouseEntered(mouseEvent);
+//                refreshTemplates();
+//                populateTemplateMenu();
+//            }
+//        });
 
         /**
          * Action Listener for the "Send" button. Checks if message is empty, parses for tags, sends message, logs
@@ -107,6 +107,12 @@ public class NotificationForm {
                 if(checkMessageContent()) {
                     String parsedMessage = parser.returnParsedMessage();
                     ArrayList<Recipient> recipients = buildRecipientList();
+                    if(getMessageText().contains("image")) {
+                        for(Recipient recipient : recipients) {
+                            MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
+                            msg.sendMessageWithImage(parser.getImageSrcPath());
+                        }
+                    }
                     for(Recipient recipient : recipients) {
 //                        MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
 //                        msg.sendMessage();
@@ -151,7 +157,7 @@ public class NotificationForm {
      * Create a Model for the ComboBox pulldown menu for message templates and populate it from saved Templates
      * found in the database. Currently set with one default option and 3 template options.
      */
-    private void populateTemplateMenu() {
+    public void populateTemplateMenu() {
         model.removeAllElements();
         model.addElement("No Template");
         for(Template temp : templates) {
@@ -245,7 +251,7 @@ public class NotificationForm {
     /**
      * Clear the current ArrayList of Templates. Reload available templates from DB.
      */
-    private void refreshTemplates() {
+    public void refreshTemplates() {
         templates.clear();
         templates = subs.readTemplates();
     }

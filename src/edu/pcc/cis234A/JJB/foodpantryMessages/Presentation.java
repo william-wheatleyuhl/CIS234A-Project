@@ -3,6 +3,8 @@ package edu.pcc.cis234A.JJB.foodpantryMessages;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,7 @@ public class Presentation {
     private String username = ul.getLoggedInUser();
     private int userID = uldb.getUsernameUserID(username);
     private int roleID = uldb.getUserIDRoleID(userID);
+    private NotificationForm nForm = new NotificationForm(username);
     private JLabel userLoggedInLabel;
     private JPanel sendNotificationTab;
     private JPanel templateTab;
@@ -33,11 +36,20 @@ public class Presentation {
 
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
-        sendNotificationTab.add(new NotificationForm(username).getRootPanel());
+        sendNotificationTab.add(nForm.getRootPanel());
         templateTab.add(new CreateTemplateForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
         manageRolesTab.add(new ManageRolesForm().getRootPanel());
         fpSettingsTab.add(new SettingsForm().getRootPanel());
+
+        tabbedPane1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                super.mouseClicked(mouseEvent);
+                nForm.refreshTemplates();
+                nForm.populateTemplateMenu();
+            }
+        });
     }
 
     /**
