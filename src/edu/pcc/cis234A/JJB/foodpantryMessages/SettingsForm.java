@@ -1,9 +1,14 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import com.twilio.rest.chat.v1.service.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Pattern;
+
+import static java.awt.Label.CENTER;
 
 /**
  * The Settings form class
@@ -32,6 +37,7 @@ public class SettingsForm {
     private JLabel phoneNumberLabel;
     private JTextField phoneNumberTextField;
     private JButton upateMyUserSettingsButton;
+    private UserSetting userSetting;
     private JCheckBox[] boxes;
 
     /**
@@ -43,7 +49,6 @@ public class SettingsForm {
         String un = ul.getLoggedInUser();
         JavaneseJumpingBeansDB jjb = new JavaneseJumpingBeansDB();
         SubscriptionSetting subscriptionSettings;
-        UserSetting userSettings;
         boxes = new JCheckBox[]{ cascadeCheckBox, rockCreekCheckBox, southeastCheckBox, sylvaniaCheckBox,
             emailCheckBox, alternateEmailCheckBox, smsCheckBox };
         emailTextField.setMargin(new Insets(0,2,2,0));
@@ -56,20 +61,12 @@ public class SettingsForm {
         } else {
             setEnabledFieldStatus(false);
         }
-        notificationOnOffCheckBox.setSelected(subscriptionSettings.isNotificationsOn());
-        cascadeCheckBox.setSelected(subscriptionSettings.isCascadeOn());
-        rockCreekCheckBox.setSelected(subscriptionSettings.isRockCreekOn());
-        southeastCheckBox.setSelected(subscriptionSettings.isSoutheastOn());
-        sylvaniaCheckBox.setSelected(subscriptionSettings.isSylvaniaOn());
-        emailCheckBox.setSelected(subscriptionSettings.isEmailOn());
-        alternateEmailCheckBox.setSelected(subscriptionSettings.isAltEmailOn());
-        smsCheckBox.setSelected(subscriptionSettings.isSmsOn());
+        setSubscriptionSettings(subscriptionSettings);
 
-        userSettings = jjb.readUserSettings();
-        emailTextField.setText(userSettings.getEmail());
-        altEmailTextField.setText(userSettings.getAltEmail());
-        String phone = userSettings.getPhoneNbr().replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
-        phoneNumberTextField.setText(phone);
+        userSetting = jjb.readUserSettings();
+        setUserSettings(userSetting);
+
+        UserLogin userLogin = new UserLogin();
 
         /**
          * Action Listener for the top level notification settings check box. This is selected by default when a subscriber
@@ -201,8 +198,43 @@ public class SettingsForm {
         upateMyUserSettingsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-               jjb.updateUserSettings(altEmailTextField.getText().trim(), phoneNumberTextField.getText().trim());
-                JOptionPane.showMessageDialog(null, "You have updated your user settings successfully!");
+                userSetting = jjb.readUserSettings();
+                String email = userSetting.getEmail();
+                String dbAltEmail = userSetting.getAltEmail();
+                String altEmailNoTrim = altEmailTextField.getText();
+                String altEmail = altEmailTextField.getText().trim();
+                System.out.println("DB Alt Email: " + dbAltEmail + " || Text field Alt Email: " +
+                        altEmailNoTrim);
+                if (email.equals(altEmail)) {
+                    JOptionPane.showMessageDialog(null, "Update failed!  Your alternate " +
+                            "email address cannot be the same as your email address.");
+                } else if (dbAltEmail.equals(altEmail)) {
+                    if (dbAltEmail.isEmpty() && altEmail.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Update failed!  You must enter " +
+                                "values to update your user settings.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Update failed!  You are already " +
+                                "using that alternate email address.");
+                    }
+                } else {
+                    System.out.println("Updating DB ...");
+                    if (altEmail.isEmpty()) {
+                        jjb.updateUserSettings(altEmailTextField.getText().trim(), phoneNumberTextField.getText().trim());
+                        JOptionPane.showMessageDialog(null, "You have updated your " +
+                                "user settings successfully!");
+                        return;
+                    }
+                    if (altEmailIsValid(altEmailTextField.getText().trim())) {
+                        jjb.updateUserSettings(altEmailTextField.getText().trim(), phoneNumberTextField.getText().trim());
+                        JOptionPane.showMessageDialog(null, "You have updated your user " +
+                                "settings successfully!");
+                        return;
+                    } else {
+                        JOptionPane.showMessageDialog(null, "That alternate email address is " +
+                                "invalid!  Please choose a valid one.");
+                    }
+                    System.out.println("Alt Email Verification: " + altEmailIsValid(altEmail));
+                }
             }
         });
     }
@@ -222,5 +254,36 @@ public class SettingsForm {
         }
         campusesLabel.setEnabled(status);
         notificationMethodsLabel.setEnabled(status);
+    }
+
+    public void setSubscriptionSettings(SubscriptionSetting subSettings) {
+        notificationOnOffCheckBox.setSelected(subSettings.isNotificationsOn());
+        cascadeCheckBox.setSelected(subSettings.isCascadeOn());
+        rockCreekCheckBox.setSelected(subSettings.isRockCreekOn());
+        southeastCheckBox.setSelected(subSettings.isSoutheastOn());
+        sylvaniaCheckBox.setSelected(subSettings.isSylvaniaOn());
+        emailCheckBox.setSelected(subSettings.isEmailOn());
+        alternateEmailCheckBox.setSelected(subSettings.isAltEmailOn());
+        smsCheckBox.setSelected(subSettings.isSmsOn());
+    }
+
+    public void setUserSettings(UserSetting usrSettings) {
+        emailTextField.setText(usrSettings.getEmail());
+        altEmailTextField.setText(usrSettings.getAltEmail());
+        String phone = usrSettings.getPhoneNbr().replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
+        phoneNumberTextField.setText(phone);
+    }
+
+    public static boolean altEmailIsValid(String altEmail)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pattern = Pattern.compile(emailRegex);
+        if (altEmail == null)
+            return false;
+        return pattern.matcher(altEmail).matches();
     }
 }
