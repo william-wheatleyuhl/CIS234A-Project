@@ -16,7 +16,7 @@ import java.util.*;
  * 20190609 SC - Added ROLES_QUERY
  * 20190609 WWU - Added readRoles() Method
  * 20190609 SC - Added GROUP_INSERT & GROUP_UPDATE & GROUP_QUERY
- * 20190609 SC - Added logNewGroup() & updateExistingGroup() & getLastGroupID()
+ * 20190609 SC - Added logNewGroup() & updateExistingGroup() & getLastGroupID() & getRoleNameRoleID()
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -35,7 +35,7 @@ public class SubscriberDB {
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
     private static final String GROUP_INSERT = "INSERT INTO [GROUP] VALUES(?,?,?)";
-    private static final String GROUP_UPDATE = "UPDATE [GROUP] SET GroupName = ? WHERE GroupID = ?";
+    private static final String GROUP_UPDATE = "UPDATE [GROUP] SET GroupName = ?, Description = ? WHERE GroupID = ?";
     private static final String GROUP_QUERY = "SELECT GroupID, GroupName, Description FROM [GROUP]";
 
     private ArrayList<Role> roles = new ArrayList<>();
@@ -419,12 +419,35 @@ public class SubscriberDB {
         try {
             Connection conn = getConnection();
             PreparedStatement stmt = conn.prepareStatement(GROUP_UPDATE);
-            stmt.setInt(1, existingGroupID);
-            stmt.setString(2, existingGroupName);
-            stmt.setString(3, existingGroupDesc);
+            stmt.setString(1, existingGroupName);
+            stmt.setString(2, existingGroupDesc);
+            stmt.setInt(3, existingGroupID);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Get the RoleID for a given RoleName
+     * @return roleID
+     */
+    public int getRoleNameRoleID(String roleName) {
+        int roleID = 0;
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(SUBSCRIBER_QUERY)
+                ) {
+            while (rs.next()) {
+                if(rs.getString("RoleName").equals(roleName)) {
+                    roleID = rs.getInt("RoleID");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roleID;
+    }
+
 }
