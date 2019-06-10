@@ -1,6 +1,5 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
-import javax.mail.FetchProfile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A class to define the functionality of the Manage Roles GUI
@@ -16,6 +16,12 @@ import java.util.ArrayList;
  *
  * @author Syn
  * @version 2019.06.08
+ *
+ * Changelog:
+ * 20190609 WWU - Implemented working roles class
+ * 20190603 WWU - Populate "Current Role" label dynamically
+ * 20190603 WWU - Finished Submit button for changing subscriber roles.
+ * 20190603 WWU - comboBoxGroups now populates, as does the fieldGroupName textField
  */
 public class ManageRolesForm {
     private JPanel rootPanel;
@@ -41,9 +47,11 @@ public class ManageRolesForm {
     SubscriberDB subs = new SubscriberDB();
     private ArrayList<Recipient> recipients = subs.readSubscriberData();
     private ArrayList<Role> roles = subs.readRoles(); //TODO: - Will - DONE
+    private HashMap<Integer, ArrayList<Object>> groups = subs.getGroupMakeup();
 
-    private int newUserRole;
-    private int newUserID;
+
+    private int roleID;
+    private int userID;
     private String newGroupName;
 
     DefaultComboBoxModel modelUsers = (DefaultComboBoxModel) comboBoxUsers.getModel();
@@ -53,6 +61,7 @@ public class ManageRolesForm {
     public ManageRolesForm() {
         populateUsers();
         populateRoles();
+        populateGroups();
         comboBoxRoles.setEnabled(false);
         checkBoxConfirm.setEnabled(false);
         checkBoxConfirm.setVisible(false);
@@ -124,6 +133,7 @@ public class ManageRolesForm {
                 //Check that a user is selected
                 if(comboBoxUsers.getSelectedIndex() > 0) {
                     checkUserSelected = true;
+                    userID = comboBoxUsers.getSelectedIndex();
                 } else {
                     JOptionPane.showMessageDialog(null, "Please select a user to change role");
                 }
@@ -131,9 +141,11 @@ public class ManageRolesForm {
                 //Check that a role is selected for the user
                 if(comboBoxRoles.getSelectedIndex() > 0) {
                     checkUserRole = true;
-                    //TODO: Add user role variable
-                    //newUserRole =
+                    //TODO: Add user role variable - DONE
+                    roleID = comboBoxRoles.getSelectedIndex();
+                    System.out.println(roleID);
                 } else {
+
                     JOptionPane.showMessageDialog(null, "You have not selected a role for the user");
                 }
 
@@ -147,8 +159,8 @@ public class ManageRolesForm {
                 //Check that everything is true/selected before submitting to DB
                 if(checkUserRole && checkCheckBox && checkUserSelected) {
                     JOptionPane.showMessageDialog(null, "User's role has been updated");
-                    //TODO: Update DB with new user role (get the user ID & Role ID selected in combo boxes)
-                    subs.updateUserRole(newUserRole, newUserID);
+                    //TODO: Update DB with new user role (get the user ID & Role ID selected in combo boxes) - DONE
+                    subs.updateUserRole(roleID, userID);
                 }
             }
         });
@@ -200,8 +212,14 @@ public class ManageRolesForm {
                     if (selectedIndex == 0) {
                         fieldGroupName.setText("");
                     } else {
-                        //TODO: Need groups and groupName (Group class? like Template class?)
-                        //fieldGroupName.setText(groups.get(selectedIndex - 1).groupName);
+                        //TODO: Need groups and groupName (Group class? like Template class?) - DONE
+                        String fieldText = "";
+                        for(Integer key : groups.keySet()) {
+                            if(selectedIndex == key) {
+                                fieldText = groups.get(key).get(0).toString();
+                            }
+                        }
+                        fieldGroupName.setText(fieldText);
                     }
                 }
             }
@@ -257,13 +275,13 @@ public class ManageRolesForm {
     private void populateRoles() {
         modelRoles.removeAllElements();
         modelRoles.addElement("Choose one...");
-        //TODO: Will - Change from manual entry to pull from DB (add getRole() method to SubscriberDB?)
-//        for(Role role : roles) {
-//            modelRoles.addElement(roles.getRoleName());
-//        }
-        modelRoles.addElement("Subscriber");
-        modelRoles.addElement("Staff");
-        modelRoles.addElement("Manager");
+        //TODO: Will - Change from manual entry to pull from DB (add getRole() method to SubscriberDB?) - DONE
+        for(Role role : roles) {
+            modelRoles.addElement(role.getRoleName());
+        }
+//        modelRoles.addElement("Subscriber");
+//        modelRoles.addElement("Staff");
+//        modelRoles.addElement("Manager");
         comboBoxRoles.setModel(modelRoles);
     }
 
@@ -273,7 +291,10 @@ public class ManageRolesForm {
     private void populateGroups() {
         modelGroups.removeAllElements();
         modelGroups.addElement("Choose one...");
-        //TODO: Add for loop to get groups
+        //TODO: Add for loop to get groups - DONE
+        for(Integer key : groups.keySet()) {
+            modelGroups.addElement( groups.get(key).get(0));
+        }
         comboBoxGroups.setModel(modelGroups);
     }
 
