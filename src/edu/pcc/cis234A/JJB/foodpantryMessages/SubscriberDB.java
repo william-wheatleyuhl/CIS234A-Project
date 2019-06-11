@@ -148,21 +148,19 @@ public class SubscriberDB {
      * @param key The Setting text to be checked against.
      */
     private void checkSettingsAgainstGroups(int groupID, String key) {
-        for(Recipient recipient : receivers) {
+         for(Recipient recipient : receivers) {
             HashMap<String, Boolean> settings = recipient.getUserSettings();
             if(settings.containsKey(key) && settings.get(key).equals(true)) {
                 if(!checkUserGroup(recipient.getUserID(), groupID)) {
 //                    Output for debugging
 //                    System.out.println("Setting found, not in USER_GROUP. Setting in USER_GROUP");
                     addUserGroup(recipient.getUserID(), groupID);
-                    groups.get(groupID).add(recipient.getUserID());
                 }
             } else if(settings.containsKey(key) && settings.get(key).equals(false)) {
                 if (checkUserGroup(recipient.getUserID(), groupID)) {
 //                    Output for debugging
 //                    System.out.println("Setting found, in USER_GROUP. not Setting in USER_GROUP");
                     deleteUserGroup(recipient.getUserID(), groupID);
-                    groups.get(groupID).remove(recipient.getUserID());
                 }
             }
         }

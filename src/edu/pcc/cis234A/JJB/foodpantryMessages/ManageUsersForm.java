@@ -11,12 +11,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * A class to define the functionality of the Manage Roles GUI
+ * A class to define the functionality of the Manage Users GUI
  * Allows a Manager to change user roles and edit or create
  * user groups (subscriber lists)
  *
  * @author Syn Calvo & William Wheatley-Uhl
- * @version 2019.06.08
+ * @version 2019.06.10
  *
  * Changelog:
  * 20190609 WWU - Implemented working roles class
@@ -27,8 +27,9 @@ import java.util.HashMap;
  * 20190609 SC - Cleaned up completed TODOs & added new TODOs
  * 20190610 SC - Added Refresh & Reset methods to activate on save / submit and refresh combo boxes
  * 20190610 SC - Added ghostUserID to use in USER_GROUP add on Save
+ * 20190610 SC - Added validation such that loggedInUserID cannot be the same as userID to be changed
  */
-public class ManageRolesForm {
+public class ManageUsersForm {
     private JPanel rootPanel;
     private JRadioButton radioEditExisting;
     private JRadioButton radioCreateNew;
@@ -57,7 +58,9 @@ public class ManageRolesForm {
     private ArrayList<Role> roles = subs.readRoles();
     private HashMap<Integer, ArrayList<Object>> groups = subs.getGroupMakeup();
     private int currentRoleID;
-
+    UserLoginDB session = new UserLoginDB();
+    UserLogin login = new UserLogin();
+    private int loggedInUserID = session.getUsernameUserID(login.getLoggedInUser());
     private int roleID;
     private int userID;
     private String newGroupName;
@@ -69,7 +72,7 @@ public class ManageRolesForm {
     DefaultComboBoxModel modelRoles = (DefaultComboBoxModel) comboBoxRoles.getModel();
     DefaultComboBoxModel modelGroups = (DefaultComboBoxModel) comboBoxGroups.getModel();
 
-    public ManageRolesForm() {
+    public ManageUsersForm() {
         populateUsers();
         populateRoles();
         populateGroups();
@@ -81,7 +84,7 @@ public class ManageRolesForm {
         fieldGroupName.setEnabled(false);
         scrollPaneUsers.setEnabled(false);
         listUsers.setEnabled(false);
-        buttonSubmitRole.setEnabled(false);
+        //buttonSubmitRole.setEnabled(false);
         fieldGroupDesc.setEnabled(false);
         labelCurrentRole.setText("None");
 
@@ -147,6 +150,7 @@ public class ManageRolesForm {
                 boolean checkCheckBox = false;
                 boolean checkUserSelected = false;
                 boolean checkRoles = false;
+                boolean checkUser = false;
                 currentRoleID = subs.getRoleNameRoleID(labelCurrentRole.getText());
 
                 //Check that a user is selected
@@ -181,8 +185,15 @@ public class ManageRolesForm {
                     checkRoles = true;
                 }
 
+                //Check that the selected user is not the same as logged in user
+                if(loggedInUserID == userID) {
+                    JOptionPane.showMessageDialog(null, "You cannot modify your own user, please select a different user");
+                } else {
+                    checkUser = true;
+                }
+
                 //Check that everything is true/selected before submitting to DB
-                if(checkUserRole && checkCheckBox && checkUserSelected && checkRoles) {
+                if(checkUserRole && checkCheckBox && checkUserSelected && checkRoles && checkUser) {
                     JOptionPane.showMessageDialog(null, "User's role has been updated");
                     subs.updateUserRole(roleID, userID);
                     resetManageUserRoles();
@@ -301,18 +312,18 @@ public class ManageRolesForm {
                 if(checkGroupName && checkGroupDesc) {
                     if(radioCreateNew.isSelected()) {
                         //TODO: FUTURE FEATURE 02: Add functionality to include users in group (different table USER_GROUP)
+                        JOptionPane.showMessageDialog(null, "Group Created");
                         subs.logNewGroup(newGroupName, newGroupDesc);
                         // Add the ghost user to the new group automatically, regardless of user selection
                         subs.addUserGroup(ghostUserID, subs.getLastGroupID());
                         resetManageUserGroups();
-                        JOptionPane.showMessageDialog(null, "Group Created");
                     }
                     else if (radioEditExisting.isSelected()) {
                         //TODO: FUTURE FEATURE 03: Add functionality to update users in group (different table USER_GROUP)
                         existingGroupID = comboBoxGroups.getSelectedIndex();
+                        JOptionPane.showMessageDialog(null, "Group Updated");
                         subs.updateExistingGroup(existingGroupID, newGroupName, newGroupDesc);
                         resetManageUserGroups();
-                        JOptionPane.showMessageDialog(null, "Group Updated");
                     }
                 }
             }
@@ -406,7 +417,6 @@ public class ManageRolesForm {
         fieldGroupDesc.setText("");
         fieldGroupDesc.setEnabled(false);
         refreshComboBoxGroups();
-        populateGroups();
     }
 
     /**

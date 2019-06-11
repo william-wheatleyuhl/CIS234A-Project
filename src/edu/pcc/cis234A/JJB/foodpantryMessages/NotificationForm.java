@@ -44,10 +44,6 @@ public class NotificationForm {
         getCurrentUserID();
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
-        for(Integer key : groups.keySet()) {
-            System.out.println(groups.get(key).toString());
-        }
-
 
         /**
           * Action Listener for the chooseTemplate comboBox. Selecting the first option in the pull-down
@@ -70,33 +66,6 @@ public class NotificationForm {
             }
         });
 
-        //OLD CODE
-//        chooseTemplate.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent actionEvent) {
-//                int selectedIndex = chooseTemplate.getSelectedIndex() - 1;
-//                if(chooseTemplate.getSelectedIndex() == 0) {
-//                    notificationTextArea.setText("");
-//                    notificationTextArea.setEnabled(true);
-//                } else {
-//                notificationTextArea.setText(templates.get(selectedIndex).messageText);
-//                notificationTextArea.setEnabled(false);
-//                }
-//            }
-//        });
-
-//        /**
-//         * On Mouse-Over, refresh the list of available templates.
-//         */
-//        chooseTemplate.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseEntered(MouseEvent mouseEvent) {
-//                super.mouseEntered(mouseEvent);
-//                refreshTemplates();
-//                populateTemplateMenu();
-//            }
-//        });
-
         /**
          * Action Listener for the "Send" button. Checks if message is empty, parses for tags, sends message, logs
          * messages.
@@ -109,20 +78,29 @@ public class NotificationForm {
                 if(checkMessageContent()) {
                     String parsedMessage = parser.returnParsedMessage();
                     ArrayList<Recipient> recipients = buildRecipientList();
-                    if(getMessageText().contains("image")) {
+                    if(parser.checkForImages()) {
                         for(Recipient recipient : recipients) {
-                            MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
-                            msg.sendMessageWithImage(parser.getImageSrcPath());
+                            if(recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("EmailOn").equals(true)) {
+                                MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
+                                msg.sendMessageWithImage(parser.getImageSrcPath());
+                                //Debugging Output
+//                                System.out.println(recipient.getUserID() + ": " + recipient.getFullName());
+
+                            }
                         }
                     }
-                    for(Recipient recipient : recipients) {
+                    for (Recipient recipient : recipients) {
+                        if(recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("EmailOn").equals(true)) {
 //                        MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
 //                        msg.sendMessage();
+                            System.out.println(recipient.getUserID() + ": " + recipient.getFullName());
+                            recipientIDs.add(recipient.getUserID());
+                        }else if(recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("SMSOn").equals(true)) {
 //                        SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
 //                        smsMsg.sendSMS();
-                        System.out.println(recipient.getFullName());
-                        recipientIDs.add(recipient.getUserID());
+                        }
                     }
+                    //Debugging Output
                     System.out.println(parsedMessage);
 //                    subs.logMessage(parsedMessage, recipients.size(), getCurrentUserID());
 //                    for(int recipID : recipientIDs) {
@@ -132,6 +110,7 @@ public class NotificationForm {
                 }
             }
         });
+
         /**
          * Change the selected Group of Recipients.
          */
@@ -253,9 +232,24 @@ public class NotificationForm {
     /**
      * Clear the current ArrayList of Templates. Reload available templates from DB.
      */
-    public void refreshTemplates() {
+    private void refreshTemplates() {
         templates.clear();
         templates = subs.readTemplates();
+        populateTemplateMenu();
+
+    }
+
+    private void refreshRecipients() {
+        subscribers.clear();
+        subscribers = subs.readSubscriberData();
+        groups.clear();
+        groups = subs.getGroupMakeup();
+        populateRecipientMenu();
+    }
+
+    public void refreshLists() {
+        refreshRecipients();
+        refreshTemplates();
     }
 }
 

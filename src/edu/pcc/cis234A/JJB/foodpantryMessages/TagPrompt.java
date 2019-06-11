@@ -46,18 +46,6 @@ public class TagPrompt {
                    }
             }
         });
-
-//        imgButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent ae) {
-//                FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG & GIF Images", "jpg", "gif");
-//                chooser.setFileFilter(filter);
-//                int returnVal = chooser.showOpenDialog(panel);
-//                if(returnVal == JFileChooser.APPROVE_OPTION) {
-//                    imageFileSrc = chooser.getSelectedFile().getAbsolutePath();
-//                    System.out.println("You Chose this file: " + imageFileSrc);
-//                }
-//            }
-//        });
     }
 
     /**

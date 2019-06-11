@@ -208,7 +208,7 @@ public class CreateTemplateForm {
                 // Make sure the template has both fields filled in and is under 500 characters
                 if (checkTemplateName && checkTemplateText && checkTemplateChars) {
                     if(radioCreateNew.isSelected()) {
-                        JOptionPane.showMessageDialog(null, "New template saved saved as \"" + newTemplateName + "\"");
+                        JOptionPane.showMessageDialog(null, "New template saved as \"" + newTemplateName + "\"");
                         temps.logNewTemplate(newTemplateName, newTemplateText, loggedInUserID);
                         // Reset the frame
                         resetAllTheThings();
