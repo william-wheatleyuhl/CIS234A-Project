@@ -89,6 +89,7 @@
         </constraints>
         <properties>
           <autoscrolls value="false"/>
+          <background color="-327937"/>
           <editable value="true"/>
           <enabled value="true"/>
           <focusable value="true"/>
