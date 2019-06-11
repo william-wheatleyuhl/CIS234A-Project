@@ -48,18 +48,22 @@ class TagParser {
      */
     private void tagFillPrompt() {
        boolean tagsValid = false;
-        for(String tag : tags) {
-            prompt.populateTagFrame(tag);
-        }
-        int result;
-        while(!tagsValid) {
-            result = JOptionPane.showConfirmDialog(null, prompt.getPanel(), "Please Fill Tags", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                tagsValid = checkTagCount();
-            } else if (result == JOptionPane.CANCEL_OPTION) {
-                return;
-            }
-        }
+       if(tags.size() > 0) {
+           for (String tag : tags) {
+               prompt.populateTagFrame(tag);
+           }
+           int result;
+           while (!tagsValid) {
+               result = JOptionPane.showConfirmDialog(null, prompt.getPanel(), "Please Fill Tags", JOptionPane.OK_CANCEL_OPTION);
+               if (result == JOptionPane.OK_OPTION) {
+                   tagsValid = checkTagCount();
+               } else if (result == JOptionPane.CANCEL_OPTION) {
+                   return;
+               }
+           }
+       } else {
+           return;
+       }
     }
     /**
      * For each given tag in the tags list, substitute the provided value from the
@@ -99,6 +103,20 @@ class TagParser {
                 filled = true;
             }
         return filled;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean checkForImages() {
+        boolean needsImage = false;
+        for(String tag : tags) {
+            if(tag.equals("image")) {
+                needsImage = true;
+            }
+        }
+        return needsImage;
     }
 
     /**
