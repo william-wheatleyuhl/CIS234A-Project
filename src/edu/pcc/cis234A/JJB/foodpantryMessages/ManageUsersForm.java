@@ -27,7 +27,7 @@ import java.util.HashMap;
  * 20190609 SC - Cleaned up completed TODOs & added new TODOs
  * 20190610 SC - Added Refresh & Reset methods to activate on save / submit and refresh combo boxes
  */
-public class ManageRolesForm {
+public class ManageUsersForm {
     private JPanel rootPanel;
     private JRadioButton radioEditExisting;
     private JRadioButton radioCreateNew;
@@ -68,7 +68,7 @@ public class ManageRolesForm {
     DefaultComboBoxModel modelRoles = (DefaultComboBoxModel) comboBoxRoles.getModel();
     DefaultComboBoxModel modelGroups = (DefaultComboBoxModel) comboBoxGroups.getModel();
 
-    public ManageRolesForm() {
+    public ManageUsersForm() {
         populateUsers();
         populateRoles();
         populateGroups();

@@ -1,14 +1,9 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -43,7 +38,7 @@ public class Presentation {
         userLoggedInLabel.setText("Logged in as " + username);
         sendNotificationTab.add(nForm.getRootPanel());
         templateTab.add(new CreateTemplateForm().getRootPanel());
-        manageRolesTab.add(new ManageRolesForm().getRootPanel());
+        manageRolesTab.add(new ManageUsersForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
         fpSettingsTab.add(new SettingsForm().getRootPanel());
 
@@ -61,8 +56,7 @@ public class Presentation {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 super.mouseClicked(mouseEvent);
-                nForm.refreshTemplates();
-                nForm.populateTemplateMenu();
+                nForm.refreshLists();
             }
         });
     }
