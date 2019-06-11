@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
  * - Added button and action listener for updating user settings.
  * - Added logic to update user settings button to handle validation of alternate email address and phone number values
  * provided by the user.
- * 
+ * - Removed functionality to retrieve the logged in user's username.
+ *
  */
 public class SettingsForm {
     private JPanel rootPanel;
@@ -54,8 +55,6 @@ public class SettingsForm {
      * initialize this tab with the user's settings from the database.  
      */
     public SettingsForm() {
-        UserLogin ul = new UserLogin();
-        String un = ul.getLoggedInUser();
         JavaneseJumpingBeansDB jjb = new JavaneseJumpingBeansDB();
         SubscriptionSetting subscriptionSettings;
         boxes = new JCheckBox[]{ cascadeCheckBox, rockCreekCheckBox, southeastCheckBox, sylvaniaCheckBox,
@@ -64,7 +63,7 @@ public class SettingsForm {
         altEmailTextField.setMargin(new Insets(0,2,2,0));
         phoneNumberTextField.setMargin(new Insets(0,2,2,0));
 
-        subscriptionSettings = jjb.readSubscriptionSettings(un);
+        subscriptionSettings = jjb.readSubscriptionSettings();
         if(subscriptionSettings.isNotificationsOn()) {
             setEnabledFieldStatus(true);
         } else {
@@ -74,8 +73,6 @@ public class SettingsForm {
 
         userSetting = jjb.readUserSettings();
         setUserSettings(userSetting);
-
-        UserLogin userLogin = new UserLogin();
 
         /**
          * Action Listener for the top level notification settings check box. This is selected by default when a subscriber
@@ -210,7 +207,6 @@ public class SettingsForm {
                 userSetting = jjb.readUserSettings();
                 String email = userSetting.getEmail();
                 String dbAltEmail = userSetting.getAltEmail();
-                String altEmailNoTrim = altEmailTextField.getText();
                 String altEmail = altEmailTextField.getText().trim();
                 String dbPhone = userSetting.getPhoneNbr();
                 String phone = "";
@@ -228,6 +224,8 @@ public class SettingsForm {
                     } else if (!dbAltEmail.isEmpty() && !dbPhone.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "Update failed!  Your alternate " +
                                 "email address and phone number cannot match your existing ones.");
+                        userSetting = jjb.readUserSettings();
+                        setUserSettings(userSetting);
                     } else if (!dbAltEmail.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "Update failed!  Your alternate " +
                                 "email address cannot match your existing one.");
@@ -260,7 +258,13 @@ public class SettingsForm {
                                     "and phone number are invalid!");
                         }
                     } else if (altEmail.isEmpty()) {
-                        if (validatePhoneNbr(phone)) {
+                        if (!dbAltEmail.isEmpty()) {
+                            jjb.updateUserSettings(altEmail, phone);
+                            JOptionPane.showMessageDialog(null, "*Your user settings have been " +
+                                    "updated successfully!");
+                            userSetting = jjb.readUserSettings();
+                            setUserSettings(userSetting);
+                        } else if (validatePhoneNbr(phone)) {
                             jjb.updateUserSettings(altEmail, phone);
                             JOptionPane.showMessageDialog(null, "Your phone number has been " +
                                     "updated successfully!");
@@ -271,10 +275,19 @@ public class SettingsForm {
                                     "you have entered is invalid!");
                         }
                     } else {
-                        if (altEmailIsValid(altEmail)) {
+                        if (!dbPhone.isEmpty()) {
+                            if (altEmailIsValid(altEmail)) {
+                                jjb.updateUserSettings(altEmail, phone);
+                                JOptionPane.showMessageDialog(null, "Your user settings " +
+                                        "have been updated successfully!");
+                            } else {
+                                JOptionPane.showMessageDialog(null, "The alternate email " +
+                                        "address you have entered is invalid!");
+                            }
+                        } else if (altEmailIsValid(altEmail)) {
                             jjb.updateUserSettings(altEmail, phone);
-                            JOptionPane.showMessageDialog(null, "Your user settings have been " +
-                                    "updated successfully!");
+                            JOptionPane.showMessageDialog(null, "Your alternate email " +
+                                    "address has been updated successfully!");
                             userSetting = jjb.readUserSettings();
                             setUserSettings(userSetting);
                         } else {
@@ -296,7 +309,7 @@ public class SettingsForm {
     }
 
 
-    public void setEnabledFieldStatus(Boolean status) {
+    private void setEnabledFieldStatus(Boolean status) {
         for (JCheckBox box : boxes) {
             box.setEnabled(status);
         }
@@ -304,7 +317,7 @@ public class SettingsForm {
         notificationMethodsLabel.setEnabled(status);
     }
 
-    public void setSubscriptionSettings(SubscriptionSetting subSettings) {
+    private void setSubscriptionSettings(SubscriptionSetting subSettings) {
         notificationOnOffCheckBox.setSelected(subSettings.isNotificationsOn());
         cascadeCheckBox.setSelected(subSettings.isCascadeOn());
         rockCreekCheckBox.setSelected(subSettings.isRockCreekOn());
@@ -315,14 +328,14 @@ public class SettingsForm {
         smsCheckBox.setSelected(subSettings.isSmsOn());
     }
 
-    public void setUserSettings(UserSetting usrSettings) {
+    private void setUserSettings(UserSetting usrSettings) {
         emailTextField.setText(usrSettings.getEmail());
         altEmailTextField.setText(usrSettings.getAltEmail());
         String phone = usrSettings.getPhoneNbr().replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
         phoneNumberTextField.setText(phone);
     }
 
-    public static boolean altEmailIsValid(String altEmail)
+    private static boolean altEmailIsValid(String altEmail)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
                 "[a-zA-Z0-9_+&*-]+)*@" +
@@ -336,32 +349,24 @@ public class SettingsForm {
         return pattern.matcher(altEmail).matches();
     }
 
-    public boolean validatePhoneNbr(String phoneNbr) {
-        //String regexStr = "^[0-9\\-]*$";
-        boolean isNumeric = false;
-
+    private boolean validatePhoneNbr(String phoneNbr) {
         for (char c : phoneNbr.toCharArray())
         {
             if (!Character.isDigit(c)) return false;
         }
-        isNumeric = true;
 
-        if (phoneNbr.length() == 10 && isNumeric) {
-            return true;
-        } else {
-            return false;
-        }
+        return phoneNbr.length() == 10;
     }
 
-    public String parsePhoneNbr(String phone) {
-        String phoneNbr = "";
+    private String parsePhoneNbr(String phone) {
+        StringBuilder phoneNbr = new StringBuilder();
 
         Iterable<String> phoneSplit = Splitter.on(CharMatcher.anyOf("-)("))
                 .omitEmptyStrings().trimResults().split(phone);
         for (String p : phoneSplit) {
-            phoneNbr = phoneNbr + p;
+            phoneNbr.append(p);
         }
-        return phoneNbr;
+        return phoneNbr.toString();
     }
 
 }

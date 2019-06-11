@@ -25,8 +25,9 @@ import java.util.ArrayList;
  * Spring 2 Part 2 Modifications:
  * - Added updateUserSettings method which updates the values for alternate email address and phone number for
  * the logged in user.
- * - Removed method to set logged in user's ID and replaced it by retrieving it using the method in the
- * UserLoginDB class.
+ * - Removed method to set logged in user's ID and replaced it by retrieving it using the method from the
+ * UserLoginDB class inside this (JavaneseJumpingBeansDB) constructor.
+ * - Removed parameter from readSubscriptionSettings signature.
  *
  */
 public class JavaneseJumpingBeansDB {
@@ -48,9 +49,13 @@ public class JavaneseJumpingBeansDB {
     private static final String UPDATE_ALT_EMAIL_ON_SQL = "UPDATE USER_SETTING SET AltEmailOn = ? WHERE UserID = ?";
     private static final String UPDATE_SMS_ON_SQL = "UPDATE USER_SETTING SET SMSOn = ? WHERE UserID = ?";
     private static final String UPDATE_USER_SETTINGS_SQL = "UPDATE [USER] SET AltEmail = ?, Phone = ? WHERE UserID = ?";
-    UserLoginDB session = new UserLoginDB();
-    UserLogin login = new UserLogin();
-    private int userId = session.getUsernameUserID(login.getLoggedInUser());
+    private static UserLogin login = new UserLogin();
+    private static int userId;
+
+    public JavaneseJumpingBeansDB() {
+        UserLoginDB session = new UserLoginDB();
+        userId = session.getUsernameUserID(login.getLoggedInUser());
+    }
 
     /**
      * Establishes the DB connection.
@@ -132,7 +137,7 @@ public class JavaneseJumpingBeansDB {
      * Reads and returns subscription settings for the logged in user
      * @return The subscriptions settings
      */
-    public SubscriptionSetting readSubscriptionSettings(String username) {
+    public SubscriptionSetting readSubscriptionSettings() {
         SubscriptionSetting subscriptionSetting = new SubscriptionSetting();
 
         try (
