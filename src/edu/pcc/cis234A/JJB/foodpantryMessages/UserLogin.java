@@ -65,32 +65,41 @@ public class UserLogin {
         int dotAfterAtIndex = -1;
         for(char c : email.toCharArray()){
             if(c == '@'){
+                System.out.println("1");
                 if(containsAT){
+                    System.out.println("2");
                     return false;
                 }
                 containsAT = true;
                 atIndex = charIndex;
 
                 if(charIndex == 0 || charIndex == email.length() - 1){
+                    System.out.println("3");
                     return false;
                 }
             }
 
             if(c == '.'){
+                System.out.println("4");
                 if(charIndex == 0 || charIndex == email.length() - 1){
+                    System.out.println("5");
                     return false;
                 }
 
                 if(email.charAt(charIndex + 1) == '@'){
+                    System.out.println("6");
                     return false;
                 }
 
                 if(email.charAt(charIndex + 1) == '.' || email.charAt(charIndex - 1) == '.'){
+                    System.out.println("7");
                     return false;
                 }
 
                 if(containsAT){
+                    System.out.println("8");
                     if(containsDOTAfterAT){
+                        System.out.println("9");
                         return false;
                     }
                     containsDOTAfterAT = true;
@@ -102,6 +111,7 @@ public class UserLogin {
         }
 
         if((containsAT && containsDOTAfterAT) && dotAfterAtIndex - atIndex > 1){
+            System.out.println("10");
             if(email.length() <= 50){
                 inputOK = true;
             }
@@ -110,6 +120,7 @@ public class UserLogin {
         if(email.contains("@pcc.edu")) {
             return inputOK;
         }
+        System.out.println("11");
         return false;
     }
 
