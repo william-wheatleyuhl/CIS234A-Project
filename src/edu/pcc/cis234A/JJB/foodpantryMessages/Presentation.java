@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 
 /**
@@ -33,15 +34,22 @@ public class Presentation {
     private JPanel msgLogTab;
     private JPanel manageRolesTab;
     private JPanel fpSettingsTab;
+    private SubscriberDB subs = new SubscriberDB();
+    ArrayList<Recipient> users = subs.readSubscriberData();
 
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
         sendNotificationTab.add(nForm.getRootPanel());
         templateTab.add(new CreateTemplateForm().getRootPanel());
-        msgLogTab.add(new NotificationLogForm().getRootPanel());
         manageRolesTab.add(new ManageRolesForm().getRootPanel());
+        msgLogTab.add(new NotificationLogForm().getRootPanel());
         fpSettingsTab.add(new SettingsForm().getRootPanel());
 
+        if(!checkManager()) {
+            tabbedPane1.remove(templateTab);
+            tabbedPane1.remove(manageRolesTab);
+
+        }
         tabbedPane1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
@@ -52,6 +60,15 @@ public class Presentation {
         });
     }
 
+    private boolean checkManager() {
+        boolean isManager = false;
+        for(Recipient user : users) {
+            if(user.getUserID() == userID && user.getRoleID() == 1) {
+                isManager = true;
+            }
+        }
+        return isManager;
+    }
     /**
      * Sends the JPanel object to a requesting class.
      * @return A JPanel object representing the GUI of this class.

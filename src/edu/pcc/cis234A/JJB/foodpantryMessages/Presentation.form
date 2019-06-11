@@ -26,8 +26,10 @@
               </grid>
             </constraints>
             <properties>
+              <enabled value="true"/>
               <name value=""/>
               <tabPlacement value="1"/>
+              <visible value="true"/>
             </properties>
             <border type="none"/>
             <children>
@@ -43,7 +45,10 @@
                 <constraints>
                   <tabbedpane title="Template Editor"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <enabled value="false"/>
+                  <visible value="false"/>
+                </properties>
                 <border type="none"/>
                 <children/>
               </grid>
@@ -59,7 +64,10 @@
                 <constraints>
                   <tabbedpane title="Manage Users"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <enabled value="false"/>
+                  <visible value="false"/>
+                </properties>
                 <border type="none"/>
                 <children/>
               </grid>
