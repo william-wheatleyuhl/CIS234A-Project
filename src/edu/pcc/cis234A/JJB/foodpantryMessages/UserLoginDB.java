@@ -155,6 +155,9 @@ public class UserLoginDB {
         return userID;
     }
 
+    /**
+     * Gets RoleID associated with UserID
+     */
     public int getUserIDRoleID(int userID){
         int roleID = 0;
         try(
@@ -171,6 +174,90 @@ public class UserLoginDB {
             e.printStackTrace();
         }
         return roleID;
+    }
+
+    /**
+     * Gets LastName associated with UserID
+     */
+    public String getUserIDLastName(int userID){
+        String lastName = "";
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(UserSelectStar)
+        ){
+            while(rs.next()){
+                if(rs.getInt("UserID") == userID){
+                    lastName = rs.getString("LastName");
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return lastName;
+    }
+
+    /**
+     * Gets FirstName associated with UserID
+     */
+    public String getUserIDFirstName(int userID){
+        String firstName = "";
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(UserSelectStar)
+        ){
+            while(rs.next()){
+                if(rs.getInt("UserID") == userID){
+                    firstName = rs.getString("FirstName");
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return firstName;
+    }
+
+    /**
+     * Gets Email associated with UserID
+     */
+    public String getUserIDEmail(int userID){
+        String email = "";
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(UserSelectStar)
+        ){
+            while(rs.next()){
+                if(rs.getInt("UserID") == userID){
+                    email = rs.getString("Email");
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return email;
+    }
+
+    /**
+     * Gets Phone associated with UserID
+     */
+    public String getUserIDPhone(int userID){
+        String phone = "";
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(UserSelectStar)
+        ){
+            while(rs.next()){
+                if(rs.getInt("UserID") == userID){
+                    phone = rs.getString("Phone");
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return phone;
     }
 
     /**
@@ -219,6 +306,9 @@ public class UserLoginDB {
         return userSalt;
     }
 
+    /**
+     * Determines whether a user account is active.
+     */
     public boolean getUserActive(int userID){
         boolean userActive = false;
         try(
@@ -242,6 +332,9 @@ public class UserLoginDB {
         return userActive;
     }
 
+    /**
+     * Deactivates a user account.
+     */
     public void deactivateUserAccount(int userID){
         try(
                 Connection conn = getConnection();
@@ -255,10 +348,31 @@ public class UserLoginDB {
         }
     }
 
+    /**
+     * Reactivates a user account.
+     */
     public void reactivateUserAccount(int userID){
         try(
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement("UPDATE [USER] SET Active = 1 WHERE UserID = "+userID+";");
+                //PreparedStatement stmt2 = conn2.prepareStatement(insertPasswordString);
+                //PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('testhash',35 , NULL)");
+        ){
+            stmt.executeUpdate();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Updates a user password.
+     */
+    public void updateUserIDPassword(int userID, String newPassword){
+        //String oldSalt = getUserSalt(userID);
+
+        try(
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement("UPDATE [PASSWORD] SET HashedPW = '"+newPassword+"' WHERE UserID = "+userID+";");
                 //PreparedStatement stmt2 = conn2.prepareStatement(insertPasswordString);
                 //PreparedStatement stmt2 = conn2.prepareStatement("INSERT INTO [PASSWORD] VALUES ('testhash',35 , NULL)");
         ){

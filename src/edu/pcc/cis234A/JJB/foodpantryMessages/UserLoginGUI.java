@@ -25,11 +25,12 @@ public class UserLoginGUI {
     private JLabel suUsernameLabel;
     private JTextField suUsernameField;
     private JLabel suPasswordLabel1;
-    private JTextField suPasswordField1;
+    private JPasswordField suPasswordField1;
     private JLabel suPasswordLabel2;
-    private JTextField suPasswordField2;
+    private JPasswordField suPasswordField2;
     private JButton suButton;
     private JButton deactivateButton;
+    private JButton resetPWButton;
 
     public static String[] usernameDB;
     public static String lastNameDB;
@@ -82,9 +83,9 @@ public class UserLoginGUI {
                     suUsernameField.setText(usernameDB[0]);
                 }
 
-                boolean passwordOK = UserLogin.verifySignUpPassword(suPasswordField1.getText(), suPasswordField2.getText());
+                boolean passwordOK = UserLogin.verifySignUpPassword(new String(suPasswordField1.getPassword()), new String(suPasswordField2.getPassword()));
                 if(!passwordOK){
-                    JOptionPane.showMessageDialog(null, "Invalid Password");
+                    JOptionPane.showMessageDialog(null, "Invalid Password. Passwords must match, contain 1 number, contain 1 uppercase letter, and be a minimum of 12 characters.");
                 }
 
                 boolean emailUnique = UserLogin.verifyEmailUnique(suEmailField.getText());
@@ -101,7 +102,7 @@ public class UserLoginGUI {
                     firstNameDB = firstLast[0];
                     emailDB = suEmailField.getText();
                     UserLogin.generateSalt();
-                    passwordDB = UserLogin.hashPassword(suPasswordField1.getText(), UserLogin.salt.toString());
+                    passwordDB = UserLogin.hashPassword(new String(suPasswordField1.getPassword()), UserLogin.salt.toString());
 
                     database1.insertUser(highestUserID);
                     System.out.println("");
@@ -109,8 +110,13 @@ public class UserLoginGUI {
                     System.out.println("");
                     database1.insertDefaultSettings(highestUserID);
 
-                    JOptionPane.showMessageDialog(null, "Successfully signed up!");
+                    JOptionPane.showMessageDialog(null, "Successfully signed up! Please sign in.");
                 }
+
+                suNameField.setText(null);
+                suEmailField.setText(null);
+                suPasswordField1.setText(null);
+                suPasswordField2.setText(null);
             }
         });
 
@@ -198,6 +204,72 @@ public class UserLoginGUI {
             public void actionPerformed(ActionEvent e) {
                 deactivateAccount = true;
                 JOptionPane.showMessageDialog(null, "Sign in as usual and your account will be deactivated. Restart program if you changed your mind.");
+            }
+        });
+
+        /**
+         * password reset logic.
+         */
+        resetPWButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String inputUsername = JOptionPane.showInputDialog(null, "Enter username to reset password.");
+                boolean inputExists = database1.checkUserExists(inputUsername);
+                if(!inputExists){
+                    JOptionPane.showMessageDialog(null, "Username does not exist.");
+                }
+                else{
+                    int inputUserID = database1.getUsernameUserID(inputUsername);
+                    String inputLastName = database1.getUserIDLastName(inputUserID);
+                    String inputFirstName = database1.getUserIDFirstName(inputUserID);
+                    String inputEmail = database1.getUserIDEmail(inputUserID);
+                    String inputPhone = database1.getUserIDPhone(inputUserID);
+                    int inputRoleID = database1.getUserIDRoleID(inputUserID);
+
+                    String resetCode = UserLogin.genPasswordResetCode();
+
+                    String message1 = "Your password reset code is: "+resetCode+".";
+
+
+                    Recipient rec1 = new Recipient(inputUserID, inputUsername, inputLastName, inputFirstName, inputEmail, inputPhone, inputRoleID, Integer.toString(inputRoleID));
+                    MessageBuilder mb1 = new MessageBuilder(rec1, message1);
+                    mb1.sendPlainMessage();
+
+                    String inputResetCode = JOptionPane.showInputDialog(null, "Reset Code Sent To Email. Enter Here.");
+
+                    while(true) {
+                        if (!inputResetCode.equals(resetCode)) {
+                            inputResetCode = JOptionPane.showInputDialog(null, "Incorrect Code. Reenter.");
+                        }
+                        else{
+                            break;
+                        }
+                    }
+
+                    String newPassword = JOptionPane.showInputDialog(null, "Please Enter New Password.");
+
+                    boolean updatePW = false;
+
+                    while(true){
+                        if(!UserLogin.passwordStrong(newPassword)){
+                            newPassword = JOptionPane.showInputDialog(null, "Invalid. Must be 12 characters minimum, contain at least 1 number, and at least 1 uppercase letter.");
+                        }
+                        else{
+                            updatePW = true;
+                            break;
+                        }
+                    }
+
+                    if(updatePW) {
+                        String pwSalt = database1.getUserSalt(inputUserID);
+                        String newPasswordDB = UserLogin.hashPassword(newPassword, pwSalt);
+                        //JOptionPane.showMessageDialog(null, newPasswordDB);
+                        database1.updateUserIDPassword(inputUserID, newPasswordDB);
+
+                        JOptionPane.showMessageDialog(null, "Password Updated. Please Sign In.");
+                    }
+
+                }
             }
         });
     }

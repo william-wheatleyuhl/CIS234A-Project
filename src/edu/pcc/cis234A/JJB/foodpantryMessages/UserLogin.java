@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * @author Jeff
@@ -167,7 +168,7 @@ public class UserLogin {
      * Method to check the strength of a password. Ensures that the password is at least 12 characters long and
      * contains at least one uppercase letter, and at least one number.
      */
-    private static boolean passwordStrong(String password){
+    public static boolean passwordStrong(String password){
         boolean lengthOK = false;
         boolean containsUpperLetter = false;
         boolean containsNumber = false;
@@ -229,6 +230,18 @@ public class UserLogin {
         return hashedPW;
     }
 
+    public static String genPasswordResetCode(){
+        String code = "";
+        int randNum = 0;
+        String randNumString = "";
 
+        Random rand = new Random();
+        for(int i = 0; i < 4; i += 1){
+            randNum = rand.nextInt(10);
+            randNumString = Integer.toString(randNum);
+            code = code.concat(randNumString);
+        }
+        return code;
+    }
 
 }
