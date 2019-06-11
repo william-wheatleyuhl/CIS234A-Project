@@ -1,5 +1,7 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
 import com.twilio.rest.chat.v1.service.User;
 
 import javax.swing.*;
@@ -203,37 +205,99 @@ public class SettingsForm {
                 String dbAltEmail = userSetting.getAltEmail();
                 String altEmailNoTrim = altEmailTextField.getText();
                 String altEmail = altEmailTextField.getText().trim();
+                String dbPhone = userSetting.getPhoneNbr();
+                String phone = phoneNumberTextField.getText().trim();
+                /*if (validatePhoneNbr(phoneNumberTextField.getText().trim())) {
+                    phone = parsePhoneNbr(phoneNumberTextField.getText().trim());
+                    System.out.println(phone);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Update failed!  Please enter a " +
+                            "valid phone number.  E.g. (503) 777-7777.");
+                    return;
+                }*/
+
                 System.out.println("DB Alt Email: " + dbAltEmail + " || Text field Alt Email: " +
-                        altEmailNoTrim);
+                        altEmailNoTrim + " || DB Phone Nbr: " + dbPhone + " || Text field Phone Nbr: " + phone);
+                // email == alt email
                 if (email.equals(altEmail)) {
-                    JOptionPane.showMessageDialog(null, "Update failed!  Your alternate " +
-                            "email address cannot be the same as your email address.");
-                } else if (dbAltEmail.equals(altEmail)) {
-                    if (dbAltEmail.isEmpty() && altEmail.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Update failed!  Your email " +
+                            "address and alternate email address cannot be the same.");
+                    System.out.println("1x");
+                    System.out.println("--------------------------------------------------------");
+                // alt emails and phone numbers are equal
+                } else if (dbAltEmail.equals(altEmail) && dbPhone.equals(phone)) {
+                    System.out.println("2x");
+                    // don't update db with null when db is already null
+                    if (dbAltEmail.isEmpty() && dbPhone.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "Update failed!  You must enter " +
                                 "values to update your user settings.");
+                        System.out.println("3x");
+                        System.out.println("--------------------------------------------------------");
+                    // don't update db if input is the same
+                    } else if (!dbAltEmail.isEmpty() && !dbPhone.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Update failed!  Your alternate " +
+                                "email address and phone number cannot match your existing ones.");
+                        System.out.println("4x");
+                        System.out.println("--------------------------------------------------------");
+                    // update db with alt email
+                    } else if (!dbAltEmail.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Update failed!  Your alternate " +
+                                "email address cannot match your existing one.");
+                        System.out.println("5x");
+                        System.out.println("--------------------------------------------------------");
                     } else {
-                        JOptionPane.showMessageDialog(null, "Update failed!  You are already " +
-                                "using that alternate email address.");
+                        JOptionPane.showMessageDialog(null, "Update failed!  Your phone " +
+                                "number cannot match your existing one.");
+                        System.out.println("6x");
+                        System.out.println("--------------------------------------------------------");
                     }
+                // alt email and/or phone db values don't match input
                 } else {
-                    System.out.println("Updating DB ...");
-                    if (altEmail.isEmpty()) {
-                        jjb.updateUserSettings(altEmailTextField.getText().trim(), phoneNumberTextField.getText().trim());
-                        JOptionPane.showMessageDialog(null, "You have updated your " +
-                                "user settings successfully!");
-                        return;
-                    }
-                    if (altEmailIsValid(altEmailTextField.getText().trim())) {
-                        jjb.updateUserSettings(altEmailTextField.getText().trim(), phoneNumberTextField.getText().trim());
-                        JOptionPane.showMessageDialog(null, "You have updated your user " +
-                                "settings successfully!");
-                        return;
+                    System.out.println("7x");
+                    // db values exist, input is empty
+                    if (altEmail.isEmpty() && phone.isEmpty()) {
+                        jjb.updateUserSettings(altEmail, phone);
+                        JOptionPane.showMessageDialog(null, "Your user settings have been " +
+                                "updated successfully!");
+                        System.out.println("8x");
+                        System.out.println("--------------------------------------------------------");
+                    // db values don't exist, input is provided
+                    } else if (!altEmail.isEmpty() && !phone.isEmpty()) {
+                        System.out.println("9x");
+                        if (altEmailIsValid(altEmail)) { // && phone is valid
+                            jjb.updateUserSettings(altEmail, phone);
+                            JOptionPane.showMessageDialog(null, "Your user settings have been " +
+                                    "updated successfully!");
+                            System.out.println("10x");
+                            System.out.println("--------------------------------------------------------");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Your input is invalid!");
+                            System.out.println("11x");
+                            System.out.println("--------------------------------------------------------");
+                        }
+                    // db value exists for alt email
+                    } else if (altEmail.isEmpty()) {
+                        jjb.updateUserSettings(altEmail, phone);
+                        JOptionPane.showMessageDialog(null, "Your phone number has been " +
+                                "updated successfully!");
+
+                        System.out.println("12x");
+                        System.out.println("--------------------------------------------------------");
                     } else {
-                        JOptionPane.showMessageDialog(null, "That alternate email address is " +
-                                "invalid!  Please choose a valid one.");
+                        System.out.println("13x");
+                        if (altEmailIsValid(altEmail)) {
+                            jjb.updateUserSettings(altEmail, phone);
+                            JOptionPane.showMessageDialog(null, "Your user settings have been " +
+                                    "updated successfully!");
+                            System.out.println("14x");
+                            System.out.println("--------------------------------------------------------");
+                        } else {
+                            System.out.println("15x");
+                            JOptionPane.showMessageDialog(null, "Update failed!  Your " +
+                                    "alternate email address is invalid.");
+                            System.out.println("--------------------------------------------------------");
+                        }
                     }
-                    System.out.println("Alt Email Verification: " + altEmailIsValid(altEmail));
                 }
             }
         });
@@ -286,4 +350,29 @@ public class SettingsForm {
             return false;
         return pattern.matcher(altEmail).matches();
     }
+
+    public boolean validatePhoneNbr(String phoneNbr) {
+        String regexStr = "^[0-9\\-]*$";
+        if (phoneNbr.matches(regexStr)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String parsePhoneNbr(String phone) {
+        String phoneNbr = "";
+        System.out.println("parsePhoneNbr phone passed in: " + phone);
+        String formattedPhoneNumber = "(123) 456-7890";
+
+        Iterable<String> phoneSplit = Splitter.on(CharMatcher.anyOf("-)("))
+                .omitEmptyStrings().trimResults().split(formattedPhoneNumber);
+        System.out.println("parsePhoneNbr phone passed in: " + phoneSplit.toString());
+        for (String p : phoneSplit) {
+            phoneNbr = phoneNbr + p;
+        }
+        System.out.println("parsePhoneNbr phoneNbr: " + phoneNbr);
+        return phoneNbr;
+    }
+
 }
