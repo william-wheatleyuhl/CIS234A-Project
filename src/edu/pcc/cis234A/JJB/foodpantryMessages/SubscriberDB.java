@@ -15,6 +15,8 @@ import java.util.*;
  * 20190604 SC - Added UserID to readTemplates()
  * 20190609 SC - Added ROLES_QUERY
  * 20190609 WWU - Added readRoles() Method
+ * 20190609 SC - Added GROUP_INSERT & GROUP_UPDATE & GROUP_QUERY
+ * 20190609 SC - Added logNewGroup() & updateExistingGroup() & getLastGroupID() & getRoleNameRoleID()
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
@@ -27,11 +29,14 @@ public class SubscriberDB {
     private static final String SUB_SETTINGS_QUERY = "SELECT UserID, NotificationsOn, CascadeOn, RockCreekOn, SoutheastOn, SylvaniaOn, EmailOn, AltEmailOn, SMSOn FROM USER_SETTING";
     private static final String USER_GROUPS_UPDATE = "INSERT INTO USER_GROUP (UserID, GroupID) VALUES(?, ?)";
     private static final String USER_GROUPS_DELETE = "DELETE USER_GROUP WHERE UserID=? AND GroupID=?";
-    private static final String USER_GROUP_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
+    private static final String USER_GROUP_QUERY = "SELECT UserID, USER_GROUP.GroupID, [GROUP].GroupName, [GROUP].Description FROM USER_GROUP JOIN [GROUP] ON USER_GROUP.GroupID = [GROUP].GroupID;";
     private static final String ROLES_QUERY = "SELECT RoleID, RoleName FROM [ROLE]";
     private static final String ID_QUERY = "SELECT MessageID FROM NOTIFICATION";
     private static final String LOG_MESSAGE = "INSERT INTO NOTIFICATION (MessageID, DateTime, Message, UserID, RecipientCount) VALUES(?,?,?,?,?)" ;
     private static final String LOG_RECIPIENTS = "INSERT INTO RECIPIENT (UserID, MessageID) VALUES(?,?)";
+    private static final String GROUP_INSERT = "INSERT INTO [GROUP] VALUES(?,?,?)";
+    private static final String GROUP_UPDATE = "UPDATE [GROUP] SET GroupName = ?, Description = ? WHERE GroupID = ?";
+    private static final String GROUP_QUERY = "SELECT GroupID, GroupName, Description FROM [GROUP]";
 
     private ArrayList<Role> roles = new ArrayList<>();
     private ArrayList<Recipient> receivers = new ArrayList<>();
@@ -180,7 +185,7 @@ public class SubscriberDB {
      * @param userID The integer UserID identifying the Recipient.
      * @param groupID The integer GroupID identifying the Group.
      */
-    private void addUserGroup(int userID, int groupID) {
+    protected void addUserGroup(int userID, int groupID) {
 //        Output for debugging
 //        System.out.println("Adding User Group Setting for " + userID);
         try {
@@ -228,7 +233,9 @@ public class SubscriberDB {
                 ) {
             while(rs.next()) {
                 if(!groups.containsKey(rs.getInt("GroupID"))) {
-                    groups.computeIfAbsent(rs.getInt("GroupID"), k -> new ArrayList<>()).add(rs.getString("GroupName"));
+                    groups.computeIfAbsent(rs.getInt("GroupID"), k -> new ArrayList<>()).add(
+                            rs.getString("GroupName"));
+                    groups.get(rs.getInt("GroupID")).add(rs.getString("Description"));
                     groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));
                 } else {
                     groups.get(rs.getInt("GroupID")).add(rs.getInt("UserID"));
@@ -364,4 +371,84 @@ public class SubscriberDB {
         Timestamp timeStamp = new Timestamp(sysDate.getTime());
         return timeStamp;
     }
+
+    /**
+     * Returns the integer value of the last GroupID from the GROUP table
+     * @return lastGroupID The value of the last GroupID
+     */
+    public int getLastGroupID() {
+        int lastGroupID = 0;
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(GROUP_QUERY);
+                ResultSet rs = stmt.executeQuery();
+        ) {
+            while (rs.next()) {
+                lastGroupID = rs.getInt("GroupID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lastGroupID;
+    }
+
+    /**
+     * Add a new Group to the GROUP table in DB
+     * @param newGroupName The group name to be added to DB
+     * @param newGroupDesc The group description to be added to DB
+     */
+    public void logNewGroup(String newGroupName, String newGroupDesc) {
+        try {
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(GROUP_INSERT);
+            stmt.setInt(1, getLastGroupID() + 1);
+            stmt.setString(2, newGroupName);
+            stmt.setString(3, newGroupDesc);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Update an existing Group in the GROUP table in DB
+     * @param existingGroupID The GroupID of the group to be changed / updated in DB
+     * @param existingGroupName The group name to be changed / updated in DB
+     * @param existingGroupDesc The group description to be changed / updated in DB
+     */
+    public void updateExistingGroup(int existingGroupID, String existingGroupName, String existingGroupDesc) {
+        try {
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(GROUP_UPDATE);
+            stmt.setString(1, existingGroupName);
+            stmt.setString(2, existingGroupDesc);
+            stmt.setInt(3, existingGroupID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get the RoleID for a given RoleName
+     * @return roleID
+     */
+    public int getRoleNameRoleID(String roleName) {
+        int roleID = 0;
+        try(
+                Connection conn = getConnection();
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = stmt.executeQuery(SUBSCRIBER_QUERY)
+                ) {
+            while (rs.next()) {
+                if(rs.getString("RoleName").equals(roleName)) {
+                    roleID = rs.getInt("RoleID");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roleID;
+    }
+
 }

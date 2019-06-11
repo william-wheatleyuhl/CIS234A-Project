@@ -44,7 +44,9 @@ public class NotificationForm {
         getCurrentUserID();
 
         rootPanel.setPreferredSize(new Dimension(800, 600));
-
+        for(Integer key : groups.keySet()) {
+            System.out.println(groups.get(key).toString());
+        }
 
 
         /**
@@ -155,7 +157,7 @@ public class NotificationForm {
         model.removeAllElements();
         model.addElement("All Recipients");
         for(Integer key : groups.keySet()) {
-            model.addElement( groups.get(key).get(0) + ":\t\t " +  (groups.get(key).size() - 1));
+            model.addElement( groups.get(key).get(0) + ":\t\t " +  (groups.get(key).size() - 2));
         }
         groupSelect.setModel(model);
         scrollList.setViewportView(groupSelect);

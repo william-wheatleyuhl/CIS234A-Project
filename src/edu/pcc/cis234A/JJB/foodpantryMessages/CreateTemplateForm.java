@@ -166,16 +166,6 @@ public class CreateTemplateForm {
                 }
             }
         });
-        // OLD CODE for reference TODO: REMOVE LATER
-//        comboTemplates.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int selectedIndex = comboTemplates.getSelectedIndex() -1;
-//                areaTemplateText.setText(templates.get(selectedIndex).messageText);
-//                fieldTemplateName.setText(templates.get(selectedIndex).templateName);
-//                labelLastEdit.setText("Last edit by " + temps.getLastEditUser(templates.get(selectedIndex).getUserID()));
-//            }
-//        });
 
         /**
          * Action listener for the "Save" button.
