@@ -26,6 +26,7 @@ import java.util.HashMap;
  * 20190609 SC - Added functionality to save groups to DB
  * 20190609 SC - Cleaned up completed TODOs & added new TODOs
  * 20190610 SC - Added Refresh & Reset methods to activate on save / submit and refresh combo boxes
+ * 20190610 SC - Added ghostUserID to use in USER_GROUP add on Save
  */
 public class ManageRolesForm {
     private JPanel rootPanel;
