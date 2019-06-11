@@ -1,14 +1,10 @@
 package edu.pcc.cis234A.JJB.foodpantryMessages;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import java.util.ArrayList;
 
 
 /**
@@ -17,6 +13,8 @@ import java.net.URL;
  * @author William Wheatley-Uhl
  * @version 2019.05.06
  *
+ * Changelog:
+ * 20190610 WWU - Implemented logic to only allow managers to see All Tabs, Staff and Users have limited functionality
  */
 public class Presentation {
     private JTabbedPane tabbedPane1;
@@ -33,25 +31,64 @@ public class Presentation {
     private JPanel msgLogTab;
     private JPanel manageRolesTab;
     private JPanel fpSettingsTab;
+    private SubscriberDB subs = new SubscriberDB();
+    ArrayList<Recipient> users = subs.readSubscriberData();
 
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
         sendNotificationTab.add(nForm.getRootPanel());
         templateTab.add(new CreateTemplateForm().getRootPanel());
+        manageRolesTab.add(new ManageUsersForm().getRootPanel());
         msgLogTab.add(new NotificationLogForm().getRootPanel());
-        manageRolesTab.add(new ManageRolesForm().getRootPanel());
         fpSettingsTab.add(new SettingsForm().getRootPanel());
 
+        if(isUser()) {
+            tabbedPane1.remove(sendNotificationTab);
+            tabbedPane1.remove(templateTab);
+            tabbedPane1.remove(manageRolesTab);
+            tabbedPane1.remove(msgLogTab);
+        }
+        if(isStaff()) {
+            tabbedPane1.remove(templateTab);
+            tabbedPane1.remove(manageRolesTab);
+        }
         tabbedPane1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 super.mouseClicked(mouseEvent);
-                nForm.refreshTemplates();
-                nForm.populateTemplateMenu();
+                nForm.refreshLists();
             }
         });
     }
 
+    /**
+     * Check to see if the user has a roleID representing a Staff member
+     * @return True if the user has a roleID of 2
+     */
+    private boolean isStaff() {
+        boolean isStaff = false;
+        for(Recipient user : users) {
+            if(user.getUserID() == userID && user.getRoleID() == 2) {
+                isStaff = true;
+            }
+        }
+        return isStaff;
+    }
+
+    /**
+     * Check to see if the user has a roleID representing a Subscriber
+     * @return True if the user has a roleID of 3
+     */
+    private boolean isUser() {
+        boolean isUser = false;
+        for(Recipient user : users) {
+            if(user.getUserID() == userID && user.getRoleID() == 3) {
+                isUser = true;
+            }
+        }
+        return isUser;
+    }
+    
     /**
      * Sends the JPanel object to a requesting class.
      * @return A JPanel object representing the GUI of this class.
