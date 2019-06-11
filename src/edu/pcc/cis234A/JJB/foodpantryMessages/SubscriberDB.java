@@ -17,6 +17,7 @@ import java.util.*;
  * 20190609 WWU - Added readRoles() Method
  * 20190609 SC - Added GROUP_INSERT & GROUP_UPDATE & GROUP_QUERY
  * 20190609 SC - Added logNewGroup() & updateExistingGroup() & getLastGroupID() & getRoleNameRoleID()
+ * 20190910 SC - Changed addUserGroup() to protected instead of private
  */
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
