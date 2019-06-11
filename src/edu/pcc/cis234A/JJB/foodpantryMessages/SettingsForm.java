@@ -259,11 +259,16 @@ public class SettingsForm {
                         }
                     } else if (altEmail.isEmpty()) {
                         if (!dbAltEmail.isEmpty()) {
-                            jjb.updateUserSettings(altEmail, phone);
-                            JOptionPane.showMessageDialog(null, "*Your user settings have been " +
-                                    "updated successfully!");
-                            userSetting = jjb.readUserSettings();
-                            setUserSettings(userSetting);
+                            if (validatePhoneNbr(phone)) {
+                                jjb.updateUserSettings(altEmail, phone);
+                                JOptionPane.showMessageDialog(null, "Your user settings have been " +
+                                        "updated successfully!");
+                                userSetting = jjb.readUserSettings();
+                                setUserSettings(userSetting);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "The phone number " +
+                                        "you have entered is invalid!");
+                            }
                         } else if (validatePhoneNbr(phone)) {
                             jjb.updateUserSettings(altEmail, phone);
                             JOptionPane.showMessageDialog(null, "Your phone number has been " +
@@ -273,6 +278,8 @@ public class SettingsForm {
                         } else {
                             JOptionPane.showMessageDialog(null, "The phone number " +
                                     "you have entered is invalid!");
+                            userSetting = jjb.readUserSettings();
+                            setUserSettings(userSetting);
                         }
                     } else {
                         if (!dbPhone.isEmpty()) {

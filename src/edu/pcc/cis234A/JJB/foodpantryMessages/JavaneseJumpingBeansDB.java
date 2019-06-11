@@ -342,16 +342,14 @@ public class JavaneseJumpingBeansDB {
         int i = 0;
         if (!altEmail.isEmpty() && !phoneNbr.isEmpty()) {
             i = 1;
-        } else if (!altEmail.isEmpty() && phoneNbr.isEmpty()) {
+        } else if (!altEmail.isEmpty()) {
             i = 2;
-        } else if (altEmail.isEmpty() && !phoneNbr.isEmpty()) {
+        } else if (!phoneNbr.isEmpty()) {
             i = 3;
-        } else if (altEmail.isEmpty() && phoneNbr.isEmpty()) {
-            i = 4;
         } else {
-            System.out.println("Entered else statement.  Returning ...");
-            return;
+            i = 4;
         }
+
         try (
                 Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(UPDATE_USER_SETTINGS_SQL);
