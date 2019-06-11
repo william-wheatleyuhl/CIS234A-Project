@@ -62,6 +62,7 @@ public class ManageRolesForm {
     private String newGroupName;
     private String newGroupDesc;
     private int existingGroupID;
+    private int ghostUserID = 45;
 
     DefaultComboBoxModel modelUsers = (DefaultComboBoxModel) comboBoxUsers.getModel();
     DefaultComboBoxModel modelRoles = (DefaultComboBoxModel) comboBoxRoles.getModel();
@@ -301,6 +302,8 @@ public class ManageRolesForm {
                         //TODO: FUTURE FEATURE 02: Add functionality to include users in group (different table USER_GROUP)
                         JOptionPane.showMessageDialog(null, "Group Created");
                         subs.logNewGroup(newGroupName, newGroupDesc);
+                        // Add the ghost user to the new group automatically, regardless of user selection
+                        subs.addUserGroup(ghostUserID, subs.getLastGroupID());
                         resetManageUserGroups();
                     }
                     else if (radioEditExisting.isSelected()) {
@@ -319,6 +322,7 @@ public class ManageRolesForm {
      * Model for the first drop down menu to select existing users found in DB.
      */
     private void populateUsers() {
+        //TODO: Sort list alphabetically
         modelUsers.removeAllElements();
         modelUsers.addElement("Choose one...");
         for(Recipient recipient : recipients) {

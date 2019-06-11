@@ -185,7 +185,7 @@ public class SubscriberDB {
      * @param userID The integer UserID identifying the Recipient.
      * @param groupID The integer GroupID identifying the Group.
      */
-    private void addUserGroup(int userID, int groupID) {
+    protected void addUserGroup(int userID, int groupID) {
 //        Output for debugging
 //        System.out.println("Adding User Group Setting for " + userID);
         try {
