@@ -25,6 +25,7 @@ import java.util.HashMap;
  * 20190609 WWU - comboBoxGroups now populates, as does the fieldGroupName textField
  * 20190609 SC - Added functionality to save groups to DB
  * 20190609 SC - Cleaned up completed TODOs & added new TODOs
+ * 20190610 SC - Added Refresh & Reset methods to activate on save / submit and refresh combo boxes
  */
 public class ManageRolesForm {
     private JPanel rootPanel;
@@ -204,6 +205,7 @@ public class ManageRolesForm {
                     listUsers.setEnabled(true);
                     fieldGroupDesc.setEnabled(true);
                     fieldGroupDesc.setText("");
+                    comboBoxGroups.setSelectedIndex(0);
                 }
             }
         });
@@ -256,6 +258,8 @@ public class ManageRolesForm {
                         fieldGroupName.setText(fieldText);
                         fieldGroupDesc.setText(fieldDesc);
                     }
+                    fieldGroupName.setEnabled(true);
+                    fieldGroupDesc.setEnabled(true);
                 }
             }
         });
@@ -297,12 +301,14 @@ public class ManageRolesForm {
                         //TODO: FUTURE FEATURE 02: Add functionality to include users in group (different table USER_GROUP)
                         JOptionPane.showMessageDialog(null, "Group Created");
                         subs.logNewGroup(newGroupName, newGroupDesc);
+                        resetManageUserGroups();
                     }
                     else if (radioEditExisting.isSelected()) {
                         //TODO: FUTURE FEATURE 03: Add functionality to update users in group (different table USER_GROUP)
                         existingGroupID = comboBoxGroups.getSelectedIndex();
                         JOptionPane.showMessageDialog(null, "Group Updated");
                         subs.updateExistingGroup(existingGroupID, newGroupName, newGroupDesc);
+                        resetManageUserGroups();
                     }
                 }
             }
@@ -362,6 +368,10 @@ public class ManageRolesForm {
         scrollPaneUsers.setViewportView(listUsers);
     }
 
+    /**
+     * Reset the fields and drop downs in the Manage User Roles section
+     * For use in the Submit button listener
+     */
     private void resetManageUserRoles() {
         labelCurrentRole.setText("None");
         comboBoxRoles.setSelectedIndex(0);
@@ -371,9 +381,35 @@ public class ManageRolesForm {
         populateUsers();
     }
 
+    /**
+     * Clear the recipients (users) list in the Manage User Roles section
+     * and repopulate from DB
+     */
     private void refreshComboBoxUsers() {
         recipients.clear();
         recipients = subs.readSubscriberData();
+    }
+
+    /**
+     * Reset the fields and drop downs in the Manage User Groups section
+     * For use in the Save button listener
+     */
+    private void resetManageUserGroups() {
+        comboBoxGroups.setSelectedIndex(0);
+        fieldGroupName.setText("");
+        fieldGroupName.setEnabled(false);
+        fieldGroupDesc.setText("");
+        fieldGroupDesc.setEnabled(false);
+        refreshComboBoxGroups();
+    }
+
+    /**
+     * Clear the groups list in the Manage User Groups section
+     * and repopulate from DB
+     */
+    public void refreshComboBoxGroups() {
+        groups.clear();
+        groups = subs.getGroupMakeup();
     }
 
     /**
