@@ -300,18 +300,18 @@ public class ManageRolesForm {
                 if(checkGroupName && checkGroupDesc) {
                     if(radioCreateNew.isSelected()) {
                         //TODO: FUTURE FEATURE 02: Add functionality to include users in group (different table USER_GROUP)
-                        JOptionPane.showMessageDialog(null, "Group Created");
                         subs.logNewGroup(newGroupName, newGroupDesc);
                         // Add the ghost user to the new group automatically, regardless of user selection
                         subs.addUserGroup(ghostUserID, subs.getLastGroupID());
                         resetManageUserGroups();
+                        JOptionPane.showMessageDialog(null, "Group Created");
                     }
                     else if (radioEditExisting.isSelected()) {
                         //TODO: FUTURE FEATURE 03: Add functionality to update users in group (different table USER_GROUP)
                         existingGroupID = comboBoxGroups.getSelectedIndex();
-                        JOptionPane.showMessageDialog(null, "Group Updated");
                         subs.updateExistingGroup(existingGroupID, newGroupName, newGroupDesc);
                         resetManageUserGroups();
+                        JOptionPane.showMessageDialog(null, "Group Updated");
                     }
                 }
             }
@@ -405,6 +405,7 @@ public class ManageRolesForm {
         fieldGroupDesc.setText("");
         fieldGroupDesc.setEnabled(false);
         refreshComboBoxGroups();
+        populateGroups();
     }
 
     /**
