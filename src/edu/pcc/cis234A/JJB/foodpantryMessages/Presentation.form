@@ -41,9 +41,9 @@
                 <border type="none"/>
                 <children/>
               </grid>
-              <grid id="94556" binding="templateTab" layout-manager="CardLayout" hgap="0" vgap="0">
+			  <grid id="94557" binding="msgLogTab" layout-manager="CardLayout" hgap="0" vgap="0">
                 <constraints>
-                  <tabbedpane title="Template Editor"/>
+                  <tabbedpane title="Notification Log"/>
                 </constraints>
                 <properties>
                   <enabled value="false"/>
@@ -52,9 +52,9 @@
                 <border type="none"/>
                 <children/>
               </grid>
-              <grid id="1c1a2" binding="msgLogTab" layout-manager="CardLayout" hgap="0" vgap="0">
+              <grid id="1c1a3" binding="templateTab" layout-manager="CardLayout" hgap="0" vgap="0">
                 <constraints>
-                  <tabbedpane title="Notification Log"/>
+                  <tabbedpane title="Template Editor"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
