@@ -178,7 +178,6 @@ public class SettingsForm {
                 userSetting = jjb.readUserSettings();
                 if (userSetting.getAltEmail().isEmpty()) {
                     if (alternateEmailCheckBox.isSelected()) {
-
                         alternateEmailCheckBox.setSelected(false);
                         JOptionPane.showMessageDialog(null, "You must add an alternate " +
                                 "email address in user settings first.");
@@ -261,12 +260,16 @@ public class SettingsForm {
                 } else {
                     if (altEmail.isEmpty() && phone.isEmpty()) {
                         jjb.updateUserSettings(altEmail, phone);
+                        jjb.updateAltEmailOn(false);
+                        jjb.updateSmsOn(false);
+                        alternateEmailCheckBox.setSelected(false);
+                        smsCheckBox.setSelected(false);
                         JOptionPane.showMessageDialog(null, "Your user settings have been " +
                                 "updated successfully!");
                         userSetting = jjb.readUserSettings();
                         setUserSettings(userSetting);
                     } else if (!altEmail.isEmpty() && !phone.isEmpty()) {
-                        if (altEmailIsValid(altEmail) && validatePhoneNbr(phone)) { // && phone is valid
+                        if (altEmailIsValid(altEmail) && validatePhoneNbr(phone)) {
                             jjb.updateUserSettings(altEmail, phone);
                             JOptionPane.showMessageDialog(null, "Your user settings have been " +
                                     "updated successfully!");
