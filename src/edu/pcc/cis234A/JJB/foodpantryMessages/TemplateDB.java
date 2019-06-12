@@ -19,7 +19,7 @@ public class TemplateDB {
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
     private static final String PASSWORD = "Nullifying9Defeating%";
     //private static final String NAME_QUERY = "SELECT Username, LastName, FirstName FROM [USER]";
-    private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText, UserID FROM TEMPLATE";
+    private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText, UserID FROM TEMPLATE ORDER BY TemplateName";
     private static final String ID_QUERY = "SELECT TemplateID FROM TEMPLATE";
     private static final String LOG_TEMPLATE = "INSERT INTO TEMPLATE VALUES(?,?,?,?)";
     private static final String UPDATE_TEMPLATE = "UPDATE TEMPLATE SET TemplateName = ?, MessageText = ?, UserID = ? WHERE TemplateID = ?";
