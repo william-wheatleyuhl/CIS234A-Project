@@ -161,7 +161,7 @@ public class CreateTemplateForm {
                     } else {
                         areaTemplateText.setText(templates.get(selectedIndex - 1).messageText);
                         fieldTemplateName.setText(templates.get(selectedIndex - 1).templateName);
-                        labelLastEdit.setText("Last edit by " + temps.getLastEditUser(templates.get(selectedIndex).getUserID()));
+                        labelLastEdit.setText("Last edit by " + temps.getLastEditUser(templates.get(selectedIndex - 1).getUserID()));
                     }
                 }
             }
