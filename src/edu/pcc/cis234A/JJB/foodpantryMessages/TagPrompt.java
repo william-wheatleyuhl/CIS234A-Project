@@ -43,7 +43,6 @@ public class TagPrompt {
                    if(returnVal == JFileChooser.APPROVE_OPTION) {
                         imagePath.setText(chooser.getSelectedFile().getAbsolutePath());
                         imageFileSrc = chooser.getSelectedFile().getAbsolutePath();
-                        System.out.println("You Chose this file: " + imageFileSrc);
                    }
             }
         });

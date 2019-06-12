@@ -70,7 +70,6 @@ public class MessageBuilder {
             message.setSubject(subject);
             message.setText(formatMessage( recipient, msgText));
             Transport.send(message, username, password);
-            System.out.println("Message Sent to: " + sendTo);
         } catch(MessagingException e) {
             e.printStackTrace();
         }
@@ -109,7 +108,6 @@ public class MessageBuilder {
 
             message.setContent(multipart);
             Transport.send(message, username, password);
-            System.out.println("Message Sent to: " + sendTo);
         } catch(MessagingException e) {
             e.printStackTrace();
         }

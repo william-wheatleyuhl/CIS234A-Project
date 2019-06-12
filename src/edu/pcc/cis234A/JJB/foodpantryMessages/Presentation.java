@@ -36,28 +36,41 @@ public class Presentation {
 
     public Presentation() {
         userLoggedInLabel.setText("Logged in as " + username);
-        sendNotificationTab.add(nForm.getRootPanel());
-        templateTab.add(new CreateTemplateForm().getRootPanel());
-        manageRolesTab.add(new ManageUsersForm().getRootPanel());
-        msgLogTab.add(new NotificationLogForm().getRootPanel());
-        fpSettingsTab.add(new SettingsForm().getRootPanel());
+//        sendNotificationTab.add(nForm.getRootPanel());
+//        templateTab.add(new CreateTemplateForm().getRootPanel());
+//        manageRolesTab.add(new ManageUsersForm().getRootPanel());
+//        msgLogTab.add(new NotificationLogForm().getRootPanel());
+//        fpSettingsTab.add(new SettingsForm().getRootPanel());
 
         if(isUser()) {
             tabbedPane1.remove(sendNotificationTab);
             tabbedPane1.remove(templateTab);
             tabbedPane1.remove(manageRolesTab);
             tabbedPane1.remove(msgLogTab);
-        }
-        if(isStaff()) {
+            fpSettingsTab.add(new SettingsForm().getRootPanel());
+        }else if(isStaff()) {
             tabbedPane1.remove(templateTab);
             tabbedPane1.remove(manageRolesTab);
+            sendNotificationTab.add(nForm.getRootPanel());
+            msgLogTab.add(new NotificationLogForm().getRootPanel());
+            fpSettingsTab.add(new SettingsForm().getRootPanel());
+        } else {
+            sendNotificationTab.add(nForm.getRootPanel());
+            templateTab.add(new CreateTemplateForm().getRootPanel());
+            manageRolesTab.add(new ManageUsersForm().getRootPanel());
+            msgLogTab.add(new NotificationLogForm().getRootPanel());
+            fpSettingsTab.add(new SettingsForm().getRootPanel());
         }
         tabbedPane1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 super.mouseClicked(mouseEvent);
+                if(tabbedPane1.getTabCount() > 1 && tabbedPane1.getSelectedIndex() == 0) {
                 nForm.refreshLists();
+//                    System.out.println("Yes");
+                }
             }
+
         });
     }
 

@@ -20,6 +20,7 @@ class TagParser {
     private ArrayList<String> tags = new ArrayList<>();
     private TagPrompt prompt;
     private String imageSrcPath;
+    private boolean cancelled = false;
 
     public TagParser(String msg) {
         this.messageString = msg.replaceAll("><", "> <");
@@ -59,6 +60,7 @@ class TagParser {
                if (result == JOptionPane.OK_OPTION) {
                    tagsValid = checkTagCount();
                } else if (result == JOptionPane.CANCEL_OPTION) {
+                   cancelSelected();
                    return;
                }
            }
@@ -82,7 +84,6 @@ class TagParser {
                 messageString = messageString.replaceAll(tag, newValue);
             }
         }
-        System.out.println(messageString);
     }
 
     /**
@@ -141,5 +142,20 @@ class TagParser {
      */
     public String getImageSrcPath() {
         return imageSrcPath;
+    }
+
+    /**
+     * Set the variable to true only if the cancel button is pressed when filling tags.
+     */
+    private void cancelSelected() {
+        cancelled = true;
+    }
+
+    /**
+     * Check to see if the cancel button has been pressed
+     * @return True if pressed, False if not pressed.
+     */
+    public boolean getCancelled() {
+        return cancelled;
     }
 }
