@@ -64,7 +64,7 @@ public class SettingsForm {
         phoneNumberTextField.setMargin(new Insets(0,2,2,0));
 
         subscriptionSettings = jjb.readSubscriptionSettings();
-        if(subscriptionSettings.isNotificationsOn()) {
+        if (subscriptionSettings.isNotificationsOn()) {
             setEnabledFieldStatus(true);
         } else {
             setEnabledFieldStatus(false);
@@ -81,7 +81,7 @@ public class SettingsForm {
         notificationOnOffCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(notificationOnOffCheckBox.isSelected()) {
+                if (notificationOnOffCheckBox.isSelected()) {
                     setEnabledFieldStatus(true);
                     jjb.updateNotificationsOn(true);
                 } else {
@@ -98,7 +98,7 @@ public class SettingsForm {
         cascadeCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(cascadeCheckBox.isSelected()) {
+                if (cascadeCheckBox.isSelected()) {
                     jjb.updateCascadeOn(true);
                 } else {
                     jjb.updateCascadeOn(false);
@@ -113,7 +113,7 @@ public class SettingsForm {
         rockCreekCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(rockCreekCheckBox.isSelected()) {
+                if (rockCreekCheckBox.isSelected()) {
                     jjb.updateRockCreekOn(true);
                 } else {
                     jjb.updateRockCreekOn(false);
@@ -128,7 +128,7 @@ public class SettingsForm {
         southeastCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(southeastCheckBox.isSelected()) {
+                if (southeastCheckBox.isSelected()) {
                     jjb.updateSoutheastOn(true);
                 } else {
                     jjb.updateSoutheastOn(false);
@@ -143,7 +143,7 @@ public class SettingsForm {
         sylvaniaCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(sylvaniaCheckBox.isSelected()) {
+                if (sylvaniaCheckBox.isSelected()) {
                     jjb.updateSylvaniaOn(true);
                 } else {
                     jjb.updateSylvaniaOn(false);
@@ -158,7 +158,7 @@ public class SettingsForm {
         emailCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(emailCheckBox.isSelected()) {
+                if (emailCheckBox.isSelected()) {
                     jjb.updateEmailOn(true);
                 } else {
                     jjb.updateEmailOn(false);
@@ -173,10 +173,22 @@ public class SettingsForm {
         alternateEmailCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(alternateEmailCheckBox.isSelected()) {
-                    jjb.updateAltEmailOn(true);
+                userSetting = jjb.readUserSettings();
+                if (userSetting.getAltEmail().isEmpty()) {
+                    if (alternateEmailCheckBox.isSelected()) {
+
+                        alternateEmailCheckBox.setSelected(false);
+                        JOptionPane.showMessageDialog(null, "You must add an alternate " +
+                                "email address in user settings first.");
+                    } else {
+                        jjb.updateAltEmailOn(false);
+                    }
                 } else {
-                    jjb.updateAltEmailOn(false);
+                    if (alternateEmailCheckBox.isSelected()) {
+                        jjb.updateAltEmailOn(true);
+                    } else {
+                        jjb.updateAltEmailOn(false);
+                    }
                 }
             }
         });
@@ -188,10 +200,21 @@ public class SettingsForm {
         smsCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if(smsCheckBox.isSelected()) {
-                    jjb.updateSmsOn(true);
+                userSetting = jjb.readUserSettings();
+                if (userSetting.getPhoneNbr().isEmpty()) {
+                    if(smsCheckBox.isSelected()) {
+                        smsCheckBox.setSelected(false);
+                        JOptionPane.showMessageDialog(null, "You must add a phone number " +
+                                "in user settings first.");
+                    } else {
+                        jjb.updateSmsOn(false);
+                    }
                 } else {
-                    jjb.updateSmsOn(false);
+                    if(smsCheckBox.isSelected()) {
+                        jjb.updateSmsOn(true);
+                    } else {
+                        jjb.updateSmsOn(false);
+                    }
                 }
             }
         });
@@ -278,8 +301,6 @@ public class SettingsForm {
                         } else {
                             JOptionPane.showMessageDialog(null, "The phone number " +
                                     "you have entered is invalid!");
-                            userSetting = jjb.readUserSettings();
-                            setUserSettings(userSetting);
                         }
                     } else {
                         if (!dbPhone.isEmpty()) {
