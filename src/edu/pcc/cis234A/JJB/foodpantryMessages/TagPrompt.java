@@ -9,7 +9,8 @@ import java.util.HashMap;
 /**
  * This class provides the structure for the GUI window that prompts the user to provide values for messages containing
  * tags. The interface has been consolidated so that only one tag prompt window is displayed, containing a field for
- * each tag in the message. This panel is then populated into a JOptionPane when called by the TagParser Class.
+ * each tag in the message. If <image> tags are present, use JFileChooser to get the image path.
+ * This panel is then populated into a JOptionPane when called by the TagParser Class.
  * @author William Wheatley-Uhl
  * @version 2019.05.26
  */
@@ -105,6 +106,10 @@ public class TagPrompt {
         return tagValues.get(tag).getText();
     }
 
+    /**
+     * Get the Absolute Path of the local image to be sent in the message.
+     * @return The String value of the image's Path.
+     */
     public String getImageFileSrc() {
         return imageFileSrc;
     }

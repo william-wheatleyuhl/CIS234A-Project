@@ -41,6 +41,7 @@ class TagParser {
             }
         }
     }
+
     /**
      * Given an array list of tags, populate the JOptionPane with fields to fill tags. While all tags fields are not
      * filled, present an error message and prompt for tags again. If cancel button is pressed, exit without
@@ -65,6 +66,7 @@ class TagParser {
            return;
        }
     }
+
     /**
      * For each given tag in the tags list, substitute the provided value from the
      * tag prompt window. Original tags are stored in the tags ArrayList, and are used to query
@@ -106,8 +108,8 @@ class TagParser {
     }
 
     /**
-     *
-     * @return
+     * Check the message for an image tag
+     * @return Boolean value describing the presence of the image tag.
      */
     public boolean checkForImages() {
         boolean needsImage = false;
@@ -133,9 +135,10 @@ class TagParser {
         return messageString;
     }
 
-    public ArrayList<String> getTags() {
-        return tags;
-    }
+    /**
+     * Get the String value of the path of Images to be included in the
+     * @return
+     */
     public String getImageSrcPath() {
         return imageSrcPath;
     }

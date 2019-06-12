@@ -18,6 +18,7 @@ public class MessageBuilder {
     private Recipient recipient;
     private String sendTo;
     private String sentFrom = "jjb.234a.test@gmail.com";
+    private String subject = "A message from PCC Panther Pantry!";
     private String msgText;
     private final String username= "jjb.234a.test@gmail.com";
     private final String password = "xqaddkztgrcbdlda";  // App password for gmail, not actual password.
@@ -60,14 +61,13 @@ public class MessageBuilder {
 
     /**
      * Given all parameters of the message, send the message to the intended recipient.
-     * TODO: Implement one send message usage by providing list of recipient email addresses, rather than calling this method multiple times.
      */
     public void sendPlainMessage() {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sentFrom));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTo));
-            message.setSubject("Test Message");
+            message.setSubject(subject);
             message.setText(formatMessage( recipient, msgText));
             Transport.send(message, username, password);
             System.out.println("Message Sent to: " + sendTo);
@@ -76,25 +76,17 @@ public class MessageBuilder {
         }
     }
 
+    /**
+     * If the message has an Image tag, place the message body in the Multipart Message, add the image, and
+     * send the message with the inline image included.
+     * @param imagePath
+     */
     public void sendMessageWithImage(String imagePath) {
-//        Properties props = new Properties();
-//        props.put("mail.smtp.auth", "true");
-//        props.put("mail.smtp.starttls.enable", "true");
-//        props.put("mail.smtp.host", "smtp.gmail.com");
-//        props.put("mail.smtp.socketFactory.port", "465");
-//        props.put("mail.smtp.socketFactory.class",
-//                "javax.net.ssl.SSLSocketFactory");
-//
-//        this.session = Session.getDefaultInstance(props, new Authenticator() {
-//            protected PasswordAuthentication getPassWordAuthentication() {
-//                return new PasswordAuthentication(username, password);
-//            }
-//        });
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sentFrom));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress("william.wheatleyuhl@pcc.edu"));
-            message.setSubject("Test Message");
+            message.setSubject(subject);
 
             // Add Message Body.
             MimeMultipart multipart = new MimeMultipart("related");
