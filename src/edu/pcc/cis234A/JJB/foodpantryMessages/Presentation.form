@@ -41,7 +41,7 @@
                 <border type="none"/>
                 <children/>
               </grid>
-			  <grid id="94557" binding="msgLogTab" layout-manager="CardLayout" hgap="0" vgap="0">
+              <grid id="94557" binding="msgLogTab" layout-manager="CardLayout" hgap="0" vgap="0">
                 <constraints>
                   <tabbedpane title="Notification Log"/>
                 </constraints>
@@ -111,7 +111,7 @@
         </constraints>
         <properties>
           <font size="16" style="1"/>
-          <text value="Food Pantry Send Notification"/>
+          <text value="Food Pantry Notification System"/>
         </properties>
       </component>
       <vspacer id="36bfa">
