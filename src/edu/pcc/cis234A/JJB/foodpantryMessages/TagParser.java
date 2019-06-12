@@ -66,7 +66,7 @@ class TagParser {
            return;
        }
     }
-    
+
     /**
      * For each given tag in the tags list, substitute the provided value from the
      * tag prompt window. Original tags are stored in the tags ArrayList, and are used to query
