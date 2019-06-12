@@ -25,7 +25,7 @@ public class SubscriberDB {
     private static final String PASSWORD = "Nullifying9Defeating%";
     private static final String TEMPLATE_QUERY = "SELECT TemplateID, TemplateName, MessageText, UserID FROM TEMPLATE";
     private static final String SUBSCRIBER_QUERY = "SELECT UserID, Username, LastName, FirstName, Email, Phone, [USER].RoleID, ROLE.RoleName FROM [USER]" +
-            "JOIN ROLE ON [USER].RoleID = ROLE.RoleID ORDER BY Username";
+            "JOIN ROLE ON [USER].RoleID = ROLE.RoleID";
     private static final String ROLE_UPDATE = "UPDATE [USER] SET RoleID = ? WHERE UserID = ?";
     private static final String SUB_SETTINGS_QUERY = "SELECT UserID, NotificationsOn, CascadeOn, RockCreekOn, SoutheastOn, SylvaniaOn, EmailOn, AltEmailOn, SMSOn FROM USER_SETTING";
     private static final String USER_GROUPS_UPDATE = "INSERT INTO USER_GROUP (UserID, GroupID) VALUES(?, ?)";
