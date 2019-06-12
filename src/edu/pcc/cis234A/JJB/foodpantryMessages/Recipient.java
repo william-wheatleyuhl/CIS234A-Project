@@ -74,6 +74,10 @@ public class Recipient {
         return userSettings;
     }
 
+    public String getPhoneNbr() {
+        return phoneNbr;
+    }
+
     public int getRoleID() {
         return roleID;
     }

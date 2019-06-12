@@ -18,6 +18,7 @@ import java.util.*;
  * 20190609 SC - Added GROUP_INSERT & GROUP_UPDATE & GROUP_QUERY
  * 20190609 SC - Added logNewGroup() & updateExistingGroup() & getLastGroupID() & getRoleNameRoleID()
  */
+
 public class SubscriberDB {
     private static final String DB_URL = "jdbc:jtds:sqlserver://cisdbss.pcc.edu/234a_JavaneseJumpingBeans";
     private static final String USERNAME = "234a_JavaneseJumpingBeans";
@@ -105,8 +106,9 @@ public class SubscriberDB {
     }
 
     /**
-     *
-     * @return
+     * Read through all the Roles available in the DB, store Role data in the Role class object. Class objects are
+     * stored in an ArrayList and returned for use.
+     * @return An ArrayList populated with Role Class Objects.
      */
 
     protected ArrayList readRoles() {
@@ -164,9 +166,13 @@ public class SubscriberDB {
             }
         }
     }
+
+    /**
+     * If roles are changed, update the Role association with the user in the Database
+     * @param roleID The Integer value of the User's New Role
+     * @param userID The Integer value of the User's ID.
+     */
     protected void updateUserRole(int roleID, int userID) {
-//        Output for debugging
-//        System.out.println("Adding User Group Setting for " + userID);
         try {
             Connection conn = getConnection();
             PreparedStatement stmt = conn.prepareStatement(ROLE_UPDATE);
@@ -243,8 +249,6 @@ public class SubscriberDB {
             e.printStackTrace();
         }
 
-//        Output for debugging
-//        System.out.println("Checking User Settings against USER_GROUP table.");
         for(Integer groupID : new HashSet<Integer>(groups.keySet())) {
             switch(groupID) {
                 case 1:

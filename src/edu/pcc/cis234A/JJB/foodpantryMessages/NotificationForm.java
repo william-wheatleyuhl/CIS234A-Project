@@ -83,29 +83,28 @@ public class NotificationForm {
                             if(recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("EmailOn").equals(true)) {
                                 MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
                                 msg.sendMessageWithImage(parser.getImageSrcPath());
-                                //Debugging Output
-//                                System.out.println(recipient.getUserID() + ": " + recipient.getFullName());
-
                             }
                         }
                     }
                     for (Recipient recipient : recipients) {
                         if(recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("EmailOn").equals(true)) {
-//                        MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
-//                        msg.sendMessage();
+                        MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
+                        msg.sendPlainMessage();
                             System.out.println(recipient.getUserID() + ": " + recipient.getFullName());
                             recipientIDs.add(recipient.getUserID());
-                        }else if(recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("SMSOn").equals(true)) {
-//                        SMSBuilder smsMsg = new SMSBuilder(parser.returnParsedMessage()); //SMS Message Builder
-//                        smsMsg.sendSMS();
+                        }
+                        if(recipient.getUserSettings().containsKey("NotificationsOn") && recipient.getUserSettings().get("NotificationsOn").equals(true)) {
+                            if(recipient.getUserSettings().get("SMSOn").equals(true) && recipient.getPhoneNbr() != null) {
+                                SMSBuilder smsMsg = new SMSBuilder(parsedMessage, recipient); //SMS Message Builder
+                                System.out.println("Sending a message to " + recipient.getFirstName() + " at " + recipient.getPhoneNbr());
+                                smsMsg.sendSMS();
+                            }
                         }
                     }
-                    //Debugging Output
-                    System.out.println(parsedMessage);
-//                    subs.logMessage(parsedMessage, recipients.size(), getCurrentUserID());
-//                    for(int recipID : recipientIDs) {
-//                        subs.logRecipients(recipID);
-//                    }
+                    subs.logMessage(parsedMessage, recipients.size(), getCurrentUserID());
+                    for(int recipID : recipientIDs) {
+                        subs.logRecipients(recipID);
+                    }
                     JOptionPane.showMessageDialog(null, "Message Sent!");
                 }
             }
@@ -124,11 +123,6 @@ public class NotificationForm {
                         selectedGroups.add(group);
                     }
                 }
-                //Output for debugging
-//                ArrayList<Recipient> recipients = buildRecipientList();
-//                for(Recipient recipient: recipients) {
-//                    System.out.println("NAME: " + recipient.getUserName() + " " + recipient.getRoleID() + " " + recipient.getRoleTitle());
-//                }
             }
 
         });
@@ -239,6 +233,11 @@ public class NotificationForm {
 
     }
 
+
+    /**
+     * Refresh the current Subscribers and Groups data structures with data freshly pulled from the DB.
+     * Repopulate the the Recipient Group list.
+     */
     private void refreshRecipients() {
         subscribers.clear();
         subscribers = subs.readSubscriberData();
@@ -247,6 +246,9 @@ public class NotificationForm {
         populateRecipientMenu();
     }
 
+    /**
+     * Run both refresh tasks described above.
+     */
     public void refreshLists() {
         refreshRecipients();
         refreshTemplates();

@@ -61,7 +61,6 @@ public class MessageBuilder {
 
     /**
      * Given all parameters of the message, send the message to the intended recipient.
-     * TODO: Implement one send message usage by providing list of recipient email addresses, rather than calling this method multiple times.
      */
     public void sendPlainMessage() {
         try {
@@ -77,6 +76,11 @@ public class MessageBuilder {
         }
     }
 
+    /**
+     * If the message has an Image tag, place the message body in the Multipart Message, add the image, and
+     * send the message with the inline image included.
+     * @param imagePath
+     */
     public void sendMessageWithImage(String imagePath) {
         try {
             Message message = new MimeMessage(session);
