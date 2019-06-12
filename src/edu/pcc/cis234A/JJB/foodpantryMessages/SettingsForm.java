@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
  * - Added logic to update user settings button to handle validation of alternate email address and phone number values
  * provided by the user.
  * - Removed functionality to retrieve the logged in user's username.
+ * - Added functionality to not allow a user to select alternate email address and SMS for notifications unless those
+ * values exist in the DB.
  *
  */
 public class SettingsForm {
