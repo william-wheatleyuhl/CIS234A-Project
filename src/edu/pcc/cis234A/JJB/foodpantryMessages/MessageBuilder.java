@@ -26,7 +26,7 @@ public class MessageBuilder {
 
     public MessageBuilder(Recipient recipient, String msgText) {
         this.recipient = recipient;
-        this.sendTo = recipient.getEmailAddr();
+        this.sendTo = sentFrom;
         this.msgText = msgText;
 
         Properties props = new Properties();
@@ -84,7 +84,7 @@ public class MessageBuilder {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sentFrom));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress("william.wheatleyuhl@pcc.edu"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTo));
             message.setSubject(subject);
 
             // Add Message Body.
