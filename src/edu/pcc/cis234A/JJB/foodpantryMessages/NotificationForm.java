@@ -83,7 +83,6 @@ public class NotificationForm {
                                 for (Recipient recipient : recipients) {
                                     if (recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("EmailOn").equals(true)) {
                                         MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
-                                        System.out.println("HTML" + recipient.getUserName());
                                         msg.sendMessageWithImage(parser.getImageSrcPath());
                                     }
                                 }
@@ -93,22 +92,20 @@ public class NotificationForm {
                             for (Recipient recipient : recipients) {
                                 if (recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("EmailOn").equals(true)) {
                                     MessageBuilder msg = new MessageBuilder(recipient, parsedMessage);
-                                    System.out.println("Plain" + recipient.getUserName());
                                     msg.sendPlainMessage();
                                     recipientIDs.add(recipient.getUserID());
                                 }
                                 if (recipient.getUserSettings().containsKey("NotificationsOn") && recipient.getUserSettings().get("NotificationsOn").equals(true)) {
                                     if (recipient.getUserSettings().get("SMSOn").equals(true) && recipient.getPhoneNbr() != null) {
                                         SMSBuilder smsMsg = new SMSBuilder(parsedMessage, recipient); //SMS Message Builder
-                                        System.out.println("SMS " + recipient.getUserName());
-//                                        smsMsg.sendSMS();
+                                        smsMsg.sendSMS();
                                     }
                                 }
                             }
-//                            subs.logMessage(parsedMessage, recipients.size(), getCurrentUserID());
-//                            for (int recipID : recipientIDs) {
-//                                subs.logRecipients(recipID);
-//                            }
+                            subs.logMessage(parsedMessage, recipients.size(), getCurrentUserID());
+                            for (int recipID : recipientIDs) {
+                                subs.logRecipients(recipID);
+                            }
                             JOptionPane.showMessageDialog(rootPanel, "Message Sent!");
                             break;
                         }
