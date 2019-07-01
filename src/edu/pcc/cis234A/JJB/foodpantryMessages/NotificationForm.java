@@ -86,6 +86,8 @@ public class NotificationForm {
                                         msg.sendMessageWithImage(parser.getImageSrcPath());
                                     }
                                 }
+                                JOptionPane.showMessageDialog(rootPanel, "Message Sent!");
+                                break;
                             }
                             for (Recipient recipient : recipients) {
                                 if (recipient.getUserSettings().get("NotificationsOn").equals(true) && recipient.getUserSettings().get("EmailOn").equals(true)) {
@@ -104,7 +106,8 @@ public class NotificationForm {
                             for (int recipID : recipientIDs) {
                                 subs.logRecipients(recipID);
                             }
-                            JOptionPane.showMessageDialog(null, "Message Sent!");
+                            JOptionPane.showMessageDialog(rootPanel, "Message Sent!");
+                            break;
                         }
                     }
                 if(parser.getCancelled()) {
@@ -159,6 +162,7 @@ public class NotificationForm {
         }
         groupSelect.setModel(model);
         scrollList.setViewportView(groupSelect);
+        groupSelect.setSelectedIndex(0);
     }
 
     /**
@@ -213,7 +217,7 @@ public class NotificationForm {
      */
     private ArrayList buildRecipientList() {
         ArrayList<Recipient> recipients = new ArrayList<>();
-        if(selectedGroups.contains(0)) {
+        if(selectedGroups.contains(0) || selectedGroups.size() == 0) {
             recipients = subscribers;
         } else {
             for (Recipient recipient : subscribers) {

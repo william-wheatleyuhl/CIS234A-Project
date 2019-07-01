@@ -15,7 +15,7 @@ import java.util.regex.*;
 class TagParser {
     private String messageString;
     private StringTokenizer defaultTokenizer;
-    private String pattern = "<(.*?)>";
+    private String pattern = "(^)<(.*?)>($)";
     private Pattern p = Pattern.compile(pattern);
     private ArrayList<String> tags = new ArrayList<>();
     private TagPrompt prompt;
@@ -78,7 +78,7 @@ class TagParser {
     private void replaceTags() {
         for(String tag : tags) {
             if(tag.contains("image")) {
-                messageString = messageString.replaceAll(tag, "<img style=\"max-height:300px;\" src=\"cid:image\">");
+                messageString = messageString.replaceAll(tag, "<br><img style=\"max-height:300px;\" src=\"cid:image\">");
             } else {
                 String newValue = prompt.getTagValue(tag);
                 messageString = messageString.replaceAll(tag, newValue);
@@ -115,7 +115,7 @@ class TagParser {
     public boolean checkForImages() {
         boolean needsImage = false;
         for(String tag : tags) {
-            if(tag.equals("image")) {
+            if(tag.equals("<image>")) {
                 needsImage = true;
             }
         }
